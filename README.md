@@ -15,7 +15,7 @@ mvn appengine:run
 Only need to do for first time. If you're using cloud shell, should not need following commands.
 ```
 gcloud init
-gcloud config set project [Project_ID]
+gcloud config set project greyswan
 ```
 Run every time you want to deploy:
 ```
