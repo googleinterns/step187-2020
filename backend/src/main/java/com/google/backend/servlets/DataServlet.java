@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 */
 @WebServlet("/api/v1/test-servlet")
 public class DataServlet extends HttpServlet {
- @Override
- public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-   response.setContentType("text/html;");
-   response.getWriter().println("Hello world from data servlet!");
- }
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("text/html;");
+    response.getWriter().println("Hello world from data servlet!");
+  }
 }
