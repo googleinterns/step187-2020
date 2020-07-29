@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import NavBar from './NavBar';
 import "./App.css";
 
 
@@ -16,11 +16,25 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
+      <div className="Home">
+        <NavBar />
+        <HomeContent />
+      </div>
+    );
+  }
+}
+
+class HomeContent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {isLoggedIn : false};
+  }
+
+  render () {
+    return (
+      <div className="homeContent">
+        <h1>Welcome to GreySwan!</h1>
+        <p>{this.state.isLoggedIn ? "Thank you for visiting our app!" :  "Please log in." }</p>
       </div>
     );
   }
