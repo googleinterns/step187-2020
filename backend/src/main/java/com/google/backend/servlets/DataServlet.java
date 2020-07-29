@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.servlets;
+package com.google.backend.servlets;
 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 */
 @WebServlet("/api/v1/test-servlet")
 public class DataServlet extends HttpServlet {
-
  @Override
  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
    response.setContentType("text/html;");

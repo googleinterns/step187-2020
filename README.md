@@ -23,3 +23,12 @@ yarn build // From frontend directory
 gcloud app deploy // From frontend directory
 mvn package appengine:deploy // From backend directory
 ```
+Run to deploy a cron job:
+```
+gcloud app deploy cron.yaml
+```
+Run to stop a cron job:
+```
+// Remove content in cron.yaml. 
+gcloud app deploy cron.yaml
+```
