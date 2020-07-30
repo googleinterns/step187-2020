@@ -24,15 +24,13 @@ public final class Anomaly {
   private final Timestamp timestampDate;
   private final String metricName;
   private final String dimensionName;
-  private final String status;
   private final Map<Timestamp, MetricValue> dataPoints;
   
   public Anomaly(Timestamp timestampDate, String metricName, String dimensionName, 
-      String status, Map<Timestamp, MetricValue> dataPoints) {
+      Map<Timestamp, MetricValue> dataPoints) {
     this.timestampDate = timestampDate;
     this.metricName = metricName;
     this.dimensionName = dimensionName;
-    this.status = status;
     this.dataPoints = dataPoints;
   }
 
