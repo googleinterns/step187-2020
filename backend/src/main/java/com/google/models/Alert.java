@@ -21,7 +21,9 @@ import java.util.List;
 
 /** Store alert-related data. */
 public final class Alert {
-  
+  public static final String RESOLVED_MESSAGE = "resolved";
+  public static final String UNRESOLVED_MESSAGE = "unresolved";
+
   private final Timestamp timestampDate;
   private final List<Anomaly> anomalies;
   private final String resolvedStatus;

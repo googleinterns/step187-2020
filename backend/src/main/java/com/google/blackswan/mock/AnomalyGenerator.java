@@ -12,22 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.models;
+package com.google.blackswan.mock;
 
-/** 
- * Wrapper for a metric value.
- * TODO: Make metric value work for double, floats, etc.  
- */
-public final class MetricValue {
-  
-  private final int value;
+import com.google.models.*;
+import java.util.List;
 
-  public MetricValue(int value) {
-    this.value = value;
-  }
-
-  public int getValue() {
-    return value;
-  }
-
+public interface AnomalyGenerator {  
+  List<Anomaly> getAnomalies();
 }

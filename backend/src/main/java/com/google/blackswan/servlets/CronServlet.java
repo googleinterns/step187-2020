@@ -20,6 +20,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Logger;
+import com.google.blackswan.mock.*;
+import com.google.models.*;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import java.util.*;
 
 /**
 * Servlet to test if cron job runs.
@@ -31,6 +37,15 @@ public class CronServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     log.info("Cron job ran.");
+    storeAnomalyInDatastore();
     response.setStatus(200); 
   }
+
+  public void storeAnomalyInDatastore() {
+    AnomalyGenerator testAnomalyGenerator = new DummyAnomalyGenerator();
+    List<Anomaly> anomalies = testAnomalyGenerator.getAnomalies();
+
+    DatastoreServiceFactory.getDatastoreService().put(Anomaly.toEntity(anomalies.get(0)));
+  }
+
 }

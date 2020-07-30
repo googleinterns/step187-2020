@@ -16,7 +16,8 @@ package com.google.models;
 
 /** Wrapper for timestamp with day, month, year fields. */
 public final class Timestamp {
-  
+  public static String TIMESTAMP_PROPERTY = "timestamp";
+
   private final int day;
   private final int month;
   private final int year;
