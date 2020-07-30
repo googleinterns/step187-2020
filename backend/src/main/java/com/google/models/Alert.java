@@ -24,12 +24,12 @@ public final class Alert {
   
   private final Timestamp timestampDate;
   private final List<Anomaly> anomalies;
-  private final String status;
+  private final String resolvedStatus;
 
-  public Alert(Timestamp timestampDate, List<Anomaly> anomalies, String status) {
+  public Alert(Timestamp timestampDate, List<Anomaly> anomalies, String resolvedStatus) {
     this.timestampDate = timestampDate;
     this.anomalies = anomalies;
-    this.status = status;
+    this.resolvedStatus = resolvedStatus;
   }
 
 }
