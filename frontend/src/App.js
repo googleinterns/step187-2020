@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import NavBar from './NavBar';
-import "./App.css";
+import './App.css';
 
 
 class App extends Component {
@@ -16,7 +16,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="Home">
+      <div className="home">
         <NavBar />
         <HomeContent />
       </div>
@@ -30,11 +30,11 @@ class HomeContent extends Component {
     this.state = {isLoggedIn : false};
   }
 
-  render () {
+  render() {
     return (
-      <div className="homeContent">
+      <div className="home-content">
         <h1>Welcome to GreySwan!</h1>
-        <p>{this.state.isLoggedIn ? "Thank you for visiting our app!" :  "Please log in." }</p>
+        <p>{this.state.isLoggedIn ? "Thank you for visiting our app!" :  "Please log in."}</p>
       </div>
     );
   }
