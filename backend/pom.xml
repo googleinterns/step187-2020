@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.google.backend</groupId>
-  <artifactId>backend</artifactId>
+  <artifactId>greyswan</artifactId>
   <version>1</version>
   <packaging>war</packaging>
 
