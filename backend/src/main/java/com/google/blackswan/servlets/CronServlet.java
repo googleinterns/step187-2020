@@ -30,7 +30,11 @@ public class CronServlet extends HttpServlet {
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // TODO: Update or clean up log message. 
     log.info("Cron job ran.");
-    response.setStatus(200); 
+
+    // TODO: Logic for cron job to run blackswan mock. (#13)
+
+    response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
 }
