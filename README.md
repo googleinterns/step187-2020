@@ -32,6 +32,7 @@ mvn package appengine:deploy // From backend directory
 
 ## Deploy cron jobs
 To view all active cron jobs on GCP: https://pantheon.corp.google.com/appengine/cronjobs?project=greyswan
+
 To deploy a cron job:
 1) Specify cron job details in `cron.yaml` file. 
 2) Deploy the `cron.yaml` file. 
