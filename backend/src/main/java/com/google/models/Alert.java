@@ -14,13 +14,18 @@
 
 package com.google.models;
 
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.models.Anomaly;
 import com.google.models.Timestamp;
 import java.util.List;
-
+import java.util.ArrayList;
 
 /** Store alert-related data. */
 public final class Alert {
+  public static final String ALERT_ENTITY_KIND = "alert";
+  public static final String RESOLVED_STATUS_PROPERTY = "resolvedStatus";
+  public static final String ANOMALIES_LIST_PROPERTY = "anomaliesList";
   public static final String RESOLVED_MESSAGE = "resolved";
   public static final String UNRESOLVED_MESSAGE = "unresolved";
 
@@ -32,6 +37,62 @@ public final class Alert {
     this.timestampDate = timestampDate;
     this.anomalies = anomalies;
     this.resolvedStatus = resolvedStatus;
+  }
+
+  public List<Anomaly> getAnomalies() {
+    return anomalies;
+  }
+
+  public Timestamp getTimestamp() {
+    return timestampDate;
+  }
+
+  public String getResolvedStatus() {
+    return resolvedStatus;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof Alert)) {
+      return false;
+    }
+
+    Alert target = (Alert) o;
+
+    return target.timestampDate.equals(timestampDate) && target.resolvedStatus.equals(resolvedStatus)
+        && target.anomalies.equals(anomalies);
+  }
+
+  public static Entity toEntity(Alert alert) {
+    Entity alertEntity = new Entity(ALERT_ENTITY_KIND);
+    alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, alert.timestampDate.toString());
+    alertEntity.setProperty(RESOLVED_STATUS_PROPERTY, alert.resolvedStatus);
+
+    // TODO: Combine builder to one line(?).
+
+    List<EmbeddedEntity> list = new ArrayList<>();
+
+    alert.anomalies.forEach(anomaly -> list.add(Anomaly.toEmbeddedEntity(anomaly)));
+
+    alertEntity.setProperty(ANOMALIES_LIST_PROPERTY, list);
+
+    return alertEntity;
+  }
+
+  public static Alert toAlert(Entity alertEntity) {
+    // Attempt to fetch list of anomalies.
+    List<EmbeddedEntity> list = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
+    List<Anomaly> listAnomaly = new ArrayList<>();
+    if (list != null) {
+      list.forEach(embeddedAnomaly -> listAnomaly.add(Anomaly.toAnomaly(embeddedAnomaly)));
+    }
+    return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
+        listAnomaly, 
+        (String) alertEntity.getProperty(RESOLVED_STATUS_PROPERTY));
   }
 
 }

@@ -30,4 +30,23 @@ public final class MetricValue {
     return value;
   }
 
+  public String toString() {
+    return String.valueOf(value);
+  }
+
+  @Override
+   public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof MetricValue)) {
+      return false;
+    }
+
+    MetricValue target = (MetricValue) o;
+
+    return target.value == value;
+  }
+
 }

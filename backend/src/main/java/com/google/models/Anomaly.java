@@ -20,6 +20,7 @@ import com.google.models.Timestamp;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 /** Store anomaly-related data. */
 public final class Anomaly {
@@ -31,9 +32,9 @@ public final class Anomaly {
   private static final String DUMMY_METRIC_NAME = "Sample metric name";
   private static final String DUMMY_DIMENSION_NAME = "Sample dimension name";
   private static final Map<Timestamp, MetricValue> DUMMY_DATA_POINTS = ImmutableMap.of( 
-      Timestamp.getDummyTimestamp(), new MetricValue(1), 
-      Timestamp.getDummyTimestamp(), new MetricValue(2), 
-      Timestamp.getDummyTimestamp(), new MetricValue(3));
+      Timestamp.getDummyTimestamp(1), new MetricValue(1), 
+      Timestamp.getDummyTimestamp(2), new MetricValue(2), 
+      Timestamp.getDummyTimestamp(3), new MetricValue(3));
   
   private final Timestamp timestampDate;
   private final String metricName;
@@ -48,8 +49,55 @@ public final class Anomaly {
     this.dataPoints = dataPoints;
   }
 
+  public Timestamp getTimestamp() {
+    return timestampDate;
+  }
+
+  public String getMetricName() {
+    return metricName;
+  }
+
+  public String getDimensionName() {
+    return dimensionName;
+  }
+
+  public Map<Timestamp, MetricValue> getDataPoints() {
+    return dataPoints;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof Anomaly)) {
+      return false;
+    }
+
+    Anomaly target = (Anomaly) o;
+
+    return target.timestampDate.equals(timestampDate) && target.metricName.equals(metricName)
+        && target.dimensionName.equals(dimensionName) 
+        && dataPoints.entrySet().stream().allMatch(
+          e -> e.getValue().equals(target.dataPoints.get(e.getKey()))
+        );
+  }
+
+  public String toString() {
+    StringBuilder str = new StringBuilder("");
+    str.append("Timestamp: " + timestampDate.toString() + "\n");
+    str.append("Metric Name: " + metricName + "\n");
+    str.append("Dimension Name: " + dimensionName + "\n");
+    str.append("Datapoints: \n");
+    dataPoints.forEach((key, value) -> 
+      str.append(key.toString() + ": " + value.toString() + "\n")
+    );
+    return str.toString();
+  }
+
   public static Anomaly getDummyAnomaly() {
-    return new Anomaly(Timestamp.getDummyTimestamp(), DUMMY_METRIC_NAME, DUMMY_DIMENSION_NAME, 
+    return new Anomaly(Timestamp.getDummyTimestamp(1), DUMMY_METRIC_NAME, DUMMY_DIMENSION_NAME, 
         DUMMY_DATA_POINTS);
   }
 
@@ -65,6 +113,29 @@ public final class Anomaly {
     anomalyEntity.setProperty(DATA_POINTS_PROPERTY, dataPointsEntity);
 
     return anomalyEntity;
+  }
+
+  /** TODO: Move Entity to Embedded Entity conversion somewhere else that all entity can share. */
+  public static EmbeddedEntity toEmbeddedEntity(Anomaly anomaly) {
+    Entity anomalyEntity = toEntity(anomaly);
+    EmbeddedEntity anomalyEmbeddedEntity = new EmbeddedEntity();
+    anomalyEmbeddedEntity.setKey(anomalyEntity.getKey());
+    anomalyEmbeddedEntity.setPropertiesFrom(anomalyEntity);
+    return anomalyEmbeddedEntity;
+  }
+
+  public static Anomaly toAnomaly(EmbeddedEntity anomalyEmbeddedEntity) {
+    EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(DATA_POINTS_PROPERTY);
+    Map<Timestamp, MetricValue> m = new LinkedHashMap<>(); // TODO: Use other map.
+    if (dataPointsEE != null) {
+      for (String key : dataPointsEE.getProperties().keySet()) {
+        m.put(new Timestamp(key), new MetricValue((int) dataPointsEE.getProperty(key)));
+      }
+    }
+    return new Anomaly(new Timestamp((String) anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
+        (String) anomalyEmbeddedEntity.getProperty(METRIC_NAME_PROPERTY),
+        (String) anomalyEmbeddedEntity.getProperty(DIMENSION_NAME_PROPERTY),
+        m);
   }
 
 }
