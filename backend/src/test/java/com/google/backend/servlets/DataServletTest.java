@@ -27,14 +27,12 @@ public class DataServletTest {
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
 
-  private DataServlet dataServlet;
-  private StringWriter stringWriter;
+  private static final DataServlet dataServlet = new DataServlet();
+  private static final StringWriter stringWriter = new StringWriter();
 
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    dataServlet = new DataServlet();
-    stringWriter = new StringWriter();
     when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
   }
 

@@ -31,7 +31,7 @@ public final class Alert {
 
   private final Timestamp timestampDate;
   private final List<Anomaly> anomalies;
-  private final String resolvedStatus;
+  private String resolvedStatus;
 
   public Alert(Timestamp timestampDate, List<Anomaly> anomalies, String resolvedStatus) {
     this.timestampDate = timestampDate;
@@ -49,6 +49,11 @@ public final class Alert {
 
   public String getResolvedStatus() {
     return resolvedStatus;
+  }
+
+  public void setResolvedStatus(String resolvedStatus) {
+    // TODO: Check whether resolvedStatus is valid.
+    this.resolvedStatus = resolvedStatus;
   }
 
   @Override
@@ -72,9 +77,7 @@ public final class Alert {
     alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, alert.timestampDate.toString());
     alertEntity.setProperty(RESOLVED_STATUS_PROPERTY, alert.resolvedStatus);
 
-    // TODO: Combine builder to one line(?).
-
-    List<EmbeddedEntity> list = new ArrayList<>();
+    List<EmbeddedEntity> list = new ArrayList<EmbeddedEntity>();
 
     alert.anomalies.forEach(anomaly -> list.add(Anomaly.toEmbeddedEntity(anomaly)));
 
@@ -83,13 +86,15 @@ public final class Alert {
     return alertEntity;
   }
 
-  public static Alert toAlert(Entity alertEntity) {
-    // Attempt to fetch list of anomalies.
+  @SuppressWarnings("unchecked")
+  public static Alert toAlert(Entity alertEntity) throws Exception {
     List<EmbeddedEntity> list = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
-    List<Anomaly> listAnomaly = new ArrayList<>();
+
+    List<Anomaly> listAnomaly = new ArrayList<Anomaly>();
     if (list != null) {
       list.forEach(embeddedAnomaly -> listAnomaly.add(Anomaly.toAnomaly(embeddedAnomaly)));
     }
+
     return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
         listAnomaly, 
         (String) alertEntity.getProperty(RESOLVED_STATUS_PROPERTY));

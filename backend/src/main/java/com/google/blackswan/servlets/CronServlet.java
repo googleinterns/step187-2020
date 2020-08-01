@@ -38,18 +38,19 @@ public class CronServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // TODO: Update or clean up log message. 
     log.info("Cron job ran.");
-    storeAnomalyInDatastore();
-
+    
     // TODO: Logic for cron job to run blackswan mock. (#13)
-
+    storeAlertInDatastore();
+    
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
 
-  public void storeAnomalyInDatastore() {
-    AnomalyGenerator testAnomalyGenerator = new DummyAnomalyGenerator();
-    List<Anomaly> anomalies = testAnomalyGenerator.getAnomalies();
+  /** Temporary method for storing dummy alert into datastore. */
+  private void storeAlertInDatastore() {
+    AlertGenerator testAlertGenerator = new DummyAlertGenerator();
+    List<Alert> alerts = testAlertGenerator.getAlerts();
 
-    DatastoreServiceFactory.getDatastoreService().put(Anomaly.toEntity(anomalies.get(0)));
+    DatastoreServiceFactory.getDatastoreService().put(Alert.toEntity(alerts.get(0)));
   }
 
 }

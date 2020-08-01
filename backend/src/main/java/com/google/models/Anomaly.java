@@ -20,7 +20,7 @@ import com.google.models.Timestamp;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 
 /** Store anomaly-related data. */
 public final class Anomaly {
@@ -84,14 +84,15 @@ public final class Anomaly {
         );
   }
 
+  @Override
   public String toString() {
     StringBuilder str = new StringBuilder("");
-    str.append("Timestamp: " + timestampDate.toString() + "\n");
+    str.append("Timestamp: " + timestampDate + "\n");
     str.append("Metric Name: " + metricName + "\n");
     str.append("Dimension Name: " + dimensionName + "\n");
     str.append("Datapoints: \n");
     dataPoints.forEach((key, value) -> 
-      str.append(key.toString() + ": " + value.toString() + "\n")
+      str.append(key + ": " + value + "\n")
     );
     return str.toString();
   }
@@ -126,16 +127,24 @@ public final class Anomaly {
 
   public static Anomaly toAnomaly(EmbeddedEntity anomalyEmbeddedEntity) {
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(DATA_POINTS_PROPERTY);
-    Map<Timestamp, MetricValue> m = new LinkedHashMap<>(); // TODO: Use other map.
-    if (dataPointsEE != null) {
-      for (String key : dataPointsEE.getProperties().keySet()) {
-        m.put(new Timestamp(key), new MetricValue((int) dataPointsEE.getProperty(key)));
+    Map<Timestamp, MetricValue> m = new HashMap<>();
+    // Need to catch error in case date format is bad.
+    try {
+      if (dataPointsEE != null) {
+        for (String key : dataPointsEE.getProperties().keySet()) {
+          m.put(new Timestamp(key), new MetricValue((int) dataPointsEE.getProperty(key)));
+        }
       }
+      return new Anomaly(new Timestamp((String) anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
+          (String) anomalyEmbeddedEntity.getProperty(METRIC_NAME_PROPERTY),
+          (String) anomalyEmbeddedEntity.getProperty(DIMENSION_NAME_PROPERTY),
+          m);
+    } catch (Exception e) {
+      System.err.println("Invalid date format.");
+      e.printStackTrace();
+      throw new RuntimeException("Invalid Date Format");
     }
-    return new Anomaly(new Timestamp((String) anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
-        (String) anomalyEmbeddedEntity.getProperty(METRIC_NAME_PROPERTY),
-        (String) anomalyEmbeddedEntity.getProperty(DIMENSION_NAME_PROPERTY),
-        m);
+    
   }
 
 }

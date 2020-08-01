@@ -27,7 +27,7 @@ public class DummyAlertGenerator implements AlertGenerator {
   public DummyAlertGenerator() {
     anomalyGenerator = new DummyAnomalyGenerator();
     alerts = new ArrayList<Alert>();
-    alerts.add(new Alert(Timestamp.getDummyTimestamp(), anomalyGenerator.getAnomalies(), 
+    alerts.add(new Alert(Timestamp.getDummyTimestamp(1), anomalyGenerator.getAnomalies(), 
         Alert.UNRESOLVED_MESSAGE));
   }
 

@@ -30,16 +30,15 @@ public final class Timestamp {
     this.year = year;
   }
 
-  // TODO: Throw error when wrong format.
-  public Timestamp(String dateString) {
+  public Timestamp(String dateString) throws Exception {
     String[] cells = dateString.split("-");
     if (cells.length != EXPECTED_STR_ARR_LENGTH) {
-      // TODO: error checking.
+      System.err.println("Could not parse string: " + dateString);
+      throw new Exception(EXCEPTION_MESSAGE);
     }
 
     int year, month, day;
 
-    // Turn string into int.
     try {
       year = Integer.parseInt(cells[0]);
       month = Integer.parseInt(cells[1]);
@@ -50,13 +49,24 @@ public final class Timestamp {
       throw new NumberFormatException(EXCEPTION_MESSAGE);
     }
 
-    // TODO: Check valid date numbers.
-
     this.day = day;
     this.month = month;
     this.year = year;
   }
 
+  public int getDay() {
+    return day;
+  }
+
+  public int getMonth() {
+    return month;
+  }
+
+  public int getYear() {
+    return year;
+  }
+
+  @Override
   public String toString() {
     return year + "-" + month + "-" + day;
   }
@@ -69,7 +79,7 @@ public final class Timestamp {
 
 
   @Override
-   public boolean equals(Object o) {
+  public boolean equals(Object o) {
     if (o == this) {
       return true;
     }
