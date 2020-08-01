@@ -27,14 +27,12 @@ public class DataServletTest {
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
 
-  private DataServlet dataServlet;
-  private StringWriter stringWriter;
+  private DataServlet dataServlet = new DataServlet();
+  private StringWriter stringWriter = new StringWriter();
 
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    dataServlet = new DataServlet();
-    stringWriter = new StringWriter();
     when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
   }
 
@@ -42,10 +40,7 @@ public class DataServletTest {
   public void testDataServlet_correctResponse() throws IOException, ServletException {
     dataServlet.doGet(request, response);
 
-    String actual = stringWriter.getBuffer().toString().trim();
-    String expected = "Hello world from data servlet!";
-
-    assertEquals(actual, expected);
+    assertEquals(stringWriter.getBuffer().toString().trim(), "Hello world from data servlet!");
   }
 
   /** TODO: Add tests for logic of DataServlet once more complicated logic is implemented. */
