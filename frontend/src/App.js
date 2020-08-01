@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import NavBar from './NavBar';
-import './App.css';
-
+import Home from './Home';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoggedIn: false,
+    };
+  }
+
   // Test to see if backend servlet connects to frontend.
   componentDidMount() {
     console.log("Inside componentDidMount!");
@@ -18,23 +24,7 @@ class App extends Component {
     return (
       <div className="home">
         <NavBar />
-        <HomeContent />
-      </div>
-    );
-  }
-}
-
-class HomeContent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {isLoggedIn : false};
-  }
-
-  render() {
-    return (
-      <div className="home-content">
-        <h1>Welcome to GreySwan!</h1>
-        <p>{this.state.isLoggedIn ? "Thank you for visiting our app!" :  "Please log in."}</p>
+        <Home isLoggedIn={this.state.isLoggedIn} />
       </div>
     );
   }
