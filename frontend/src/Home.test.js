@@ -15,14 +15,18 @@ afterEach(() => {
   container = null;
 });
 
-it("renders correct welcome message", () => {
-  act(() => {
-    render(<Home />, container);
+describe("homepage message", () => {
+  it("displays login message when user is not logged in", () => {
+    act(() => {
+      render(<Home />, container);
+    });
+    expect(container.querySelector(".message").textContent).toBe("Please log in.");
   });
-  expect(container.querySelector(".message").textContent).toBe("Please log in.");
 
-  act(() => {
-    render(<Home isLoggedIn="true" />, container);
+  it("displays welcome message when user is logged in", () => {
+    act(() => {
+      render(<Home isLoggedIn="true" />, container);
+    });
+    expect(container.querySelector(".message").textContent).toBe("Thank you for visiting our app!");
   });
-  expect(container.querySelector(".message").textContent).toBe("Thank you for visiting our app!");
 });
