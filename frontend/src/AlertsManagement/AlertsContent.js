@@ -36,7 +36,7 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
+let a11yProps = (index) => {
   return {
     id: `tab-${index}`,
     'aria-controls': `tabpanel-${index}`,
@@ -90,7 +90,7 @@ class AlertsContent extends Component {
   };
 
   render() {
-    const tab = this.state.tab;
+    const { tab, unchecked, checked } = this.state;
     return (
       <div className={this.props.classes.root}>
         <Paper>
@@ -110,24 +110,24 @@ class AlertsContent extends Component {
         <TabPanel value={tab} index={0}>
           <AlertsList 
             allAlerts = {allAlerts}
-            alerts={this.state.unchecked} 
-            checked={this.state.checked}
+            alerts={unchecked} 
+            checked={checked}
             handleToggle={this.handleCheckbox} 
           />
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <AlertsList 
             allAlerts = {allAlerts}
-            alerts={this.state.checked} 
-            checked={this.state.checked}
+            alerts={checked} 
+            checked={checked}
             handleToggle={this.handleCheckbox} 
           />
         </TabPanel>
         <TabPanel value={tab} index={2}>
           <AlertsList 
             allAlerts = {allAlerts}
-            alerts={this.state.unchecked.concat(this.state.checked)} 
-            checked={this.state.checked}
+            alerts={unchecked.concat(checked)} 
+            checked={checked}
             handleToggle={this.handleCheckbox}
           />
         </TabPanel>
@@ -139,7 +139,5 @@ class AlertsContent extends Component {
 AlertsContent.propTypes = {
   classes: PropTypes.object.isRequired,
 }
-
-
 
 export default AlertsContent;
