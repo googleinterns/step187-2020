@@ -87,7 +87,7 @@ public final class Alert {
   }
 
   @SuppressWarnings("unchecked")
-  public static Alert createAlertFromEntity(Entity alertEntity) throws DateTimeParseException {
+  public static Alert createAlertFromEntity(Entity alertEntity) {
     List<EmbeddedEntity> list = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
 
     List<Anomaly> listAnomaly = new ArrayList<Anomaly>();

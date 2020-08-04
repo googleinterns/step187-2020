@@ -22,7 +22,7 @@ public final class TimestampTest {
   private static final Timestamp timestamp = new Timestamp(DAY_CONST, MONTH_CONST, YEAR_CONST);
 
   @Test
-  public void constructor_convertStringToDate() throws DateTimeParseException {
+  public void constructor_convertStringToDate() {
     Timestamp stringTimestamp = new Timestamp("2020-12-5");
     Timestamp stringTimestampPaddedZero = new Timestamp("2020-12-05");
     Timestamp stringTimestampDiff = new Timestamp("2020-1-01");
@@ -39,17 +39,17 @@ public final class TimestampTest {
   }
 
   @Test(expected = DateTimeParseException.class)
-  public void constructor_throwsExceptionForBadFormat_1() throws DateTimeParseException {
+  public void constructor_throwsExceptionForBadFormat_1() {
     Timestamp stringTimestamp = new Timestamp("202012-5");
   }
 
   @Test(expected = DateTimeParseException.class)
-  public void constructor_throwsExceptionForBadFormat_2() throws DateTimeParseException {
+  public void constructor_throwsExceptionForBadFormat_2() {
     Timestamp stringTimestamp = new Timestamp("2020-13-5");
   }
 
   @Test(expected = DateTimeParseException.class)
-  public void constructor_throwsExceptionForBadFormat_3() throws DateTimeParseException {
+  public void constructor_throwsExceptionForBadFormat_3() {
     Timestamp stringTimestamp = new Timestamp("2020-13-1-5");
   }
 
@@ -60,7 +60,7 @@ public final class TimestampTest {
   }
 
   @Test
-  public void equals_workingComparator() throws DateTimeParseException {
+  public void equals_workingComparator() {
     Timestamp sameTimestamp = new Timestamp(DAY_CONST, MONTH_CONST, YEAR_CONST);
     Timestamp diffTimestamp = new Timestamp(DAY_CONST + 1, MONTH_CONST, YEAR_CONST);
 

@@ -35,11 +35,11 @@ public final class Timestamp {
 
   private final LocalDate date;
  
-  public Timestamp(int day, int month, int year) throws DateTimeParseException {
+  public Timestamp(int day, int month, int year) {
     date = LocalDate.of(year, month, day);
   }
 
-  public Timestamp(String dateString) throws DateTimeParseException {
+  public Timestamp(String dateString) {
     date = LocalDate.parse(dateString, dateFormatter);
   }
 

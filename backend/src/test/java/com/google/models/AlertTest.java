@@ -105,7 +105,7 @@ public final class AlertTest {
   }
 
   @Test
-  public void createAlertFromEntity_correctEntityToAlertConversion() throws DateTimeParseException {
+  public void createAlertFromEntity_correctEntityToAlertConversion() {
     Entity alertEntity = alert.toEntity();
     Alert convertedAlert = Alert.createAlertFromEntity(alertEntity);
 

@@ -126,8 +126,7 @@ public final class Anomaly {
     return anomalyEmbeddedEntity;
   }
 
-  public static Anomaly createAnomalyFromEmbeddedEntity(EmbeddedEntity anomalyEmbeddedEntity) 
-      throws DateTimeParseException {
+  public static Anomaly createAnomalyFromEmbeddedEntity(EmbeddedEntity anomalyEmbeddedEntity) {
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(DATA_POINTS_PROPERTY);
     Map<Timestamp, MetricValue> dataPointsMap = new HashMap<>();
 
