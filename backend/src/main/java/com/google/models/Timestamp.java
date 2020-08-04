@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Wrapper for timestamp with day, month, year fields. 
+ * Wrapper for LocalDate object with day, month, year fields. 
  * Accepts format in yyyy-MM-dd or yyyy-M-d or yyyy-MM-d or yyyy-M-dd, but prints format in yyyy-MM-dd.
  */
 public final class Timestamp {
@@ -34,34 +34,25 @@ public final class Timestamp {
                                                     .toFormatter();
 
   private final LocalDate date;
-  private final int day;
-  private final int month;
-  private final int year;
  
   public Timestamp(int day, int month, int year) throws DateTimeParseException {
     date = LocalDate.of(year, month, day);
-    this.day = day;
-    this.month = month;
-    this.year = year;
   }
 
   public Timestamp(String dateString) throws DateTimeParseException {
     date = LocalDate.parse(dateString, dateFormatter);
-    this.day = date.getDayOfMonth();
-    this.month = date.getMonthValue();
-    this.year = date.getYear();
   }
 
   public int getDay() {
-    return day;
+    return date.getDayOfMonth();
   }
 
   public int getMonth() {
-    return month;
+    return date.getMonthValue();
   }
 
   public int getYear() {
-    return year;
+    return date.getYear();
   }
 
   @Override
@@ -86,7 +77,7 @@ public final class Timestamp {
 
     Timestamp target = (Timestamp) o;
 
-    return target.day == day && target.month == month && target.year == year;
+    return target.date.equals(date);
   }
 
   public static Timestamp getDummyTimestamp(int random) {
