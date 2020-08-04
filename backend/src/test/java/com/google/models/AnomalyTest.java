@@ -105,7 +105,7 @@ public final class AnomalyTest {
 
   @Test
   public void toEntity_correctAnomalyToEntityConversion() {
-    Entity anomalyEntity = Anomaly.toEntity(anomaly);
+    Entity anomalyEntity = anomaly.toEntity();
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEntity.getProperty(Anomaly.DATA_POINTS_PROPERTY);
     
     assertFalse(dataPointsEE.equals(null));
@@ -117,7 +117,7 @@ public final class AnomalyTest {
 
   @Test
   public void toEmbeddedEntity_correctAnomalyToEmbeddedEntityConversion() {
-    EmbeddedEntity anomalyEmbeddedEntity = Anomaly.toEmbeddedEntity(anomaly);
+    EmbeddedEntity anomalyEmbeddedEntity = anomaly.toEmbeddedEntity();
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(Anomaly.DATA_POINTS_PROPERTY);
     
     assertNotNull(dataPointsEE);
@@ -128,9 +128,9 @@ public final class AnomalyTest {
   }
 
   @Test
-  public void toAnomaly_correctEmbeddedEntityToAnomalyConversion() {
-    EmbeddedEntity anomalyEmbeddedEntity = Anomaly.toEmbeddedEntity(anomaly);
-    Anomaly convertedAnomaly = Anomaly.toAnomaly(anomalyEmbeddedEntity);
+  public void createAnomalyFromEmbeddedEntity_correctEmbeddedEntityToAnomalyConversion() {
+    EmbeddedEntity anomalyEmbeddedEntity = anomaly.toEmbeddedEntity();
+    Anomaly convertedAnomaly = Anomaly.createAnomalyFromEmbeddedEntity(anomalyEmbeddedEntity);
 
     assertEquals(convertedAnomaly, anomaly);
   }

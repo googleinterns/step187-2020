@@ -103,14 +103,14 @@ public final class Anomaly {
         DUMMY_DATA_POINTS);
   }
 
-  public static Entity toEntity(Anomaly anomaly) {
+  public Entity toEntity() {
     Entity anomalyEntity = new Entity(ANOMALY_ENTITY_KIND);
-    anomalyEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, anomaly.timestampDate.toString());
-    anomalyEntity.setProperty(METRIC_NAME_PROPERTY, anomaly.metricName);
-    anomalyEntity.setProperty(DIMENSION_NAME_PROPERTY, anomaly.dimensionName);
+    anomalyEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, timestampDate.toString());
+    anomalyEntity.setProperty(METRIC_NAME_PROPERTY, metricName);
+    anomalyEntity.setProperty(DIMENSION_NAME_PROPERTY, dimensionName);
 
     EmbeddedEntity dataPointsEntity = new EmbeddedEntity();
-    anomaly.dataPoints.forEach((timestamp, metricValue) -> 
+    dataPoints.forEach((timestamp, metricValue) -> 
         dataPointsEntity.setProperty(timestamp.toString(), metricValue.getValue()));
     anomalyEntity.setProperty(DATA_POINTS_PROPERTY, dataPointsEntity);
 
@@ -118,15 +118,16 @@ public final class Anomaly {
   }
 
   /** TODO: Move Entity to Embedded Entity conversion somewhere else that all entity can share. */
-  public static EmbeddedEntity toEmbeddedEntity(Anomaly anomaly) {
-    Entity anomalyEntity = toEntity(anomaly);
+  public EmbeddedEntity toEmbeddedEntity() {
+    Entity anomalyEntity = toEntity();
     EmbeddedEntity anomalyEmbeddedEntity = new EmbeddedEntity();
     anomalyEmbeddedEntity.setKey(anomalyEntity.getKey());
     anomalyEmbeddedEntity.setPropertiesFrom(anomalyEntity);
     return anomalyEmbeddedEntity;
   }
 
-  public static Anomaly toAnomaly(EmbeddedEntity anomalyEmbeddedEntity) throws DateTimeParseException {
+  public static Anomaly createAnomalyFromEmbeddedEntity(EmbeddedEntity anomalyEmbeddedEntity) 
+      throws DateTimeParseException {
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(DATA_POINTS_PROPERTY);
     Map<Timestamp, MetricValue> dataPointsMap = new HashMap<>();
 
@@ -135,11 +136,11 @@ public final class Anomaly {
         dataPointsMap.put(new Timestamp(key), new MetricValue((int) dataPointsEE.getProperty(key)));
       }
     }
+
     return new Anomaly(new Timestamp((String) anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
         (String) anomalyEmbeddedEntity.getProperty(METRIC_NAME_PROPERTY),
         (String) anomalyEmbeddedEntity.getProperty(DIMENSION_NAME_PROPERTY),
         dataPointsMap);
-  
   }
 
 }

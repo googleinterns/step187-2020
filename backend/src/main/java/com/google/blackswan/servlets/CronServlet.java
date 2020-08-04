@@ -50,7 +50,7 @@ public class CronServlet extends HttpServlet {
     AlertGenerator testAlertGenerator = new DummyAlertGenerator();
     List<Alert> alerts = testAlertGenerator.getAlerts();
 
-    DatastoreServiceFactory.getDatastoreService().put(Alert.toEntity(alerts.get(0)));
+    DatastoreServiceFactory.getDatastoreService().put(alerts.get(0).toEntity());
   }
 
 }

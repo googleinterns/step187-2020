@@ -69,10 +69,9 @@ public final class Timestamp {
     return date.toString();
   }
 
-  /** TODO: Better hashcode function. */
   @Override
   public int hashCode() {
-    return day + month + year;
+    return toString().hashCode();
   }
 
   @Override

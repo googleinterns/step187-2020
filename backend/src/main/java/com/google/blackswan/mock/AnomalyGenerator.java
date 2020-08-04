@@ -17,7 +17,7 @@ package com.google.blackswan.mock;
 import com.google.models.*;
 import java.util.List;
 
-/** Anomaly Generate that generates anomalies based on data provided. */
+/** Anomaly Generator that generates anomalies based on data provided. */
 public interface AnomalyGenerator {  
   List<Anomaly> getAnomalies();
 }

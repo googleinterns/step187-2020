@@ -73,13 +73,13 @@ public final class Alert {
         && target.anomalies.equals(anomalies);
   }
 
-  public static Entity toEntity(Alert alert) {
+  public Entity toEntity() {
     Entity alertEntity = new Entity(ALERT_ENTITY_KIND);
-    alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, alert.timestampDate.toString());
-    alertEntity.setProperty(STATUS_PROPERTY, alert.status);
+    alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, timestampDate.toString());
+    alertEntity.setProperty(STATUS_PROPERTY, status);
 
     List<EmbeddedEntity> list = new ArrayList<EmbeddedEntity>();
-    alert.anomalies.forEach(anomaly -> list.add(Anomaly.toEmbeddedEntity(anomaly)));
+    anomalies.forEach(anomaly -> list.add(anomaly.toEmbeddedEntity()));
 
     alertEntity.setProperty(ANOMALIES_LIST_PROPERTY, list);
 
@@ -87,12 +87,12 @@ public final class Alert {
   }
 
   @SuppressWarnings("unchecked")
-  public static Alert toAlert(Entity alertEntity) throws DateTimeParseException {
+  public static Alert createAlertFromEntity(Entity alertEntity) throws DateTimeParseException {
     List<EmbeddedEntity> list = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
 
     List<Anomaly> listAnomaly = new ArrayList<Anomaly>();
     if (list != null) {
-      list.forEach(embeddedAnomaly -> listAnomaly.add(Anomaly.toAnomaly(embeddedAnomaly)));
+      list.forEach(embeddedAnomaly -> listAnomaly.add(Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly)));
     }
 
     return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 

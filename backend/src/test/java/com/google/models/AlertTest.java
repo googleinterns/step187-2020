@@ -91,11 +91,12 @@ public final class AlertTest {
   public void toEntity_correctAlertToEntityConversion() {
     List<Anomaly> anomalyList = new ArrayList<Anomaly>();
 
-    Entity alertEntity = Alert.toEntity(alert);
+    Entity alertEntity = alert.toEntity();
     List<EmbeddedEntity> anomalyEmbeddedList = 
         (List<EmbeddedEntity>) alertEntity.getProperty(Alert.ANOMALIES_LIST_PROPERTY);
+
     anomalyEmbeddedList.forEach(
-      embeddedAnomaly -> anomalyList.add(Anomaly.toAnomaly(embeddedAnomaly))
+      embeddedAnomaly -> anomalyList.add(Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly))
     );
 
     assertEquals(anomalyList, alert.getAnomalies());
@@ -104,9 +105,9 @@ public final class AlertTest {
   }
 
   @Test
-  public void toAlert_correctEntityToAlertConversion() throws DateTimeParseException {
-    Entity alertEntity = Alert.toEntity(alert);
-    Alert convertedAlert = Alert.toAlert(alertEntity);
+  public void createAlertFromEntity_correctEntityToAlertConversion() throws DateTimeParseException {
+    Entity alertEntity = alert.toEntity();
+    Alert convertedAlert = Alert.createAlertFromEntity(alertEntity);
 
     assertEquals(alert, convertedAlert);
   }
