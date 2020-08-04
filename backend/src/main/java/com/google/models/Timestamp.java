@@ -14,44 +14,42 @@
 
 package com.google.models;
 
-/** Wrapper for timestamp with day, month, year fields. */
-public final class Timestamp {
-  public static String TIMESTAMP_PROPERTY = "timestamp";
-  private static final String EXCEPTION_MESSAGE = "Invalid string format.";
-  private static int EXPECTED_STR_ARR_LENGTH = 3;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
+/**
+ * Wrapper for timestamp with day, month, year fields. 
+ * Accepts format in yyyy-MM-dd or yyyy-M-d or yyyy-MM-d or yyyy-M-dd, but prints format in yyyy-MM-dd.
+ */
+public final class Timestamp {
+  public static final String TIMESTAMP_PROPERTY = "timestamp";
+  private static final String EXCEPTION_MESSAGE = "Invalid string format.";
+  private static final DateTimeFormatter dateFormatter = new DateTimeFormatterBuilder()
+                                                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-M-d"))
+                                                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-d"))
+                                                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-M-dd"))
+                                                    .toFormatter();
+
+  private final LocalDate date;
   private final int day;
   private final int month;
   private final int year;
  
-  public Timestamp(int day, int month, int year) {
+  public Timestamp(int day, int month, int year) throws DateTimeParseException {
+    date = LocalDate.of(year, month, day);
     this.day = day;
     this.month = month;
     this.year = year;
   }
 
-  public Timestamp(String dateString) throws Exception {
-    String[] cells = dateString.split("-");
-    if (cells.length != EXPECTED_STR_ARR_LENGTH) {
-      System.err.println("Could not parse string: " + dateString);
-      throw new Exception(EXCEPTION_MESSAGE);
-    }
-
-    int year, month, day;
-
-    try {
-      year = Integer.parseInt(cells[0]);
-      month = Integer.parseInt(cells[1]);
-      day = Integer.parseInt(cells[2]);
-    } catch (NumberFormatException e) {
-      System.err.println("Could not convert string to int: " + dateString);
-      e.printStackTrace();
-      throw new NumberFormatException(EXCEPTION_MESSAGE);
-    }
-
-    this.day = day;
-    this.month = month;
-    this.year = year;
+  public Timestamp(String dateString) throws DateTimeParseException {
+    date = LocalDate.parse(dateString, dateFormatter);
+    this.day = date.getDayOfMonth();
+    this.month = date.getMonthValue();
+    this.year = date.getYear();
   }
 
   public int getDay() {
@@ -68,7 +66,7 @@ public final class Timestamp {
 
   @Override
   public String toString() {
-    return year + "-" + month + "-" + day;
+    return date.toString();
   }
 
   /** TODO: Better hashcode function. */
@@ -76,7 +74,6 @@ public final class Timestamp {
   public int hashCode() {
     return day + month + year;
   }
-
 
   @Override
   public boolean equals(Object o) {

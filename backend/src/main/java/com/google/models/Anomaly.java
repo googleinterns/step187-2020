@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.Map;
 import java.util.HashMap;
+import java.time.format.DateTimeParseException;
 
 /** Store anomaly-related data. */
 public final class Anomaly {
@@ -125,26 +126,20 @@ public final class Anomaly {
     return anomalyEmbeddedEntity;
   }
 
-  public static Anomaly toAnomaly(EmbeddedEntity anomalyEmbeddedEntity) {
+  public static Anomaly toAnomaly(EmbeddedEntity anomalyEmbeddedEntity) throws DateTimeParseException {
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(DATA_POINTS_PROPERTY);
-    Map<Timestamp, MetricValue> m = new HashMap<>();
-    // Need to catch error in case date format is bad.
-    try {
-      if (dataPointsEE != null) {
-        for (String key : dataPointsEE.getProperties().keySet()) {
-          m.put(new Timestamp(key), new MetricValue((int) dataPointsEE.getProperty(key)));
-        }
+    Map<Timestamp, MetricValue> dataPointsMap = new HashMap<>();
+
+    if (dataPointsEE != null) {
+      for (String key : dataPointsEE.getProperties().keySet()) {
+        dataPointsMap.put(new Timestamp(key), new MetricValue((int) dataPointsEE.getProperty(key)));
       }
-      return new Anomaly(new Timestamp((String) anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
-          (String) anomalyEmbeddedEntity.getProperty(METRIC_NAME_PROPERTY),
-          (String) anomalyEmbeddedEntity.getProperty(DIMENSION_NAME_PROPERTY),
-          m);
-    } catch (Exception e) {
-      System.err.println("Invalid date format.");
-      e.printStackTrace();
-      throw new RuntimeException("Invalid Date Format");
     }
-    
+    return new Anomaly(new Timestamp((String) anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
+        (String) anomalyEmbeddedEntity.getProperty(METRIC_NAME_PROPERTY),
+        (String) anomalyEmbeddedEntity.getProperty(DIMENSION_NAME_PROPERTY),
+        dataPointsMap);
+  
   }
 
 }

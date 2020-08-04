@@ -20,23 +20,24 @@ import com.google.models.Anomaly;
 import com.google.models.Timestamp;
 import java.util.List;
 import java.util.ArrayList;
+import java.time.format.DateTimeParseException;
 
 /** Store alert-related data. */
 public final class Alert {
   public static final String ALERT_ENTITY_KIND = "alert";
-  public static final String RESOLVED_STATUS_PROPERTY = "resolvedStatus";
+  public static final String STATUS_PROPERTY = "status";
   public static final String ANOMALIES_LIST_PROPERTY = "anomaliesList";
-  public static final String RESOLVED_MESSAGE = "resolved";
-  public static final String UNRESOLVED_MESSAGE = "unresolved";
+  public static final String RESOLVED_STATUS = "resolved";
+  public static final String UNRESOLVED_STATUS = "unresolved";
 
   private final Timestamp timestampDate;
   private final List<Anomaly> anomalies;
-  private String resolvedStatus;
+  private String status;
 
-  public Alert(Timestamp timestampDate, List<Anomaly> anomalies, String resolvedStatus) {
+  public Alert(Timestamp timestampDate, List<Anomaly> anomalies, String status) {
     this.timestampDate = timestampDate;
     this.anomalies = anomalies;
-    this.resolvedStatus = resolvedStatus;
+    this.status = status;
   }
 
   public List<Anomaly> getAnomalies() {
@@ -47,13 +48,13 @@ public final class Alert {
     return timestampDate;
   }
 
-  public String getResolvedStatus() {
-    return resolvedStatus;
+  public String getStatus() {
+    return status;
   }
 
-  public void setResolvedStatus(String resolvedStatus) {
-    // TODO: Check whether resolvedStatus is valid.
-    this.resolvedStatus = resolvedStatus;
+  public void setStatus(String status) {
+    // TODO: Check whether status is valid.
+    this.status = status;
   }
 
   @Override
@@ -68,17 +69,16 @@ public final class Alert {
 
     Alert target = (Alert) o;
 
-    return target.timestampDate.equals(timestampDate) && target.resolvedStatus.equals(resolvedStatus)
+    return target.timestampDate.equals(timestampDate) && target.status.equals(status)
         && target.anomalies.equals(anomalies);
   }
 
   public static Entity toEntity(Alert alert) {
     Entity alertEntity = new Entity(ALERT_ENTITY_KIND);
     alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, alert.timestampDate.toString());
-    alertEntity.setProperty(RESOLVED_STATUS_PROPERTY, alert.resolvedStatus);
+    alertEntity.setProperty(STATUS_PROPERTY, alert.status);
 
     List<EmbeddedEntity> list = new ArrayList<EmbeddedEntity>();
-
     alert.anomalies.forEach(anomaly -> list.add(Anomaly.toEmbeddedEntity(anomaly)));
 
     alertEntity.setProperty(ANOMALIES_LIST_PROPERTY, list);
@@ -87,7 +87,7 @@ public final class Alert {
   }
 
   @SuppressWarnings("unchecked")
-  public static Alert toAlert(Entity alertEntity) throws Exception {
+  public static Alert toAlert(Entity alertEntity) throws DateTimeParseException {
     List<EmbeddedEntity> list = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
 
     List<Anomaly> listAnomaly = new ArrayList<Anomaly>();
@@ -97,7 +97,7 @@ public final class Alert {
 
     return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
         listAnomaly, 
-        (String) alertEntity.getProperty(RESOLVED_STATUS_PROPERTY));
+        (String) alertEntity.getProperty(STATUS_PROPERTY));
   }
 
 }

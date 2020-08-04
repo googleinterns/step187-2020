@@ -86,6 +86,7 @@ public final class AnomalyTest {
     assertFalse(anomaly.equals(diffMetricNameAnomaly));
     assertFalse(anomaly.equals(diffDimensionNameAnomaly));
     assertFalse(anomaly.equals(diffDataPointsAnomaly));
+    assertFalse(anomaly.equals(null));
   }
 
   @Test

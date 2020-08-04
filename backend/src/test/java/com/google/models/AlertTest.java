@@ -19,6 +19,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import java.util.*;
 import com.google.blackswan.mock.*;
+import java.time.format.DateTimeParseException;
 
 /** Contain tests for methods in {@link Alert} class. */
 @RunWith(JUnit4.class)
@@ -36,7 +37,7 @@ public final class AlertTest {
     // TODO: Find out whether it's better to set parameters for Alert as private static variables,
     //       since they're used later to test getters. 
     alert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.UNRESOLVED_MESSAGE);
+        Alert.UNRESOLVED_STATUS);
   }
 
   @After
@@ -56,32 +57,33 @@ public final class AlertTest {
   }
 
   @Test
-  public void getResolvedStatus_workingGetter() {
-    assertEquals(alert.getResolvedStatus(), Alert.UNRESOLVED_MESSAGE);
+  public void getStatus_workingGetter() {
+    assertEquals(alert.getStatus(), Alert.UNRESOLVED_STATUS);
   }
 
   @Test
-  public void setResolvedStatus_workingSetter() {
-    alert.setResolvedStatus(Alert.RESOLVED_MESSAGE);
+  public void setStatus_workingSetter() {
+    alert.setStatus(Alert.RESOLVED_STATUS);
 
-    assertEquals(alert.getResolvedStatus(), Alert.RESOLVED_MESSAGE);
+    assertEquals(alert.getStatus(), Alert.RESOLVED_STATUS);
   }
 
   @Test
   public void equals_workingComparator() {
     Alert sameAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.UNRESOLVED_MESSAGE);
+        Alert.UNRESOLVED_STATUS);
     Alert diffTimeAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.UNRESOLVED_MESSAGE);
+        Alert.UNRESOLVED_STATUS);
     Alert diffResolveAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.RESOLVED_MESSAGE);
+        Alert.RESOLVED_STATUS);
     // TODO: Test equals with Alert object that has different list of anomalies. Currently, dummyAnomalyGenerator can only 
     //       generate one list of anomalies right now. 
 
     assertTrue(alert.equals(alert));
+    assertTrue(alert.equals(sameAlert));
     assertFalse(alert.equals(diffTimeAlert));
     assertFalse(alert.equals(diffResolveAlert));
-    assertTrue(alert.equals(sameAlert));
+    assertFalse(alert.equals(null));
   }
 
   @SuppressWarnings("unchecked")
@@ -98,11 +100,11 @@ public final class AlertTest {
 
     assertEquals(anomalyList, alert.getAnomalies());
     assertEquals(alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), alert.getTimestamp().toString());
-    assertEquals(alertEntity.getProperty(Alert.RESOLVED_STATUS_PROPERTY), alert.getResolvedStatus());
+    assertEquals(alertEntity.getProperty(Alert.STATUS_PROPERTY), alert.getStatus());
   }
 
   @Test
-  public void toAlert_correctEntityToAlertConversion() throws Exception {
+  public void toAlert_correctEntityToAlertConversion() throws DateTimeParseException {
     Entity alertEntity = Alert.toEntity(alert);
     Alert convertedAlert = Alert.toAlert(alertEntity);
 

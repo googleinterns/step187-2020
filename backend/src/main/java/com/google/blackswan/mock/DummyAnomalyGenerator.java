@@ -17,6 +17,7 @@ package com.google.blackswan.mock;
 import com.google.models.*;
 import java.util.*;
 
+/** Generate list of hard-coded dummy anomalies.. */
 public class DummyAnomalyGenerator implements AnomalyGenerator {
   private static final int SET_ANOMALY_GROUP_SIZE = 5;
 

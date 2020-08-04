@@ -31,6 +31,7 @@ public final class MetricValueTest {
     assertEquals(metricValue, metricValue);
     assertEquals(sameMetricValue, metricValue);
     assertFalse(metricValue.equals(diffMetricValue));
+    assertFalse(metricValue.equals(null));
   }
 
   /** TODO: Add tests for toString() and other methods once logic of Metric Value complicates. */
