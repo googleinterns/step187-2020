@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
@@ -9,6 +10,14 @@ import AllInboxIcon from '@material-ui/icons/AllInbox';
 import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import AlertsList from './AlertsList';
+
+const styles = ({
+  root: {
+    flexGrow: 1,
+    maxWidth: 900,
+    margin: 'auto',
+  },
+});
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -48,11 +57,17 @@ const allAlerts = [0, 1, 2, 3, 4, 5, 6];
 const unresolvedAlerts = [0, 1, 2, 3];
 const resolvedAlerts = [4, 5, 6]
 
+const tabLabels = {
+  UNRESOLVED: 0,
+  RESOLVED: 1,
+  ALL: 2,
+};
+
 class AlertsContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tab: 0,
+      tab: tabLabels.UNRESOLVED,
       unchecked: unresolvedAlerts.slice(), 
       checked: resolvedAlerts.slice(), 
     };
@@ -79,6 +94,8 @@ class AlertsContent extends Component {
       // Was resolved and now want to unresolve it, second check is a sanity check.
       newUnchecked.push(value);
       newChecked.splice(currentCheckedIndex, 1);
+    } else {
+      throw new Error("Misplaced alert: " + allAlerts[value]);
     }
 
     this.setState({
@@ -91,8 +108,9 @@ class AlertsContent extends Component {
 
   render() {
     const { tab, unchecked, checked } = this.state;
+    const { classes } = this.props;
     return (
-      <div className={this.props.classes.root}>
+      <div className={classes.root}>
         <Paper>
           <Tabs 
             value={tab} 
@@ -102,12 +120,12 @@ class AlertsContent extends Component {
             textColor="secondary" 
             aria-label="alert tabs"
           >
-            <Tab icon={<ErrorIcon />} label="Unresolved" {...a11yProps(0)} />
-            <Tab icon={<DoneIcon />} label="Resolved" {...a11yProps(1)} />
-            <Tab icon={<AllInboxIcon />} label="All alerts" {...a11yProps(2)} />
+            <Tab icon={<ErrorIcon />} label="Unresolved" {...a11yProps(tabLabels.UNRESOLVED)} />
+            <Tab icon={<DoneIcon />} label="Resolved" {...a11yProps(tabLabels.RESOLVED)} />
+            <Tab icon={<AllInboxIcon />} label="All alerts" {...a11yProps(tabLabels.ALL)} />
           </Tabs>
         </Paper>
-        <TabPanel value={tab} index={0}>
+        <TabPanel value={tab} index={tabLabels.UNRESOLVED}>
           <AlertsList 
             allAlerts = {allAlerts}
             alerts={unchecked} 
@@ -115,7 +133,7 @@ class AlertsContent extends Component {
             handleToggle={this.handleCheckbox} 
           />
         </TabPanel>
-        <TabPanel value={tab} index={1}>
+        <TabPanel value={tab} index={tabLabels.RESOLVED}>
           <AlertsList 
             allAlerts = {allAlerts}
             alerts={checked} 
@@ -123,7 +141,7 @@ class AlertsContent extends Component {
             handleToggle={this.handleCheckbox} 
           />
         </TabPanel>
-        <TabPanel value={tab} index={2}>
+        <TabPanel value={tab} index={tabLabels.ALL}>
           <AlertsList 
             allAlerts = {allAlerts}
             alerts={unchecked.concat(checked)} 
@@ -140,4 +158,5 @@ AlertsContent.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default AlertsContent;
+export { AlertsContent as PureAlertsContent };
+export default withStyles(styles)(AlertsContent);

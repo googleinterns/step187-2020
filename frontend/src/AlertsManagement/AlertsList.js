@@ -13,8 +13,8 @@ class AlertsList extends Component {
     return (
       <List className="alerts-list">
         {/* alert represents the index of the actual alert in allAlerts array. */}
-        {alerts.map((alert, value) => {
-          const labelId = `checkbox-list-label-${alert}`;
+        {alerts.map((alertIndex, value) => {
+          const labelId = `checkbox-list-label-${alertIndex}`;
 
           return (
             <ListItem key={value} role={undefined} dense divider>
@@ -22,14 +22,14 @@ class AlertsList extends Component {
                 <Tooltip title="Resolved?" placement="left">
                   <Checkbox
                     edge="start"
-                    checked={this.props.checked.indexOf(alert) !== -1}
+                    checked={this.props.checked.indexOf(alertIndex) !== -1}
                     tabIndex={-1}
-                    onClick={() => this.props.handleToggle(alert)}
+                    onClick={() => this.props.handleToggle(alertIndex)}
                     inputProps={{ 'aria-labelledby': labelId }}
                   />
                 </Tooltip>
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`Alert number ${this.props.allAlerts[alert] + 1}`} />
+              <ListItemText id={labelId} primary={`Alert number ${this.props.allAlerts[alertIndex] + 1}`} />
             </ListItem>
           );
         })}
