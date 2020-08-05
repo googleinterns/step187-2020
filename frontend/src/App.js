@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import NavBar from './NavBar';
 import Home from './Home';
 
@@ -21,10 +22,22 @@ class App extends Component {
 
   render() {
     return (
-      <Fragment>
-        <NavBar />
-        <Home isLoggedIn={this.state.isLoggedIn} />
-      </Fragment>
+      <BrowserRouter>
+        <Fragment>
+          <NavBar />
+          <Switch>
+            <Route path="/">
+              <Home isLoggedIn={this.state.isLoggedIn} />
+            </Route>
+            <Route path="/alerts">
+              {/* TODO: import AlertsManagement */}
+            </Route>
+            <Route path="/configs">
+              {/* TODO: import AlertConfiguration */}
+            </Route>
+          </Switch>
+        </Fragment>
+      </BrowserRouter>
     );
   }
 }
