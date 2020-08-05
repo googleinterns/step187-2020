@@ -37,7 +37,7 @@ public final class AlertTest {
     // TODO: Find out whether it's better to set parameters for Alert as private static variables,
     //       since they're used later to test getters. 
     alert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.unresolved);
+        Alert.StatusType.UNRESOLVED);
   }
 
   @After
@@ -58,24 +58,24 @@ public final class AlertTest {
 
   @Test
   public void getStatus_workingGetter() {
-    assertEquals(alert.getStatus(), Alert.StatusType.unresolved);
+    assertEquals(alert.getStatus(), Alert.StatusType.UNRESOLVED);
   }
 
   @Test
   public void setStatus_workingSetter() {
-    alert.setStatus(Alert.StatusType.resolved);
+    alert.setStatus(Alert.StatusType.RESOLVED);
 
-    assertEquals(alert.getStatus(), Alert.StatusType.resolved);
+    assertEquals(alert.getStatus(), Alert.StatusType.RESOLVED);
   }
 
   @Test
   public void equals_workingComparator() {
     Alert sameAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.unresolved);
+        Alert.StatusType.UNRESOLVED);
     Alert diffTimeAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.unresolved);
+        Alert.StatusType.UNRESOLVED);
     Alert diffResolveAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.resolved);
+        Alert.StatusType.RESOLVED);
     // TODO: Test equals with Alert object that has different list of anomalies. Currently, dummyAnomalyGenerator can only 
     //       generate one list of anomalies right now. 
 

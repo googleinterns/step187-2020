@@ -28,8 +28,8 @@ public final class Alert {
   public static final String STATUS_PROPERTY = "status";
   public static final String ANOMALIES_LIST_PROPERTY = "anomaliesList";
   public static enum StatusType {
-    resolved,
-    unresolved
+    RESOLVED,
+    UNRESOLVED
   };
 
   private final Timestamp timestampDate;
