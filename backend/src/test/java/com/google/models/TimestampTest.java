@@ -39,17 +39,17 @@ public final class TimestampTest {
   }
 
   @Test(expected = DateTimeParseException.class)
-  public void constructor_throwsExceptionForBadFormat_1() {
+  public void constructor_throwsExceptionForBadFormat_missingDash() {
     Timestamp stringTimestamp = new Timestamp("202012-5");
   }
 
   @Test(expected = DateTimeParseException.class)
-  public void constructor_throwsExceptionForBadFormat_2() {
+  public void constructor_throwsExceptionForBadFormat_monthTooLarge() {
     Timestamp stringTimestamp = new Timestamp("2020-13-5");
   }
 
   @Test(expected = DateTimeParseException.class)
-  public void constructor_throwsExceptionForBadFormat_3() {
+  public void constructor_throwsExceptionForBadFormat_extraDash() {
     Timestamp stringTimestamp = new Timestamp("2020-13-1-5");
   }
 

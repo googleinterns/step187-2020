@@ -32,7 +32,7 @@ public final class AnomalyTest {
       Timestamp.getDummyTimestamp(3), new MetricValue(3));
   private static final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-  private static final Anomaly anomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
+  private static final Anomaly ANOMALY = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
       METRIC_NAME, DIMENSION_NAME, DATA_POINTS);
 
   @Before
@@ -47,22 +47,22 @@ public final class AnomalyTest {
 
   @Test
   public void getTimestamp_workingGetter() {
-    assertEquals(anomaly.getTimestamp(), Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT));
+    assertEquals(ANOMALY.getTimestamp(), Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT));
   }
 
   @Test
   public void getMetricName_workingGetter() {
-    assertEquals(anomaly.getMetricName(), METRIC_NAME);
+    assertEquals(ANOMALY.getMetricName(), METRIC_NAME);
   }
 
   @Test
   public void getDimensionName_workingGetter() {
-    assertEquals(anomaly.getDimensionName(), DIMENSION_NAME);
+    assertEquals(ANOMALY.getDimensionName(), DIMENSION_NAME);
   }
 
   @Test
   public void getDataPoints_workingGetter() {
-    assertEquals(anomaly.getDataPoints(), DATA_POINTS);
+    assertEquals(ANOMALY.getDataPoints(), DATA_POINTS);
   }
 
   @Test
@@ -80,59 +80,59 @@ public final class AnomalyTest {
                                                   Timestamp.getDummyTimestamp(1), new MetricValue(2), 
                                                   Timestamp.getDummyTimestamp(3), new MetricValue(3)));
 
-    assertTrue(anomaly.equals(anomaly));
-    assertTrue(anomaly.equals(sameAnomaly));
-    assertFalse(anomaly.equals(diffTimeAnomaly));
-    assertFalse(anomaly.equals(diffMetricNameAnomaly));
-    assertFalse(anomaly.equals(diffDimensionNameAnomaly));
-    assertFalse(anomaly.equals(diffDataPointsAnomaly));
-    assertFalse(anomaly.equals(null));
+    assertTrue(ANOMALY.equals(ANOMALY));
+    assertTrue(ANOMALY.equals(sameAnomaly));
+    assertFalse(ANOMALY.equals(diffTimeAnomaly));
+    assertFalse(ANOMALY.equals(diffMetricNameAnomaly));
+    assertFalse(ANOMALY.equals(diffDimensionNameAnomaly));
+    assertFalse(ANOMALY.equals(diffDataPointsAnomaly));
+    assertFalse(ANOMALY.equals(null));
   }
 
   @Test
   public void toString_correctConversion() {
     StringBuilder expectedStr = new StringBuilder("");
-    expectedStr.append("Timestamp: " + anomaly.getTimestamp() + "\n");
-    expectedStr.append("Metric Name: " + anomaly.getMetricName() + "\n");
-    expectedStr.append("Dimension Name: " + anomaly.getDimensionName() + "\n");
+    expectedStr.append("Timestamp: " + ANOMALY.getTimestamp() + "\n");
+    expectedStr.append("Metric Name: " + ANOMALY.getMetricName() + "\n");
+    expectedStr.append("Dimension Name: " + ANOMALY.getDimensionName() + "\n");
     expectedStr.append("Datapoints: \n");
-    anomaly.getDataPoints().forEach((key, value) -> 
+    ANOMALY.getDataPoints().forEach((key, value) -> 
       expectedStr.append(key + ": " + value + "\n")
     );
 
-    assertEquals(anomaly.toString(), expectedStr.toString());
+    assertEquals(ANOMALY.toString(), expectedStr.toString());
   }
 
   @Test
   public void toEntity_correctAnomalyToEntityConversion() {
-    Entity anomalyEntity = anomaly.toEntity();
+    Entity anomalyEntity = ANOMALY.toEntity();
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEntity.getProperty(Anomaly.DATA_POINTS_PROPERTY);
     
     assertFalse(dataPointsEE.equals(null));
-    assertTrue(embeddedEntityDataPoints_equal(dataPointsEE, anomaly.getDataPoints()));
-    assertEquals(anomalyEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), anomaly.getTimestamp().toString());
-    assertEquals(anomalyEntity.getProperty(Anomaly.METRIC_NAME_PROPERTY), anomaly.getMetricName());
-    assertEquals(anomalyEntity.getProperty(Anomaly.DIMENSION_NAME_PROPERTY), anomaly.getDimensionName());
+    assertTrue(embeddedEntityDataPoints_equal(dataPointsEE, ANOMALY.getDataPoints()));
+    assertEquals(anomalyEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), ANOMALY.getTimestamp().toString());
+    assertEquals(anomalyEntity.getProperty(Anomaly.METRIC_NAME_PROPERTY), ANOMALY.getMetricName());
+    assertEquals(anomalyEntity.getProperty(Anomaly.DIMENSION_NAME_PROPERTY), ANOMALY.getDimensionName());
   }
 
   @Test
   public void toEmbeddedEntity_correctAnomalyToEmbeddedEntityConversion() {
-    EmbeddedEntity anomalyEmbeddedEntity = anomaly.toEmbeddedEntity();
+    EmbeddedEntity anomalyEmbeddedEntity = ANOMALY.toEmbeddedEntity();
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(Anomaly.DATA_POINTS_PROPERTY);
     
     assertNotNull(dataPointsEE);
-    assertTrue(embeddedEntityDataPoints_equal(dataPointsEE, anomaly.getDataPoints()));
-    assertEquals(anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), anomaly.getTimestamp().toString());
-    assertEquals(anomalyEmbeddedEntity.getProperty(Anomaly.METRIC_NAME_PROPERTY), anomaly.getMetricName());
-    assertEquals(anomalyEmbeddedEntity.getProperty(Anomaly.DIMENSION_NAME_PROPERTY), anomaly.getDimensionName());
+    assertTrue(embeddedEntityDataPoints_equal(dataPointsEE, ANOMALY.getDataPoints()));
+    assertEquals(anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), ANOMALY.getTimestamp().toString());
+    assertEquals(anomalyEmbeddedEntity.getProperty(Anomaly.METRIC_NAME_PROPERTY), ANOMALY.getMetricName());
+    assertEquals(anomalyEmbeddedEntity.getProperty(Anomaly.DIMENSION_NAME_PROPERTY), ANOMALY.getDimensionName());
   }
 
   @Test
   public void createAnomalyFromEmbeddedEntity_correctEmbeddedEntityToAnomalyConversion() {
-    EmbeddedEntity anomalyEmbeddedEntity = anomaly.toEmbeddedEntity();
+    EmbeddedEntity anomalyEmbeddedEntity = ANOMALY.toEmbeddedEntity();
     Anomaly convertedAnomaly = Anomaly.createAnomalyFromEmbeddedEntity(anomalyEmbeddedEntity);
 
-    assertEquals(convertedAnomaly, anomaly);
+    assertEquals(convertedAnomaly, ANOMALY);
   }
 
 

@@ -28,7 +28,7 @@ import com.google.appengine.api.datastore.Entity;
 import java.util.*;
 
 /**
-* Servlet to test if cron job runs.
+* Servlet to run cron job that generates Alerts to store in the datastore.
 */
 @WebServlet("/blackswan/test")
 public class CronServlet extends HttpServlet {
@@ -47,7 +47,7 @@ public class CronServlet extends HttpServlet {
 
   /** Temporary method for storing dummy alert into datastore. */
   private void storeAlertInDatastore() {
-    AlertGenerator testAlertGenerator = new DummyAlertGenerator();
+    AlertGenerator testAlertGenerator = new DummyAlertGenerator(new DummyAnomalyGenerator());
     List<Alert> alerts = testAlertGenerator.getAlerts();
 
     DatastoreServiceFactory.getDatastoreService().put(alerts.get(0).toEntity());

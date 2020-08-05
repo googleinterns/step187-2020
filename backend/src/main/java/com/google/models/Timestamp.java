@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.lang.Math;
 
 /**
  * Wrapper for LocalDate object with day, month, year fields. 
@@ -26,7 +27,8 @@ import java.time.format.DateTimeParseException;
 public final class Timestamp {
   public static final String TIMESTAMP_PROPERTY = "timestamp";
   private static final String EXCEPTION_MESSAGE = "Invalid string format.";
-  private static final DateTimeFormatter dateFormatter = new DateTimeFormatterBuilder()
+  private static final int NUM_OF_MONTHS = 12;
+  private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder()
                                                     .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                                                     .appendOptional(DateTimeFormatter.ofPattern("yyyy-M-d"))
                                                     .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-d"))
@@ -40,7 +42,7 @@ public final class Timestamp {
   }
 
   public Timestamp(String dateString) {
-    date = LocalDate.parse(dateString, dateFormatter);
+    date = LocalDate.parse(dateString, DATE_FORMATTER);
   }
 
   public int getDay() {
@@ -81,7 +83,7 @@ public final class Timestamp {
   }
 
   public static Timestamp getDummyTimestamp(int random) {
-    return new Timestamp(1, random, 2000);
+    return new Timestamp(1, Math.abs(random) % NUM_OF_MONTHS + 1, 2000);
   }
 
 }

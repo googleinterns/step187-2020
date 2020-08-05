@@ -22,13 +22,13 @@ public class DummyAlertGenerator implements AlertGenerator {
   private static final int SET_ALERT_GROUP_SIZE = 1;
 
   private List<Alert> alerts;
-  private AnomalyGenerator anomalyGenerator;
 
-  public DummyAlertGenerator() {
-    anomalyGenerator = new DummyAnomalyGenerator();
+  public DummyAlertGenerator(AnomalyGenerator anomalyGenerator) {
     alerts = new ArrayList<Alert>();
-    alerts.add(new Alert(Timestamp.getDummyTimestamp(1), anomalyGenerator.getAnomalies(), 
+    for (int k = 0; k < SET_ALERT_GROUP_SIZE; k++) {
+      alerts.add(new Alert(Timestamp.getDummyTimestamp(k), anomalyGenerator.getAnomalies(), 
         Alert.UNRESOLVED_STATUS));
+    }
   }
 
   public List<Alert> getAlerts() {

@@ -29,7 +29,7 @@ public final class Alert {
   public static final String ANOMALIES_LIST_PROPERTY = "anomaliesList";
   public static final String RESOLVED_STATUS = "resolved";
   public static final String UNRESOLVED_STATUS = "unresolved";
-
+  
   private final Timestamp timestampDate;
   private final List<Anomaly> anomalies;
   private String status;
@@ -88,11 +88,11 @@ public final class Alert {
 
   @SuppressWarnings("unchecked")
   public static Alert createAlertFromEntity(Entity alertEntity) {
-    List<EmbeddedEntity> list = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
+    List<EmbeddedEntity> listEE = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
 
     List<Anomaly> listAnomaly = new ArrayList<Anomaly>();
-    if (list != null) {
-      list.forEach(embeddedAnomaly -> listAnomaly.add(Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly)));
+    if (listEE != null) {
+      listEE.forEach(embeddedAnomaly -> listAnomaly.add(Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly)));
     }
 
     return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
