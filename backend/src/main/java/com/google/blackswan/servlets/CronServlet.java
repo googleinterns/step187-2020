@@ -47,7 +47,10 @@ public class CronServlet extends HttpServlet {
   }
 
   private void testSimpleAnomaly() {
-    AnomalyGenerator test = new SimpleAnomalyGenerator();
+    AlertGenerator simpleGenerator = new SimpleAlertGenerator(new SimpleAnomalyGenerator());
+    simpleGenerator.getAlerts().forEach(alert -> {
+      DatastoreServiceFactory.getDatastoreService().put(alert.toEntity());
+    });
   }
 
   /** Temporary method for storing dummy alert into datastore. */
