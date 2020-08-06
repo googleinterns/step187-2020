@@ -7,7 +7,7 @@ class App extends Component {
   // Test to see if backend servlet connects to frontend.
   componentDidMount() {
     console.log("Inside componentDidMount!");
-    fetch("/api/v1/test-servlet")
+    fetch("/blackswan/test")
       .then((response) => response.text())
       .then((text) => {
         console.log("here is the text from servlet: ", text);
