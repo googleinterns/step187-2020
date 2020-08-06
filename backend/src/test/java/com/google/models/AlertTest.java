@@ -37,7 +37,7 @@ public final class AlertTest {
     // TODO: Find out whether it's better to set parameters for Alert as private static variables,
     //       since they're used later to test getters. 
     alert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.UNRESOLVED_STATUS);
+        Alert.StatusType.UNRESOLVED);
   }
 
   @After
@@ -58,24 +58,24 @@ public final class AlertTest {
 
   @Test
   public void getStatus_workingGetter() {
-    assertEquals(alert.getStatus(), Alert.UNRESOLVED_STATUS);
+    assertEquals(alert.getStatus(), Alert.StatusType.UNRESOLVED);
   }
 
   @Test
   public void setStatus_workingSetter() {
-    alert.setStatus(Alert.RESOLVED_STATUS);
+    alert.setStatus(Alert.StatusType.RESOLVED);
 
-    assertEquals(alert.getStatus(), Alert.RESOLVED_STATUS);
+    assertEquals(alert.getStatus(), Alert.StatusType.RESOLVED);
   }
 
   @Test
   public void equals_workingComparator() {
     Alert sameAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.UNRESOLVED_STATUS);
+        Alert.StatusType.UNRESOLVED);
     Alert diffTimeAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.UNRESOLVED_STATUS);
+        Alert.StatusType.UNRESOLVED);
     Alert diffResolveAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.RESOLVED_STATUS);
+        Alert.StatusType.RESOLVED);
     // TODO: Test equals with Alert object that has different list of anomalies. Currently, dummyAnomalyGenerator can only 
     //       generate one list of anomalies right now. 
 
@@ -101,7 +101,7 @@ public final class AlertTest {
 
     assertEquals(anomalyList, alert.getAnomalies());
     assertEquals(alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), alert.getTimestamp().toString());
-    assertEquals(alertEntity.getProperty(Alert.STATUS_PROPERTY), alert.getStatus());
+    assertEquals(alertEntity.getProperty(Alert.STATUS_PROPERTY), alert.getStatus().name());
   }
 
   @Test

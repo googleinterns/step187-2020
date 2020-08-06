@@ -27,14 +27,16 @@ public final class Alert {
   public static final String ALERT_ENTITY_KIND = "alert";
   public static final String STATUS_PROPERTY = "status";
   public static final String ANOMALIES_LIST_PROPERTY = "anomaliesList";
-  public static final String RESOLVED_STATUS = "resolved";
-  public static final String UNRESOLVED_STATUS = "unresolved";
-  
+  public static enum StatusType {
+    RESOLVED,
+    UNRESOLVED
+  };
+
   private final Timestamp timestampDate;
   private final List<Anomaly> anomalies;
-  private String status;
+  private StatusType status;
 
-  public Alert(Timestamp timestampDate, List<Anomaly> anomalies, String status) {
+  public Alert(Timestamp timestampDate, List<Anomaly> anomalies, StatusType status) {
     this.timestampDate = timestampDate;
     this.anomalies = anomalies;
     this.status = status;
@@ -48,12 +50,11 @@ public final class Alert {
     return timestampDate;
   }
 
-  public String getStatus() {
+  public StatusType getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
-    // TODO: Check whether status is valid.
+  public void setStatus(StatusType status) {
     this.status = status;
   }
 
@@ -76,7 +77,7 @@ public final class Alert {
   public Entity toEntity() {
     Entity alertEntity = new Entity(ALERT_ENTITY_KIND);
     alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, timestampDate.toString());
-    alertEntity.setProperty(STATUS_PROPERTY, status);
+    alertEntity.setProperty(STATUS_PROPERTY, status.name());
 
     List<EmbeddedEntity> list = new ArrayList<EmbeddedEntity>();
     anomalies.forEach(anomaly -> list.add(anomaly.toEmbeddedEntity()));
@@ -97,7 +98,7 @@ public final class Alert {
 
     return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
         listAnomaly, 
-        (String) alertEntity.getProperty(STATUS_PROPERTY));
+        StatusType.valueOf((String) alertEntity.getProperty(STATUS_PROPERTY)));
   }
 
 }
