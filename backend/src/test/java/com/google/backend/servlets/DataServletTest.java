@@ -40,10 +40,7 @@ public class DataServletTest {
   public void testDataServlet_correctResponse() throws IOException, ServletException {
     dataServlet.doGet(request, response);
 
-    String actual = stringWriter.getBuffer().toString().trim();
-    String expected = "Hello world from data servlet!";
-
-    assertEquals(actual, expected);
+    assertEquals(stringWriter.getBuffer().toString().trim(), "Hello world from data servlet!");
   }
 
   /** TODO: Add tests for logic of DataServlet once more complicated logic is implemented. */
