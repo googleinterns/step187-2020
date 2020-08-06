@@ -40,9 +40,14 @@ public class CronServlet extends HttpServlet {
     log.info("Cron job ran.");
     
     // TODO: Logic for cron job to run blackswan mock. (#13)
-    storeAlertInDatastore();
+    // storeAlertInDatastore();
+    testSimpleAnomaly();
     
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
+  }
+
+  private void testSimpleAnomaly() {
+    AnomalyGenerator test = new SimpleAnomalyGenerator();
   }
 
   /** Temporary method for storing dummy alert into datastore. */

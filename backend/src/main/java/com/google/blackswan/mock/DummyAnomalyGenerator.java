@@ -28,6 +28,7 @@ public class DummyAnomalyGenerator implements AnomalyGenerator {
     for (int k = 0; k < SET_ANOMALY_GROUP_SIZE; k++) {
       anomalies.add(Anomaly.getDummyAnomaly());
     }
+
   }
 
   public List<Anomaly> getAnomalies() {
