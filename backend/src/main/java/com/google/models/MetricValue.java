@@ -16,6 +16,7 @@ package com.google.models;
 
 /** 
  * Wrapper for a metric value.
+ * This is an immutable class. 
  * TODO: Make metric value work for double, floats, etc.  
  */
 public final class MetricValue {

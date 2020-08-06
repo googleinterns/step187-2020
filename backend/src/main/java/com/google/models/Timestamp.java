@@ -21,7 +21,7 @@ import java.time.format.DateTimeParseException;
 import java.lang.Math;
 
 /**
- * Wrapper for LocalDate object with day, month, year fields. 
+ * Wrapper for LocalDate object with day, month, year fields. This class is immutable. 
  * Accepts format in yyyy-MM-dd or yyyy-M-d or yyyy-MM-d or yyyy-M-dd, but prints format in yyyy-MM-dd.
  */
 public final class Timestamp {

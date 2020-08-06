@@ -38,7 +38,7 @@ public final class Alert {
 
   public Alert(Timestamp timestampDate, List<Anomaly> anomalies, StatusType status) {
     this.timestampDate = timestampDate;
-    this.anomalies = anomalies;
+    this.anomalies = new ArrayList<>(anomalies);
     this.status = status;
   }
 

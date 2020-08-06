@@ -23,7 +23,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.time.format.DateTimeParseException;
 
-/** Store anomaly-related data. */
+/** 
+ * Store anomaly-related data. 
+ * This is an immutable class. 
+ */
 public final class Anomaly {
   public static final String ANOMALY_ENTITY_KIND = "anomaly";
   public static final String METRIC_NAME_PROPERTY = "metricName";
@@ -47,7 +50,7 @@ public final class Anomaly {
     this.timestampDate = timestampDate;
     this.metricName = metricName;
     this.dimensionName = dimensionName;
-    this.dataPoints = dataPoints;
+    this.dataPoints = new HashMap<Timestamp, MetricValue>(dataPoints);
   }
 
   public Timestamp getTimestamp() {
