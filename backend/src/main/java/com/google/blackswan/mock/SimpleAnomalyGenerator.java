@@ -27,7 +27,7 @@ import java.time.format.DateTimeParseException;
 import java.lang.Math;
 import java.lang.Object;
 
-/** Generate list of hard-coded dummy anomalies. */
+/** Generate list of anomalies based data in the csv file using average and threshold. */
 public class SimpleAnomalyGenerator implements AnomalyGenerator {
   private static final String DATA_FILE_LOCATION = "/sample-ramen-data.csv";
   private static final String EXCEPTION_MESSAGE = "Invalid row format.";
@@ -63,12 +63,11 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
     for (Map.Entry<Timestamp, Integer> entry : anomalyPoints.entrySet()) {
       anomalies.add(createAnomalyFromDataPoint(entry.getKey(), entry.getValue()));
     }
-    anomalies.forEach(a -> System.out.println(a));
   }
 
   /** TODO: Depending on size of future data, alter algorithm of finding associated data points. */
   private Anomaly createAnomalyFromDataPoint(Timestamp time, int value) {
-    // TODO: make const.
+    // TODO: Make const.
     String metricName = "Interest Over Time";
     String dimensionName = "Ramen";
 

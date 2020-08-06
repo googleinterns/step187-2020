@@ -139,7 +139,7 @@ public final class AnomalyTest {
   private boolean embeddedEntityDataPoints_equal(EmbeddedEntity dataPointsEE, 
       Map<Timestamp, MetricValue> dataPointsMap) {
     return dataPointsMap.entrySet().stream().allMatch(
-      e -> e.getValue().getValue() == (int) dataPointsEE.getProperty(e.getKey().toString())
+      e -> e.getValue().getValue() == ((Long) dataPointsEE.getProperty(e.getKey().toString()))
     );
   }
 

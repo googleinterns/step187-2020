@@ -18,14 +18,14 @@ import com.google.models.*;
 import java.util.*;
 import java.util.Collections;
 
-/** Generate list of dummy alerts. Supposed to analyze list of anomalies and create different alerts. */
+/** Generate list of alerts by grouping anomalies by there month. */
 public class SimpleAlertGenerator implements AlertGenerator {
 
   private List<Alert> alerts;
   private AnomalyGenerator anomalyGenerator;
 
   public SimpleAlertGenerator(AnomalyGenerator anomalyGenerator) {
-    alerts = new ArrayList<Alert>();
+    this.alerts = new ArrayList<Alert>();
     this.anomalyGenerator = anomalyGenerator;
     groupAnomaliesToAlerts();
   }
@@ -44,6 +44,7 @@ public class SimpleAlertGenerator implements AlertGenerator {
       }
     }
 
+    // Create an alert for each month where there are anomalies.
     for (Map.Entry<Timestamp, List<Anomaly>> entry : anomalyGroups.entrySet()) {
       alerts.add(new Alert(entry.getKey(), entry.getValue(), Alert.StatusType.UNRESOLVED));
     }
