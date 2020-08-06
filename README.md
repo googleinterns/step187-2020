@@ -1,6 +1,6 @@
 # GreySwan
 
-## Config React project
+## Config frontend project
 Run `yarn` in `./frontend` to install dependencies.
 
 ## Run locally
@@ -9,6 +9,12 @@ Run `yarn` in `./frontend` to install dependencies.
 yarn local
 // From backend directory
 mvn appengine:run
+```
+
+## Testing
+```
+// From backend directory
+mvn test
 ```
 
 ## Deploy to gcloud
@@ -22,4 +28,20 @@ Run every time you want to deploy:
 yarn build // From frontend directory
 gcloud app deploy // From frontend directory
 mvn package appengine:deploy // From backend directory
+```
+
+## Deploy cron jobs
+To view all active cron jobs on GCP: https://pantheon.corp.google.com/appengine/cronjobs?project=greyswan
+
+To deploy a cron job:
+1) Specify cron job details in `cron.yaml` file. 
+2) Deploy the `cron.yaml` file. 
+```
+gcloud app deploy cron.yaml
+```
+To stop a cron job:
+1) Remove cron job content in `cron.yaml`. 
+2) Deploy the `cron.yaml` file with cron job content removed. 
+```
+gcloud app deploy cron.yaml
 ```
