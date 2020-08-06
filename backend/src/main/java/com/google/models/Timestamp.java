@@ -24,7 +24,7 @@ import java.lang.Math;
  * Wrapper for LocalDate object with day, month, year fields. 
  * Accepts format in yyyy-MM-dd or yyyy-M-d or yyyy-MM-d or yyyy-M-dd, but prints format in yyyy-MM-dd.
  */
-public final class Timestamp {
+public final class Timestamp implements Comparable<Timestamp> {
   public static final String TIMESTAMP_PROPERTY = "timestamp";
   private static final String EXCEPTION_MESSAGE = "Invalid string format.";
   private static final int NUM_OF_MONTHS = 12;
@@ -43,6 +43,10 @@ public final class Timestamp {
 
   public Timestamp(String dateString) {
     date = LocalDate.parse(dateString, DATE_FORMATTER);
+  }
+
+  public Timestamp(LocalDate date) {
+    this.date = date;
   }
 
   public int getDay() {
@@ -82,8 +86,17 @@ public final class Timestamp {
     return target.date.equals(date);
   }
 
+  @Override
+  public int compareTo(Timestamp target) {
+    return this.date.compareTo(target.date);
+  }
+
   public static Timestamp getDummyTimestamp(int random) {
     return new Timestamp(1, Math.abs(random) % NUM_OF_MONTHS + 1, 2000);
+  }
+
+  public Timestamp getFirstDayOfNextMonth() {
+    return new Timestamp(LocalDate.of(getYear(), getMonth(), 1).plusMonths(1));
   }
 
 }
