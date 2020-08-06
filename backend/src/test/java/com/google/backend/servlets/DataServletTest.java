@@ -27,8 +27,8 @@ public class DataServletTest {
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
 
-  private DataServlet dataServlet = new DataServlet();
-  private StringWriter stringWriter = new StringWriter();
+  private static final DataServlet dataServlet = new DataServlet();
+  private static final StringWriter stringWriter = new StringWriter();
 
   @Before
   public void setUp() throws Exception {

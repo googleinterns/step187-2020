@@ -12,23 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.backend.servlets;
+package com.google.blackswan.mock;
 
-import java.io.IOException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import com.google.models.*;
+import java.util.List;
 
-/**
-* Servlet to test if servlet connects to React frontend.
-*/
-@WebServlet("/api/v1/test-servlet")
-public class DataServlet extends HttpServlet {
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("Hello world from data servlet!");
-  }
+/** Anomaly Generator that generates anomalies based on data provided. */
+public interface AnomalyGenerator {  
+  List<Anomaly> getAnomalies();
 }
