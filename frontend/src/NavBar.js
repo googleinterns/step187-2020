@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NavBar() {
+export default function NavBar(props) {
   const classes = useStyles();
 
   return (
@@ -29,7 +29,9 @@ export default function NavBar() {
           </Typography>
           <Button color="inherit">Alerts</Button>
           <Button color="inherit">Configs</Button>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" href={props.logURL}>
+            {props.isLoggedIn ? "Logout" :  "Login"}
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
