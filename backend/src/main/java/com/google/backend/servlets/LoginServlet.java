@@ -67,5 +67,4 @@ public class LoginServlet extends HttpServlet {
       response.getWriter().println(loginUrl);
     }
   }
-
 }
