@@ -27,6 +27,10 @@ public final class MetricValue {
     this.value = value;
   }
 
+  public MetricValue(long value) {
+    this.value = (int) value;
+  }
+
   public int getValue() {
     return value;
   }

@@ -25,6 +25,10 @@ import com.google.models.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import java.util.*;
 
 /**
@@ -40,17 +44,49 @@ public class CronServlet extends HttpServlet {
     log.info("Cron job ran.");
     
     // TODO: Logic for cron job to run blackswan mock. (#13)
-    storeAlertInDatastore();
-    
+
+    // Simple logic for cron job, since we only have one set of alerts for now. 
+    clearCurrentAlertsInDatastore();
+    storeAlertsInDatastoreSimple();
+    fetchAlertsFromDatastore();
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
 
-  /** Temporary method for storing dummy alert into datastore. */
-  private void storeAlertInDatastore() {
-    AlertGenerator testAlertGenerator = new DummyAlertGenerator(new DummyAnomalyGenerator());
-    List<Alert> alerts = testAlertGenerator.getAlerts();
+  private void clearCurrentAlertsInDatastore() {
+    Query query = new Query(Alert.ALERT_ENTITY_KIND);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
 
-    DatastoreServiceFactory.getDatastoreService().put(alerts.get(0).toEntity());
+    // Iterate through the entities to delete all comment objects.
+    for (Entity entity : results.asIterable()) {
+      long id = entity.getKey().getId();
+      Key alertEntityKey = KeyFactory.createKey(Alert.ALERT_ENTITY_KIND, id);
+      datastore.delete(alertEntityKey);
+    }
+
+  }
+
+  /** Temporary method for storing alerts from simpleGenerator into the datastore. */
+  private void storeAlertsInDatastoreSimple() {
+    AlertGenerator simpleGenerator = new SimpleAlertGenerator(new SimpleAnomalyGenerator());
+    simpleGenerator.getAlerts().forEach(alert -> {
+      DatastoreServiceFactory.getDatastoreService().put(alert.toEntity());
+    });
+  }
+
+  /** Sample fetch alerts from datastore and creating alert objects from it. */
+  private void fetchAlertsFromDatastore() {
+    Query query = new Query(Alert.ALERT_ENTITY_KIND);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    List<Alert> alertList = new ArrayList<>();
+
+    for (Entity entity : results.asIterable()) {
+      alertList.add(Alert.createAlertFromEntity(entity));
+    }
+
+    // Print out to see if alerts are correctly converted.
+    alertList.forEach(alert -> System.out.println(alert));
   }
 
 }
