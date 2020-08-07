@@ -29,7 +29,7 @@ const CustomLink = React.forwardRef((props, ref) => (
   />
 ));
 
-export default function NavBar() {
+export default function NavBar(props) {
   const classes = useStyles();
 
   return (
@@ -41,7 +41,9 @@ export default function NavBar() {
           </Typography>
           <Button color="inherit" component={CustomLink} to="/alerts">Alerts</Button>
           <Button color="inherit" component={CustomLink} to="/configs">Configs</Button>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" >
+            {props.isLoggedIn ? "Logout" :  "Login"}
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
