@@ -1,12 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import NavBar from './NavBar';
-import './App.css';
-
+import Home from './Home';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoggedIn: false,
+    };
+  }
+
   // Test to see if backend servlet connects to frontend.
   componentDidMount() {
-    console.log("Inside componentDidMount!");
     fetch("/api/v1/test-servlet")
       .then((response) => response.text())
       .then((text) => {
@@ -16,26 +21,10 @@ class App extends Component {
 
   render() {
     return (
-      <div className="home">
+      <Fragment>
         <NavBar />
-        <HomeContent />
-      </div>
-    );
-  }
-}
-
-class HomeContent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {isLoggedIn : false};
-  }
-
-  render() {
-    return (
-      <div className="home-content">
-        <h1>Welcome to GreySwan!</h1>
-        <p>{this.state.isLoggedIn ? "Thank you for visiting our app!" :  "Please log in."}</p>
-      </div>
+        <Home isLoggedIn={this.state.isLoggedIn} />
+      </Fragment>
     );
   }
 }

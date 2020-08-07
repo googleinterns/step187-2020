@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// TODO: add react-router to link the alert management components to the Alerts button.
 export default function NavBar() {
   const classes = useStyles();
 
