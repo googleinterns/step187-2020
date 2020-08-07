@@ -139,5 +139,4 @@ public class LoginServletTest {
     verify(response).setContentType(CONTENT_TYPE);
     assertEquals(stringWriter.getBuffer().toString().trim(), logoutResponse);
   }
-
 }
