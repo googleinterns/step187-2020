@@ -45,18 +45,17 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-let a11yProps = (index) => {
-  return {
-    id: `tab-${index}`,
-    'aria-controls': `tabpanel-${index}`,
-  };
-}
-
 // TODO: fetch alerts from backend and save in arrays.
+// Intended plan for reference: 
+// const allAlerts = [id1, id2, id3] where id'x' is the id of AlertX
+// const alertsMap = {id1: <Alert1>, 2: <Alert2>, 3: <Alert3>, ...};
+// const unresolvedAlerts = [0, 1] which stores the indices of the alerts in allAlerts
+// const resolvedAlerts = [2]
 const allAlerts = [0, 1, 2, 3, 4, 5, 6];
 const unresolvedAlerts = [0, 1, 2, 3];
 const resolvedAlerts = [4, 5, 6]
 
+// TODO: create constants file. ref: https://stackoverflow.com/questions/39036457/react-create-constants-file.
 const tabLabels = {
   UNRESOLVED: 0,
   RESOLVED: 1,
@@ -70,6 +69,13 @@ class AlertsContent extends Component {
       tab: tabLabels.UNRESOLVED,
       unchecked: unresolvedAlerts.slice(), 
       checked: resolvedAlerts.slice(), 
+    };
+  }
+
+  a11yProps = (index) => {
+    return {
+      id: `tab-${index}`,
+      'aria-controls': `tabpanel-${index}`,
     };
   }
   
@@ -120,9 +126,9 @@ class AlertsContent extends Component {
             textColor="secondary" 
             aria-label="alert tabs"
           >
-            <Tab icon={<ErrorIcon />} label="Unresolved" {...a11yProps(tabLabels.UNRESOLVED)} />
-            <Tab icon={<DoneIcon />} label="Resolved" {...a11yProps(tabLabels.RESOLVED)} />
-            <Tab icon={<AllInboxIcon />} label="All alerts" {...a11yProps(tabLabels.ALL)} />
+            <Tab icon={<ErrorIcon />} label="Unresolved" {...this.a11yProps(tabLabels.UNRESOLVED)} />
+            <Tab icon={<DoneIcon />} label="Resolved" {...this.a11yProps(tabLabels.RESOLVED)} />
+            <Tab icon={<AllInboxIcon />} label="All alerts" {...this.a11yProps(tabLabels.ALL)} />
           </Tabs>
         </Paper>
         <TabPanel value={tab} index={tabLabels.UNRESOLVED}>
