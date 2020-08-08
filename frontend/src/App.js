@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import Footer from './Footer';
 import NavBar from './NavBar';
 import Home from './Home';
 
@@ -36,6 +37,7 @@ class App extends Component {
       <Fragment>
         <NavBar isLoggedIn={this.state.isLoggedIn} logURL={this.state.logURL} />
         <Home isLoggedIn={this.state.isLoggedIn} />
+        {/* <Footer /> */}
       </Fragment>
     );
   }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -31,6 +31,7 @@ const CustomLink = React.forwardRef((props, ref) => (
 
 export default function NavBar(props) {
   const classes = useStyles();
+  const [isLoggedIn] = useState(props.isLoggedIn);
 
   return (
     <div className={classes.root}>
@@ -42,10 +43,11 @@ export default function NavBar(props) {
           <Button color="inherit" component={CustomLink} to="/alerts">Alerts</Button>
           <Button color="inherit" component={CustomLink} to="/configs">Configs</Button>
           <Button color="inherit" >
-            {props.isLoggedIn ? "Logout" :  "Login"}
+            {isLoggedIn ? "Logout" :  "Login"}
           </Button>
         </Toolbar>
       </AppBar>
     </div>
   );
 }
+

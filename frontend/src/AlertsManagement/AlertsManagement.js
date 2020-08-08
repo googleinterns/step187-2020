@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import Typography from '@material-ui/core/Typography';
 import AlertsContent from './AlertsContent'
+import Footer from '../Footer';
 import NavBar from '../NavBar';
 import './AlertsManagement.css';
 
@@ -8,8 +10,11 @@ class AlertsManagement extends Component {
     return (
       <div className="alerts-management">
         <NavBar />
-        <h1>BlackSwan Alerts</h1>
+        <Typography component="h1" variant="h4" align="center" color="textPrimary" gutterBottom>
+            BlackSwan Alerts
+        </Typography>
         <AlertsContent />
+        {/* <Footer /> */}
       </div>
     );
   }
