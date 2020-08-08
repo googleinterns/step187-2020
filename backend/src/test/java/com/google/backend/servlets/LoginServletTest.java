@@ -45,7 +45,9 @@ public class LoginServletTest {
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
     new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig());
 
+  private static final String AUTH_DOMAIN_NAME = "localhost";
   private static final String CONTENT_TYPE = "text/html;";
+  private static final String PROPERTY_NAME = "email";
   private static final String TEST_EMAIL = "test@example.com";
   private static final String REDIRECT_URL = "/";
   private static final String LOGIN_STATUS = "logged in";
@@ -66,7 +68,7 @@ public class LoginServletTest {
 
   @Test
   public void doGet_GetsCorrectResponseLoggedIn() throws IOException, ServletException {
-    helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain("localhost");
+    helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain(AUTH_DOMAIN_NAME);
     UserService userService = UserServiceFactory.getUserService();
     String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
     String loginResponse = LOGIN_STATUS + "\n" + logoutUrl;
@@ -83,7 +85,7 @@ public class LoginServletTest {
 
   @Test
   public void doGet_UserDoesNotExistCreateNewEntity() throws IOException, ServletException {
-    helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain("localhost");
+    helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain(AUTH_DOMAIN_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     
     StringWriter stringWriter = new StringWriter();
@@ -94,18 +96,18 @@ public class LoginServletTest {
     
     Query query =
           new Query(ENTITY_KIND).setFilter(
-            new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, TEST_EMAIL));
+            new Query.FilterPredicate(PROPERTY_NAME, Query.FilterOperator.EQUAL, TEST_EMAIL));
     Entity result = datastore.prepare(query).asSingleEntity();
     assertNotNull(result);
   }
 
   @Test
   public void doGet_UserExistsNoNewEntity() throws IOException, ServletException {
-    helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain("localhost");
+    helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain(AUTH_DOMAIN_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Entity newUser = new Entity(ENTITY_KIND);
-    newUser.setProperty("email", TEST_EMAIL);
+    newUser.setProperty(PROPERTY_NAME, TEST_EMAIL);
     datastore.put(newUser);
     
     StringWriter stringWriter = new StringWriter();
@@ -116,11 +118,11 @@ public class LoginServletTest {
 
     Query query =
           new Query(ENTITY_KIND).setFilter(
-            new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, TEST_EMAIL));
-    int numComments = datastore.prepare(query).countEntities(
+            new Query.FilterPredicate(PROPERTY_NAME, Query.FilterOperator.EQUAL, TEST_EMAIL));
+    int numUsers = datastore.prepare(query).countEntities(
         FetchOptions.Builder.withLimit(MAX_QUERIES)
     );
-    assertEquals(1, numComments);
+    assertEquals(1, numUsers);
   }
 
   @Test
