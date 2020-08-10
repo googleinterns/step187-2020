@@ -42,6 +42,7 @@ public class LoginServletTest {
   @Mock HttpServletResponse response;
 
   private static final LoginServlet loginServlet = new LoginServlet();
+  StringWriter stringWriter = new StringWriter();
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
     new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig());
 
@@ -59,6 +60,7 @@ public class LoginServletTest {
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     helper.setUp();
+    when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
   }
 
   @After
@@ -72,10 +74,6 @@ public class LoginServletTest {
     UserService userService = UserServiceFactory.getUserService();
     String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
     String loginResponse = LOGIN_STATUS + "\n" + logoutUrl;
-    
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     loginServlet.doGet(request, response);
 
@@ -87,10 +85,6 @@ public class LoginServletTest {
   public void doGet_UserDoesNotExistCreateNewEntity() throws IOException, ServletException {
     helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain(AUTH_DOMAIN_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     loginServlet.doGet(request, response);
     
@@ -109,10 +103,7 @@ public class LoginServletTest {
     Entity newUser = new Entity(ENTITY_KIND);
     newUser.setProperty(PROPERTY_NAME, TEST_EMAIL);
     datastore.put(newUser);
-    
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
+
 
     loginServlet.doGet(request, response);
 
@@ -131,10 +122,6 @@ public class LoginServletTest {
     UserService userService = UserServiceFactory.getUserService();
     String loginUrl = userService.createLoginURL(REDIRECT_URL);
     String logoutResponse = LOGOUT_STATUS + "\n" + loginUrl;
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     loginServlet.doGet(request, response);
 
