@@ -42,13 +42,10 @@ public class CronServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // TODO: Update or clean up log message. 
     log.info("Cron job ran.");
-    
-    // TODO: Logic for cron job to run blackswan mock. (#13)
 
     // Simple logic for cron job, since we only have one set of alerts for now. 
     clearCurrentAlertsInDatastore();
     storeAlertsInDatastoreSimple();
-    fetchAlertsFromDatastore();
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
 
@@ -66,7 +63,7 @@ public class CronServlet extends HttpServlet {
 
   }
 
-  /** Temporary method for storing alerts from simpleGenerator into the datastore. */
+  /** Storing alerts from simpleGenerator into the datastore. */
   private void storeAlertsInDatastoreSimple() {
     AlertGenerator simpleGenerator = new SimpleAlertGenerator(new SimpleAnomalyGenerator());
     simpleGenerator.getAlerts().forEach(alert -> {
@@ -74,7 +71,10 @@ public class CronServlet extends HttpServlet {
     });
   }
 
-  /** Sample fetch alerts from datastore and creating alert objects from it. */
+  /** 
+   * Sample fetch alerts from datastore and creating alert objects from it. 
+   * Used during demo for MVP presentation. TODO: delete or modify. 
+   */
   private void fetchAlertsFromDatastore() {
     Query query = new Query(Alert.ALERT_ENTITY_KIND);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -86,6 +86,7 @@ public class CronServlet extends HttpServlet {
     }
 
     // Print out to see if alerts are correctly converted.
+    // Used primarily during backend demo. 
     alertList.forEach(alert -> System.out.println(alert));
   }
 

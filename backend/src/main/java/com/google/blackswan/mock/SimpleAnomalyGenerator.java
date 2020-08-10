@@ -26,7 +26,7 @@ import java.time.format.DateTimeParseException;
 import java.lang.Math;
 import java.lang.Object;
 
-/** Generate list of anomalies based data in the csv file using average and threshold. */
+/** Generate list of anomalies based on data in the csv file using average and threshold. */
 public class SimpleAnomalyGenerator implements AnomalyGenerator {
   private static final String DATA_FILE_LOCATION = "/sample-ramen-data.csv";
   private static final String EXCEPTION_MESSAGE = "Invalid row format.";
@@ -49,12 +49,12 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
     for (int val : data.values()) {
       sum += val;
     }
-    int ave = sum / data.size();
+    int avg = sum / data.size();
 
     // Find instances where exceed threshold.
     Map<Timestamp, Integer> anomalyPoints = data.entrySet().stream()
-        .filter(e -> e.getValue() - ave > THRESHOLD)
-        .collect(toMap(e -> e.getKey(), e -> e.getValue()));
+        .filter(entry -> entry.getValue() - avg > THRESHOLD)
+        .collect(toMap(entry -> entry.getKey(), entry -> entry.getValue()));
 
     // Create anomaly objects from those instances.
     for (Map.Entry<Timestamp, Integer> entry : anomalyPoints.entrySet()) {
@@ -104,7 +104,10 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
     scanner.close();
   }
 
-  /** Each row of csv has following format: { yyyy-mm-dd, popularity }. */
+  /** 
+   * Each row of csv has following format: { yyyy-mm-dd, popularity }. 
+   * ParseException takes 2 parameters: message, and index of string that failed to be parses.
+   */
   private void parseRow(String row) throws ParseException {
     String[] cells = row.split(",");
     if (cells.length != 2) {

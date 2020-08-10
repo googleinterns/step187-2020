@@ -18,7 +18,7 @@ import com.google.models.*;
 import java.util.*;
 import java.util.Collections;
 
-/** Generate list of alerts by grouping anomalies by there month. */
+/** Generate list of alerts by grouping anomalies by their month. */
 public class SimpleAlertGenerator implements AlertGenerator {
 
   private List<Alert> alerts;
