@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import AlertsContent from './AlertsContent'
-import Footer from '../Footer';
+// import Footer from '../Footer';
 import NavBar from '../NavBar';
 import './AlertsManagement.css';
 

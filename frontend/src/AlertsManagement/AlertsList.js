@@ -9,13 +9,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 class AlertsList extends Component {
   render() {
     const alerts = this.props.alerts;
-
+    // const allAlerts = this.props.allAlerts;
+    // console.log(allAlerts)
     return (
       <List className="alerts-list">
         {/* alert represents the index of the actual alert in allAlerts array. */}
         {alerts.map((alertIndex, value) => {
           const labelId = `checkbox-list-label-${alertIndex}`;
-
           return (
             <ListItem key={value} role={undefined} dense divider>
               <ListItemIcon>
@@ -29,7 +29,14 @@ class AlertsList extends Component {
                   />
                 </Tooltip>
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`Alert number ${this.props.allAlerts[alertIndex] + 1}`} />
+              <ListItemText id={labelId} 
+                primary={`Alert ${alertIndex} at ${allAlerts[alertIndex].timestamp} has ${allAlerts[alertIndex].anomalies} anomalies`} 
+                />
+              {/* {this.props.allAlerts[alertIndex]} */}
+              {/* <ListItemText id={labelId} primary={this.props.allAlerts[alertIndex]} /> */}
+              {/* <ListItemText id={labelId} primary={`Alert number ${this.props.allAlerts[alertIndex] + 1}`} /> */}
+              
+              {/* <ListItemText id={labelId} primary={`Alert number ${alertIndex + 1}`} /> */}
             </ListItem>
           );
         })}

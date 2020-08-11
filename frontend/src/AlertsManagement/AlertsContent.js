@@ -45,15 +45,56 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
+function createDate(timestampDate) {
+  return new Date(
+    timestampDate.date.year, timestampDate.date.month - 1, timestampDate.date.day, 0, 0, 0, 0);
+}
+
+function Alert(props) {
+  return (
+    <li>
+      Alert {props.index} at {props.timestamp} has {props.anomalies} anomalies
+    </li>
+  );
+}
+
+let allAlerts = [];
+let unresolvedAlerts = [];
+let resolvedAlerts = [];
+
+// let allAlerts = new Map();
+
+const getAlerts = () => {
+  fetch('/api/v1/alerts-data').then(response => response.json()).then(alerts => {
+    alerts.forEach((alert, index) => {
+      allAlerts.push(
+        <Alert 
+          index={index}
+          timestamp={createDate(alert.timestampDate)}
+          anomalies={alert.anomalies.length}
+        />
+      );
+      // allAlerts.set(index, {timestamp: createDate(alert.timestampDate), anomalies: alert.anomalies.length});
+      if (alert.status === "UNRESOLVED") {
+        unresolvedAlerts.push(index);
+      } else {
+        resolvedAlerts.push(index);
+      }
+    });
+  });
+  // console.log(allAlerts)
+}
+
 // TODO: fetch alerts from backend and save in arrays.
 // Intended plan for reference: 
 // const allAlerts = [id1, id2, id3] where id'x' is the id of AlertX
 // const alertsMap = {id1: <Alert1>, 2: <Alert2>, 3: <Alert3>, ...};
 // const unresolvedAlerts = [0, 1] which stores the indices of the alerts in allAlerts
 // const resolvedAlerts = [2]
-const allAlerts = [0, 1, 2, 3, 4, 5, 6];
-const unresolvedAlerts = [0, 1, 2, 3];
-const resolvedAlerts = [4, 5, 6]
+
+// const allAlerts = [0, 1, 2, 3, 4, 5, 6];
+// const unresolvedAlerts = [0, 1, 2, 3];
+// const resolvedAlerts = [4, 5, 6];
 
 // TODO: create constants file. ref: https://stackoverflow.com/questions/39036457/react-create-constants-file.
 const tabLabels = {
@@ -65,6 +106,7 @@ const tabLabels = {
 class AlertsContent extends Component {
   constructor(props) {
     super(props);
+    // getAlerts();
     this.state = {
       tab: tabLabels.UNRESOLVED,
       unchecked: unresolvedAlerts.slice(), 
@@ -101,6 +143,7 @@ class AlertsContent extends Component {
       newUnchecked.push(value);
       newChecked.splice(currentCheckedIndex, 1);
     } else {
+      // This should never happen (programmer error).
       throw new Error("Misplaced alert: " + allAlerts[value]);
     }
 
@@ -115,6 +158,7 @@ class AlertsContent extends Component {
   render() {
     const { tab, unchecked, checked } = this.state;
     const { classes } = this.props;
+    // getAlerts();
     return (
       <div className={classes.root}>
         <Paper>
