@@ -106,7 +106,7 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
 
   /** 
    * Each row of csv has following format: { yyyy-mm-dd, popularity }. 
-   * ParseException takes 2 parameters: message, and index of string that failed to be parses.
+   * ParseException takes 2 parameters: error message and index of string that failed to be parsed.
    */
   private void parseRow(String row) throws ParseException {
     String[] cells = row.split(",");
