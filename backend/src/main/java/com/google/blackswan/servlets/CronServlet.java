@@ -44,7 +44,7 @@ public class CronServlet extends HttpServlet {
     log.info("Cron job ran.");
 
     // Simple logic for cron job, since we only have one set of alerts for now. 
-    clearCurrentAlertsInDatastore();
+    clearCurrentAlertsInDatastore(); // Need to clear alerts as we only have one set of alerts now. 
     storeAlertsInDatastoreSimple();
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }

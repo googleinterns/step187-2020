@@ -45,11 +45,7 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
   }
 
   private void generateAnomalies() {
-    int sum = 0;
-    for (int val : data.values()) {
-      sum += val;
-    }
-    int avg = sum / data.size();
+    int avg = data.values().stream().reduce(0, Integer::sum) / data.size();
 
     // Find instances where exceed threshold.
     Map<Timestamp, Integer> anomalyPoints = data.entrySet().stream()
