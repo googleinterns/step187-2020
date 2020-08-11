@@ -41,11 +41,6 @@ public class LoginServletTest {
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
 
-  private static final LoginServlet loginServlet = new LoginServlet();
-  StringWriter stringWriter = new StringWriter();
-  private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-    new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig());
-
   private static final String AUTH_DOMAIN_NAME = "localhost";
   private static final String CONTENT_TYPE = "text/html;";
   private static final String PROPERTY_NAME = "email";
@@ -55,6 +50,11 @@ public class LoginServletTest {
   private static final String LOGOUT_STATUS = "stranger";
   private static final String ENTITY_KIND = "User";
   private static final int MAX_QUERIES = 1000;
+
+  private static final LoginServlet loginServlet = new LoginServlet();
+  private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
+    new LocalDatastoreServiceTestConfig(), new LocalUserServiceTestConfig());
+  private StringWriter stringWriter = new StringWriter();
 
   @Before
   public void setUp() throws Exception {
@@ -69,7 +69,7 @@ public class LoginServletTest {
   }
 
   @Test
-  public void doGet_GetsCorrectResponseLoggedIn() throws IOException, ServletException {
+  public void doGet_loggedIn_sendLoginStatusAndUrlResponse() throws IOException, ServletException {
     helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain(AUTH_DOMAIN_NAME);
     UserService userService = UserServiceFactory.getUserService();
     String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
@@ -78,11 +78,11 @@ public class LoginServletTest {
     loginServlet.doGet(request, response);
 
     verify(response).setContentType(CONTENT_TYPE);
-    assertEquals(stringWriter.getBuffer().toString().trim(), loginResponse);
+    assertEquals(loginResponse, stringWriter.getBuffer().toString().trim());
   }
 
   @Test
-  public void doGet_UserDoesNotExistCreateNewEntity() throws IOException, ServletException {
+  public void doGet_userDoesNotExist_createNewEntity() throws IOException, ServletException {
     helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain(AUTH_DOMAIN_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -96,7 +96,7 @@ public class LoginServletTest {
   }
 
   @Test
-  public void doGet_UserExistsNoNewEntity() throws IOException, ServletException {
+  public void doGet_userExists_noNewEntityCreated() throws IOException, ServletException {
     helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain(AUTH_DOMAIN_NAME);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -117,7 +117,7 @@ public class LoginServletTest {
   }
 
   @Test
-  public void doGet_GetsCorrectResponseLoggedOut() throws IOException, ServletException {
+  public void doGet_loggedOut_sendLogoutStatusAndUrlResponse() throws IOException, ServletException {
     helper.setEnvIsLoggedIn(false);
     UserService userService = UserServiceFactory.getUserService();
     String loginUrl = userService.createLoginURL(REDIRECT_URL);
@@ -126,6 +126,6 @@ public class LoginServletTest {
     loginServlet.doGet(request, response);
 
     verify(response).setContentType(CONTENT_TYPE);
-    assertEquals(stringWriter.getBuffer().toString().trim(), logoutResponse);
+    assertEquals(logoutResponse, stringWriter.getBuffer().toString().trim());
   }
 }
