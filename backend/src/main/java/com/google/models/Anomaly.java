@@ -127,6 +127,7 @@ public final class Anomaly {
     EmbeddedEntity anomalyEmbeddedEntity = new EmbeddedEntity();
     anomalyEmbeddedEntity.setKey(anomalyEntity.getKey());
     anomalyEmbeddedEntity.setPropertiesFrom(anomalyEntity);
+    
     return anomalyEmbeddedEntity;
   }
 
@@ -136,7 +137,7 @@ public final class Anomaly {
 
     if (dataPointsEE != null) {
       for (String key : dataPointsEE.getProperties().keySet()) {
-        dataPointsMap.put(new Timestamp(key), new MetricValue(((Long) dataPointsEE.getProperty(key))));
+        dataPointsMap.put(new Timestamp(key), new MetricValue(((long) dataPointsEE.getProperty(key))));
       }
     }
 

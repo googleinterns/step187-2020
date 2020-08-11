@@ -29,7 +29,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
 * Servlet to run cron job that generates Alerts to store in the datastore.
@@ -46,6 +47,7 @@ public class CronServlet extends HttpServlet {
     // Simple logic for cron job, since we only have one set of alerts for now. 
     clearCurrentAlertsInDatastore(); // Need to clear alerts as we only have one set of alerts now. 
     storeAlertsInDatastoreSimple();
+    fetchAlertsFromDatastore();
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
 
@@ -54,7 +56,7 @@ public class CronServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    // Iterate through the entities to delete all comment objects.
+    // Iterate through the entities to delete all alert objects.
     for (Entity entity : results.asIterable()) {
       long id = entity.getKey().getId();
       Key alertEntityKey = KeyFactory.createKey(Alert.ALERT_ENTITY_KIND, id);
@@ -63,9 +65,9 @@ public class CronServlet extends HttpServlet {
 
   }
 
-  /** Storing alerts from simpleGenerator into the datastore. */
+  /** Store alerts from simpleGenerator into the datastore. */
   private void storeAlertsInDatastoreSimple() {
-    AlertGenerator simpleGenerator = new SimpleAlertGenerator(new SimpleAnomalyGenerator());
+    AlertGenerator simpleGenerator = new SimpleAlertGenerator(SimpleAnomalyGenerator.createGenerator());
     simpleGenerator.getAlerts().forEach(alert -> {
       DatastoreServiceFactory.getDatastoreService().put(alert.toEntity());
     });

@@ -15,40 +15,35 @@
 package com.google.blackswan.mock;
 
 import com.google.models.*;
-import java.util.*;
+import java.util.List;
 import java.util.Collections;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.ArrayListMultimap;
 
 /** Generate list of alerts by grouping anomalies by their month. */
 public class SimpleAlertGenerator implements AlertGenerator {
 
-  private List<Alert> alerts;
-  private AnomalyGenerator anomalyGenerator;
+  private final ImmutableList<Alert> alerts;
 
   public SimpleAlertGenerator(AnomalyGenerator anomalyGenerator) {
-    this.alerts = new ArrayList<Alert>();
-    this.anomalyGenerator = anomalyGenerator;
-    groupAnomaliesToAlerts();
+    this.alerts = groupAnomaliesToAlerts(anomalyGenerator);
   }
 
   /** TODO: Make flexible so can not only group anomalies by month but other time span. */
-  private void groupAnomaliesToAlerts() {
+  private static ImmutableList<Alert> groupAnomaliesToAlerts(AnomalyGenerator anomalyGenerator) {
     List<Anomaly> anomaliesList = anomalyGenerator.getAnomalies();
-    Map<Timestamp, List<Anomaly>> anomalyGroups = new HashMap<>();
+    ListMultimap<Timestamp, Anomaly> anomalyGroups = ArrayListMultimap.create();
 
     // Group anomalies by month.
     for (Anomaly currAnomaly : anomaliesList) {
       Timestamp keyTimestamp = currAnomaly.getTimestamp().getFirstDayOfNextMonth();
-      if (anomalyGroups.get(keyTimestamp) == null) {
-        anomalyGroups.put(keyTimestamp, new ArrayList<>(Arrays.asList(currAnomaly)));
-      } else {
-        anomalyGroups.get(keyTimestamp).add(currAnomaly);
-      }
+      anomalyGroups.put(keyTimestamp, currAnomaly);
     }
 
-    // Create an alert for each month where there are anomalies.
-    for (Map.Entry<Timestamp, List<Anomaly>> entry : anomalyGroups.entrySet()) {
-      alerts.add(new Alert(entry.getKey(), entry.getValue(), Alert.StatusType.UNRESOLVED));
-    }
+    return anomalyGroups.keySet().stream()
+        .map(key -> new Alert(key, anomalyGroups.get(key), Alert.StatusType.UNRESOLVED))
+        .collect(ImmutableList.toImmutableList());
   }
 
   public List<Alert> getAlerts() {
