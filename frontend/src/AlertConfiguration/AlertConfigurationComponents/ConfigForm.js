@@ -11,6 +11,8 @@ import uuid from "uuid";
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 
+{/**TO DO: Fix issue with setting state */}
+
 const useStyles = makeStyles((theme) => ({
   formControl: {
     backgroundColor: theme.palette.background.paper,
@@ -28,12 +30,6 @@ export default function ConfigForm({ addConfig }) {
 
   const [config, setConfig] = useState("");
 
-  /**{
-    id: "",
-    data: "",
-    rData: "",
-  } */
-
   const dimensionsMetrics = ["noodle", "spice", "egg", "soup", "instant noodle"];
   const rDimensionsMetrics = ["noodle", "spice", "egg", "soup", "instant noodle"];
 
@@ -49,16 +45,10 @@ export default function ConfigForm({ addConfig }) {
     console.log(config);
     setConfig("random");
     console.log(config);
-    //setConfig({ ...config, data: "random"});
-    //console.log(config.data);
-    //setConfig({ ...config, data: event.target.value });
-    //console.log(event.target.value);
-    //console.log(config.data);
   };
 
   function handleRDataChange(event) {
     setConfig({ ...config, rData: event.target.value });
-    //console.log(config.rData);
   };
 
   function handleSubmit(event) {

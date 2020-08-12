@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState }, { Fragment } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,7 +26,7 @@ export default function AlertConfiguration() {
   }
 
   return (
-    <React.Fragment>
+    <Fragment>
       <CssBaseline />
       {/* TODO: Replace with Catherine's NavBar */}
       {/* Navigation bar START */}
@@ -44,6 +44,6 @@ export default function AlertConfiguration() {
         <ConfigList configs={configs}/>
       </main>
       <Footer />
-    </React.Fragment>
+    </Fragment>
   );
 }
