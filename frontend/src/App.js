@@ -13,22 +13,17 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
-    this.getLoginStatus();
-  }
+  async componentDidMount() {
+    const loginResponse = await fetch("/api/v1/login").then(response => response.text());
 
-  getLoginStatus() {
-    fetch("/api/v1/login").then(response => response.text()).then((result) => {
-      // results[0] is the login status, results[1] is the login or logout URL.
-      const results = result.split("\n");
-  
-      if (results[0] === LOGGED_IN_STATUS) {
-        this.setState({ isLoggedIn: true });
-      } else {
-        this.setState({ isLoggedIn: false });
-      }
-      this.setState({ logURL: results[1] });
-    });  
+    // results[0] is the login status, results[1] is the login or logout URL.
+    const results = loginResponse.split("\n");
+    if (results[0] === LOGGED_IN_STATUS) {
+      this.setState({ isLoggedIn: true });
+    } else {
+      this.setState({ isLoggedIn: false });
+    }
+    this.setState({ logURL: results[1] });  
   }
 
   render() {
