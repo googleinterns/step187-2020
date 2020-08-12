@@ -47,7 +47,6 @@ public class CronServlet extends HttpServlet {
     // Simple logic for cron job, since we only have one set of alerts for now. 
     clearCurrentAlertsInDatastore(); // Need to clear alerts as we only have one set of alerts now. 
     storeAlertsInDatastoreSimple();
-    fetchAlertsFromDatastore();
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
 
@@ -72,24 +71,4 @@ public class CronServlet extends HttpServlet {
       DatastoreServiceFactory.getDatastoreService().put(alert.toEntity());
     });
   }
-
-  /** 
-   * Sample fetch alerts from datastore and creating alert objects from it. 
-   * Used during demo for MVP presentation. TODO: delete or modify. 
-   */
-  private void fetchAlertsFromDatastore() {
-    Query query = new Query(Alert.ALERT_ENTITY_KIND);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-    List<Alert> alertList = new ArrayList<>();
-
-    for (Entity entity : results.asIterable()) {
-      alertList.add(Alert.createAlertFromEntity(entity));
-    }
-
-    // Print out to see if alerts are correctly converted.
-    // Used primarily during backend demo. 
-    alertList.forEach(alert -> System.out.println(alert));
-  }
-
 }
