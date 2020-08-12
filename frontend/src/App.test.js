@@ -12,7 +12,6 @@ const LOGOUT_URL = "/_ah/logout?continue=%2F";
 const LOGIN_MESSAGE = "logged in\n/_ah/logout?continue=%2F";
 const LOGOUT_MESSAGE = "stranger\n/_ah/login?continue=%2F";
 
-// TODO: write the tests below.
 describe("getLoginStatus", () => {
 
   beforeEach(() => {
