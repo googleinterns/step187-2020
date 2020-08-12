@@ -114,6 +114,7 @@ describe("handleCheckbox", () => {
   // TODO: write test for sending POST request to servlet
 });
 
+// TODO: write tests for fetching alerts (in componentDidMount).
 describe("fetch alerts", () => {
-  
+
 });
