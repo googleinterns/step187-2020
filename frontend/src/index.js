@@ -15,7 +15,7 @@ ReactDOM.render(
         <Route path="/alerts" component={Dummy}>
           {/* TODO: import AlertsManagement */}
         </Route>
-        <Route path="/configs" >
+        <Route path="/configs">
           {/* TODO: import AlertConfiguration */}
         </Route>
       </Switch>
