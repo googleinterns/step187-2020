@@ -2,10 +2,6 @@ package com.google.blackswan.servlets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.atLeast;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
@@ -20,10 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
 import com.google.blackswan.mock.*;
 import com.google.models.*;
 import com.google.common.collect.ImmutableMap;
@@ -32,12 +24,12 @@ import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 
-/** Contain tests for methods in the {@link CronServlet} class. */
+/** Contain tests for methods in the {@link SimpleAlertGenerator} class. */
 @RunWith(JUnit4.class)
 public class SimpleAlertGeneratorTest {
   private static final String METRIC_NAME = "Interest Over Time";
   private static final String DIMENSION_NAME = "Ramen";
-  private static final Map<String, Integer> SAMPLE_DATA = ImmutableMap.of(
+  private static final ImmutableMap<String, Integer> SAMPLE_DATA = ImmutableMap.of(
     "2019-07-21", 73, 
     "2019-07-28", 59, 
     "2019-08-04", 75,
@@ -68,7 +60,7 @@ public class SimpleAlertGeneratorTest {
   @Test
   public void getAlerts_returnsListOfAlerts() {
     // Create first expected alert which contains one anomaly in July.
-    Map<Timestamp, MetricValue> expectedDataPoints1 = ImmutableMap.of(
+    ImmutableMap<Timestamp, MetricValue> expectedDataPoints1 = ImmutableMap.of(
       new Timestamp("2019-07-21"), new MetricValue(73),
       new Timestamp("2019-07-28"), new MetricValue(59), 
       new Timestamp("2019-08-04"), new MetricValue(75)
@@ -82,7 +74,7 @@ public class SimpleAlertGeneratorTest {
       Alert.StatusType.UNRESOLVED
     );
     // Create second expected alert which contains two anomalies that occurs in August. 
-    Map<Timestamp, MetricValue> expectedDataPoints2 = ImmutableMap.of(
+    ImmutableMap<Timestamp, MetricValue> expectedDataPoints2 = ImmutableMap.of(
       new Timestamp("2019-07-21"), new MetricValue(73),
       new Timestamp("2019-07-28"), new MetricValue(59),
       new Timestamp("2019-08-04"), new MetricValue(75), 
@@ -92,7 +84,7 @@ public class SimpleAlertGeneratorTest {
     Anomaly expectedAnomalyGroup2_1 = new Anomaly(
       new Timestamp("2019-08-04"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints2
     );
-    Map<Timestamp, MetricValue> expectedDataPoints3 = ImmutableMap.of(
+    ImmutableMap<Timestamp, MetricValue> expectedDataPoints3 = ImmutableMap.of(
       new Timestamp("2019-07-28"), new MetricValue(59),
       new Timestamp("2019-08-04"), new MetricValue(75), 
       new Timestamp("2019-08-11"), new MetricValue(79), 
