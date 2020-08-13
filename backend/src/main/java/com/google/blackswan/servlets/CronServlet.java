@@ -26,6 +26,12 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import java.util.*;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
 * Servlet to run cron job that generates Alerts to store in the datastore.
@@ -41,6 +47,7 @@ public class CronServlet extends HttpServlet {
     
     // TODO: Logic for cron job to run blackswan mock. (#13)
     storeAlertInDatastore();
+    fetchAlertsFromDatastore();
     
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
@@ -49,8 +56,23 @@ public class CronServlet extends HttpServlet {
   private void storeAlertInDatastore() {
     AlertGenerator testAlertGenerator = new DummyAlertGenerator(new DummyAnomalyGenerator());
     List<Alert> alerts = testAlertGenerator.getAlerts();
-
+    System.out.println("prior: " + alerts.get(0).getAlertId());
     DatastoreServiceFactory.getDatastoreService().put(alerts.get(0).toEntity());
+  }
+
+  /** Sample fetch alerts from datastore and creating alert objects from it. */
+  private void fetchAlertsFromDatastore() {
+    Query query = new Query(Alert.ALERT_ENTITY_KIND);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    List<Alert> alertList = new ArrayList<>();
+
+    for (Entity entity : results.asIterable()) {
+      alertList.add(Alert.createAlertFromEntity(entity));
+    }
+    // System.out.println(alertList.get(0).getAlertId());
+    // Print out to see if alerts are correctly converted.
+    alertList.forEach(alert -> System.out.println(alert.getAlertId()));
   }
 
 }
