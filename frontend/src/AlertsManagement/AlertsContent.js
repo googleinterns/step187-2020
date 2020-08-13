@@ -87,17 +87,16 @@ class AlertsContent extends Component {
     let resolvedAlerts = [];
 
     const alertsResponse = await fetch('/api/v1/alerts-data').then(response => response.json());
-    alertsResponse.forEach((alert) => {
-      // TODO: replace fakeid with actual alert ID (received from JSON, e.g. alert.id).
-      const fakeid = Math.floor(Math.random() * Math.floor(100));
-      this.state.allAlerts.set(fakeid, {
+    alertsResponse.forEach((alert, value) => {
+      // TODO: replace value with actual alert ID (received from JSON, e.g. alert.id).
+      this.state.allAlerts.set(value, {
         timestamp: createDate(alert.timestampDate), 
         anomalies: alert.anomalies.length
       });
       if (alert.status === "UNRESOLVED") {
-        unresolvedAlerts.push(fakeid);
+        unresolvedAlerts.push(value);
       } else {
-        resolvedAlerts.push(fakeid);
+        resolvedAlerts.push(value);
       }
     });
 

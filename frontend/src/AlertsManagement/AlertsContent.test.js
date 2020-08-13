@@ -1,13 +1,21 @@
 import React from "react";
-import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
 import { shallow, configure} from "enzyme";
 import Adapter from 'enzyme-adapter-react-16';
-import { createShallow } from '@material-ui/core/test-utils';
+import { enableFetchMocks } from 'jest-fetch-mock';
+enableFetchMocks();
 import { PureAlertsContent as AlertsContent } from "./AlertsContent";
 import AlertsList from "./AlertsList";
 
-configure({ adapter: new Adapter(), disableLifecycleMethods: true });
+configure({ adapter: new Adapter() });
+
+const styles = { 
+  root: {
+    flexGrow: 1,
+    maxWidth: 900,
+    margin: 'auto',
+  }
+};
 
 describe("handleTabs", () => {
   const tabLabels = {
@@ -16,17 +24,9 @@ describe("handleTabs", () => {
     ALL: 2,
   };
 
-  const styles = { 
-    root: {
-      flexGrow: 1,
-      maxWidth: 900,
-      margin: 'auto',
-    }
-  };
-
   it("should display the right tabpanel when the tab is changed", () => {
-    const wrapper = shallow(<AlertsContent classes={styles} />);
-    wrapper.setState({ tab: tabLabels.ALL });
+    const wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
+    wrapper.setState({ tab: tabLabels.ALL }); 
 
     act(() => {
       const tabs = wrapper.find('WithStyles(ForwardRef(Tabs))');
@@ -61,18 +61,10 @@ describe("handleCheckbox", () => {
   const editChecked = [2, 0];
   const doubleChecked = [0, 2];
 
-  const styles = { 
-    root: {
-      flexGrow: 1,
-      maxWidth: 900,
-      margin: 'auto',
-    }
-  };
-
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(<AlertsContent classes={styles} />);
+    wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
     wrapper.setState({ 
       allAlerts: fakeAlerts,
       unchecked: fakeUnresolved,
@@ -114,7 +106,61 @@ describe("handleCheckbox", () => {
   // TODO: write test for sending POST request to servlet
 });
 
-// TODO: write tests for fetching alerts (in componentDidMount).
 describe("fetch alerts", () => {
+  // Fake alert JSON data:
+  const fakeAlerts = [{
+    anomalies: [
+      { dataPoints: {"2019-11-24": {value: 79}, }, 
+        dimensionName: "Ramen", metricName: "Interest Over Time",
+        timestampDate: {date: {year: 2019, month: 12, day: 29}}
+      },
+      { dataPoints: {"2019-10-27": {value: 53}, }, 
+        dimensionName: "Ramen", metricName: "Interest Over Time",
+        timestampDate: {date: {year: 2019, month: 12, day: 1}}
+      },
+    ],
+    status: "UNRESOLVED",
+    timestampDate: {date: {year: 2019, month: 12, day: 8}},
+  }, 
+  {
+    anomalies: [
+      { dataPoints: {"2019-10-24": {value: 46}, }, 
+        dimensionName: "Ramen", metricName: "Interest Over Time",
+        timestampDate: {date: {year: 2019, month: 11, day: 27}}
+      },
+    ],
+    status: "RESOLVED",
+    timestampDate: {date: {year: 2019, month: 12, day: 27}},
+  }];
 
+  // Expected allAlerts, unchecked, and checked.
+  const expectedAlerts = new Map();
+  expectedAlerts.set(0, {
+    timestamp: "Sun Dec 08 2019",
+    anomalies: 2,
+  });
+  expectedAlerts.set(1, {
+    timestamp: "Fri Dec 27 2019",
+    anomalies: 1,
+  });
+  const expectedUnchecked = [0];
+  const expectedChecked = [1]
+
+  beforeEach(() => {
+    fetch.resetMocks();
+  });
+
+  it("correctly sets alert information in state based on alert data", async () => {
+    fetch.mockResponseOnce(JSON.stringify(fakeAlerts)); 
+
+    let component;
+    await act(async () => {
+      component = shallow(<AlertsContent classes={styles} />);
+    });
+    
+    component.update()
+    expect(component.state('allAlerts')).toEqual(expectedAlerts);
+    expect(component.state('unchecked')).toEqual(expectedUnchecked);
+    expect(component.state('checked')).toEqual(expectedChecked);
+  });
 });
