@@ -35,6 +35,7 @@ public class AlertsDataServlet extends HttpServlet {
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // TODO: only get alerts that the user is subscribed to.
     Query query = new Query(Alert.ALERT_ENTITY_KIND);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);

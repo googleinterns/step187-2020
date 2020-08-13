@@ -107,7 +107,7 @@ describe("handleCheckbox", () => {
 });
 
 describe("fetch alerts", () => {
-  // Fake alert JSON data:
+  // Fake alert JSON data. TODO: add ID property in the future.
   const fakeAlerts = [{
     anomalies: [
       { dataPoints: {"2019-11-24": {value: 79}, }, 

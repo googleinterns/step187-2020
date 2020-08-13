@@ -52,18 +52,21 @@ const tabLabels = {
   ALL: 2,
 };
 
-// Helper function to create Date from Timestamp model.
+/*
+ * Helper function to create Date from Timestamp model.
+ */
 const createDate = (timestampDate) => {
   return new Date(
     timestampDate.date.year, timestampDate.date.month - 1, timestampDate.date.day, 0, 0, 0, 0)
     .toDateString();
 }
 
-// Data structure explanations:
-// const allAlerts = {id1: {timestamp, # of anomalies}, id2: {timestamp, # of anomalies}, ...};
-// const unresolvedAlerts = [id1, id2, ...] which stores the ids of the alerts in allAlerts
-// const resolvedAlerts = [id3, ...] also stores ids of alerts in allAlerts
-
+/*
+ * Data structure explanation: (can remove later on)
+ * const allAlerts = {id1: {timestamp, # of anomalies}, id2: {timestamp, # of anomalies}, ...};
+ * const unresolvedAlerts = [id1, id2, ...] which stores the ids of the alerts in allAlerts
+ * const resolvedAlerts = [id3, ...] also stores ids of alerts in allAlerts
+ */
 class AlertsContent extends Component {
   constructor(props) {
     super(props);
