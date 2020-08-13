@@ -25,6 +25,7 @@ import java.time.format.DateTimeParseException;
 @RunWith(JUnit4.class)
 public final class AlertTest {
   private static final int TIMESTAMP_CONSTANT = 1;
+  private static final long DEFAULT_ID = 0;
   private static final AnomalyGenerator dummyAnomalyGenerator = new DummyAnomalyGenerator();
   private static final LocalServiceTestHelper helper = 
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -34,9 +35,7 @@ public final class AlertTest {
   @Before
   public void setUp() throws Exception {
     helper.setUp();
-    // TODO: Find out whether it's better to set parameters for Alert as private static variables,
-    //       since they're used later to test getters. 
-    alert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
+    alert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
         Alert.StatusType.UNRESOLVED);
   }
 
@@ -62,6 +61,11 @@ public final class AlertTest {
   }
 
   @Test
+  public void getAlertId_workingGetter() {
+    assertEquals(alert.getAlertId(), DEFAULT_ID);
+  }
+
+  @Test
   public void setStatus_workingSetter() {
     alert.setStatus(Alert.StatusType.RESOLVED);
 
@@ -70,11 +74,11 @@ public final class AlertTest {
 
   @Test
   public void equals_workingComparator() {
-    Alert sameAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
+    Alert sameAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
         Alert.StatusType.UNRESOLVED);
-    Alert diffTimeAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), dummyAnomalyGenerator.getAnomalies(), 
+    Alert diffTimeAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), dummyAnomalyGenerator.getAnomalies(), 
         Alert.StatusType.UNRESOLVED);
-    Alert diffResolveAlert = new Alert(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
+    Alert diffResolveAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
         Alert.StatusType.RESOLVED);
     // TODO: Test equals with Alert object that has different list of anomalies. Currently, dummyAnomalyGenerator can only 
     //       generate one list of anomalies right now. 
