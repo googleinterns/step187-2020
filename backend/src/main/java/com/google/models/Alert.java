@@ -97,6 +97,7 @@ public final class Alert {
     return alertEntity;
   }
 
+  /** Used when an alert is first created and not converted from an entity. */
   public static Alert createAlertWithoutId(Timestamp timestampDate, 
       List<Anomaly> anomalies, StatusType status) {
     return new Alert(timestampDate, anomalies, status, OptionalLong.empty());
