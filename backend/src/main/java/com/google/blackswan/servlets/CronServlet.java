@@ -47,7 +47,6 @@ public class CronServlet extends HttpServlet {
     
     // TODO: Logic for cron job to run blackswan mock. (#13)
     storeAlertInDatastore();
-    fetchAlertsFromDatastore();
     
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }

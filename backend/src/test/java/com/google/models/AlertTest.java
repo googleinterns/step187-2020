@@ -26,7 +26,8 @@ import java.time.format.DateTimeParseException;
 public final class AlertTest {
   private static final int TIMESTAMP_CONSTANT = 1;
   private static final long DEFAULT_ID = 0;
-  private static final AnomalyGenerator dummyAnomalyGenerator = new DummyAnomalyGenerator();
+  private static final AnomalyGenerator dummyAnomalyGenerator = 
+      new DummyAnomalyGenerator();
   private static final LocalServiceTestHelper helper = 
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
@@ -35,8 +36,11 @@ public final class AlertTest {
   @Before
   public void setUp() throws Exception {
     helper.setUp();
-    alert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.UNRESOLVED);
+    alert = Alert.createAlertWithoutId(
+      Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
+      dummyAnomalyGenerator.getAnomalies(), 
+      Alert.StatusType.UNRESOLVED
+    );
   }
 
   @After
@@ -51,7 +55,8 @@ public final class AlertTest {
 
   @Test
   public void getAnomalies_workingGetter() {
-    // Check to see if List<Anomaly> returned is same as List<Anomaly> used to generate alert.
+    // Check to see if List<Anomaly> returned is same as List<Anomaly> 
+    // used to generate alert.
     assertEquals(alert.getAnomalies(), dummyAnomalyGenerator.getAnomalies());
   }
 
@@ -74,14 +79,24 @@ public final class AlertTest {
 
   @Test
   public void equals_workingComparator() {
-    Alert sameAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.UNRESOLVED);
-    Alert diffTimeAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.UNRESOLVED);
-    Alert diffResolveAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.RESOLVED);
-    // TODO: Test equals with Alert object that has different list of anomalies. Currently, dummyAnomalyGenerator can only 
-    //       generate one list of anomalies right now. 
+    Alert sameAlert = Alert.createAlertWithoutId(
+        Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
+        dummyAnomalyGenerator.getAnomalies(), 
+        Alert.StatusType.UNRESOLVED
+      );
+    Alert diffTimeAlert = Alert.createAlertWithoutId(
+        Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), 
+        dummyAnomalyGenerator.getAnomalies(), 
+        Alert.StatusType.UNRESOLVED
+      );
+    Alert diffResolveAlert = Alert.createAlertWithoutId(
+        Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
+        dummyAnomalyGenerator.getAnomalies(), 
+        Alert.StatusType.RESOLVED
+      );
+    // TODO: Test equals with Alert object that has different list of anomalies. 
+    //       Currently, dummyAnomalyGenerator can only generate one list of 
+    //       anomalies right now. 
 
     assertTrue(alert.equals(alert));
     assertTrue(alert.equals(sameAlert));
@@ -100,12 +115,16 @@ public final class AlertTest {
         (List<EmbeddedEntity>) alertEntity.getProperty(Alert.ANOMALIES_LIST_PROPERTY);
 
     anomalyEmbeddedList.forEach(
-      embeddedAnomaly -> anomalyList.add(Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly))
+      embeddedAnomaly -> anomalyList.add(
+        Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly)
+      )
     );
 
     assertEquals(anomalyList, alert.getAnomalies());
-    assertEquals(alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), alert.getTimestamp().toString());
-    assertEquals(alertEntity.getProperty(Alert.STATUS_PROPERTY), alert.getStatus().name());
+    assertEquals(alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), 
+        alert.getTimestamp().toString());
+    assertEquals(alertEntity.getProperty(Alert.STATUS_PROPERTY), 
+        alert.getStatus().name());
   }
 
   @Test
