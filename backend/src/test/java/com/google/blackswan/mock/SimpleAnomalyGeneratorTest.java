@@ -59,7 +59,7 @@ public class SimpleAnomalyGeneratorTest {
     anomalyGenerator = SimpleAnomalyGenerator.createGeneratorWithString(
       inputForAnomalyGenerator(), SET_THRESHOLD_HIGH, SET_DATAPOINTS
     );
-    // Avg = 70, only 1 data point exceed 76. 
+    // Avg = 70, only 1 data point exceeds 76. 
     ImmutableMap<Timestamp, MetricValue> expectedDataPoints = ImmutableMap.of(
       new Timestamp("2019-07-28"), new MetricValue(59),
       new Timestamp("2019-08-04"), new MetricValue(75), 
