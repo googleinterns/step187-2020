@@ -9,8 +9,8 @@ configure({ adapter: new Adapter() });
 
 const LOGIN_URL = "/_ah/login?continue=%2F";
 const LOGOUT_URL = "/_ah/logout?continue=%2F";
-const LOGIN_MESSAGE = "logged in\n/_ah/logout?continue=%2F";
-const LOGOUT_MESSAGE = "stranger\n/_ah/login?continue=%2F";
+const LOGIN_MESSAGE = "logged in\n" + LOGOUT_URL;
+const LOGOUT_MESSAGE = "stranger\n" + LOGIN_URL;
 
 describe("getLoginStatus", () => {
 
@@ -18,7 +18,7 @@ describe("getLoginStatus", () => {
     fetch.resetMocks();
   });
 
-  it("sets logged in state when user is logged in", (done) => {
+  it("sets logged in state when user logs in", (done) => {
     fetch.mockResponseOnce(LOGIN_MESSAGE);
     const component = shallow(<App />);
     component.setState({ isLoggedIn: false, logURL: ""});
@@ -31,7 +31,7 @@ describe("getLoginStatus", () => {
     }, 3000);
   });
   
-  it("sets logged out state when user is logged out", (done) => {
+  it("sets logged out state when user logs out", (done) => {
     fetch.mockResponseOnce(LOGOUT_MESSAGE);
     const component = shallow(<App />);
     component.setState({ isLoggedIn: false, logURL: ""});

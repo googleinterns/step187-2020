@@ -4,6 +4,10 @@ import Home from './Home';
 
 const LOGGED_IN_STATUS = "logged in";
 
+/*
+  * isLoggedIn represents whether the user is logged in or not.
+  * logURL represents either the login URL or logout URL, depending on the login status.
+  */
 class App extends Component {
   constructor(props) {
     super(props);
@@ -17,6 +21,7 @@ class App extends Component {
     const loginResponse = await fetch("/api/v1/login").then(response => response.text());
 
     // results[0] is the login status, results[1] is the login or logout URL.
+    // TODO: adapt code for JSON format response.
     const results = loginResponse.split("\n");
     if (results[0] === LOGGED_IN_STATUS) {
       this.setState({ isLoggedIn: true });
