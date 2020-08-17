@@ -1,3 +1,15 @@
-.alerts-management h1 {
+.alerts-management h1, h2, h3, h4 {
   text-align: center;
+}
+
+.alerts-management #alerts-header {
+  margin-top: 50px;
+}
+
+.alerts-management .alert-info {
+  width: 80%;
+  margin: 0 auto;
+}
+.alerts-management .alert-info #back-button {
+  margin-top: 20px;
 }
