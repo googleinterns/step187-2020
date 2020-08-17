@@ -76,11 +76,21 @@ class AlertsContent extends Component {
     let resolvedAlerts = [];
 
     const alertsResponse = await fetch('/api/v1/alerts-data').then(response => response.json());
+    // TODO: replace value with actual alert ID (received from JSON, e.g. alert.id).
     alertsResponse.forEach((alert, value) => {
-      // TODO: replace value with actual alert ID (received from JSON, e.g. alert.id).
+      let editedAnomalies = alert.anomalies.slice();
+      for (let key in alert.anomalies) {
+        editedAnomalies[key].timestampDate = createDate(alert.anomalies[key].timestampDate);
+        let editedData = new Map();
+        for (const date in alert.anomalies[key].dataPoints) {
+          editedData.set(date, alert.anomalies[key].dataPoints[date].value);
+        }
+        editedAnomalies[key].dataPoints = editedData;
+      }
       this.state.allAlerts.set(value, {
-        timestamp: convertTimestampToDate(alert.timestampDate), 
-        anomalies: alert.anomalies.length
+        timestampDate: createDate(alert.timestampDate), 
+        anomalies: editedAnomalies,
+        status: alert.status,
       });
       if (alert.status === UNRESOLVED_STATUS) {
         unresolvedAlerts.push(value);
@@ -130,7 +140,7 @@ class AlertsContent extends Component {
 
   render() {
     const { tab, allAlerts, unchecked, checked } = this.state;
-    const { classes } = this.props;
+    const { classes, changeDisplay } = this.props;
     return (
       <div className={classes.root}>
         <Paper>
@@ -153,6 +163,7 @@ class AlertsContent extends Component {
             displayAlerts={unchecked} 
             checked={checked}
             handleToggle={this.handleCheckbox} 
+            showInfo={changeDisplay}
           />
         </TabPanel>
         <TabPanel value={tab} index={tabLabels.RESOLVED}>
@@ -161,6 +172,7 @@ class AlertsContent extends Component {
             displayAlerts={checked} 
             checked={checked}
             handleToggle={this.handleCheckbox} 
+            showInfo={changeDisplay}
           />
         </TabPanel>
         <TabPanel value={tab} index={tabLabels.ALL}>
@@ -169,6 +181,7 @@ class AlertsContent extends Component {
             displayAlerts={unchecked.concat(checked)} 
             checked={checked}
             handleToggle={this.handleCheckbox}
+            showInfo={changeDisplay}
           />
         </TabPanel>
       </div>

@@ -29,8 +29,9 @@ class AlertsList extends Component {
                   />
                 </Tooltip>
               </ListItemIcon>
-              <ListItemText id={labelId} 
-                primary={`Alert ${alertId} on ${allAlerts.get(alertId).timestamp} has ${allAlerts.get(alertId).anomalies} anomalies`} 
+              <ListItemText id={labelId} onClick={() => this.props.showInfo(allAlerts.get(alertId))}
+                primary={`Alert ${alertId} on ${allAlerts.get(alertId).timestampDate} has 
+                          ${allAlerts.get(alertId).anomalies.length} anomalies`} 
               />
             </ListItem>
           );
