@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +38,10 @@ public class SimpleAnomalyGeneratorTest {
   private static final int SET_THRESHOLD_HIGH = 6;
   private static final int SET_THRESHOLD_LOW = 4;
   private static final int SET_DATAPOINTS = 2;
+
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+  
   private SimpleAnomalyGenerator anomalyGenerator; 
       
 
@@ -57,7 +58,8 @@ public class SimpleAnomalyGeneratorTest {
   @Test
   public void getAnomalies_returnsListOfAnomaliesWithSizeOne() {
     anomalyGenerator = SimpleAnomalyGenerator.createGeneratorWithString(
-      inputForAnomalyGenerator(), SET_THRESHOLD_HIGH, SET_DATAPOINTS
+      MockTestHelper.inputForAnomalyGenerator(SAMPLE_DATA), 
+      SET_THRESHOLD_HIGH, SET_DATAPOINTS
     );
     // Avg = 70, only 1 data point exceeds 76. 
     ImmutableMap<Timestamp, MetricValue> expectedDataPoints = ImmutableMap.of(
@@ -72,14 +74,15 @@ public class SimpleAnomalyGeneratorTest {
 
     List<Anomaly> generatedAnomalies = anomalyGenerator.getAnomalies();
 
-    assertEquals(generatedAnomalies.size(), 1);
-    assertEquals(generatedAnomalies.get(0), expectedAnomaly);
+    assertEquals(1, generatedAnomalies.size());
+    assertEquals(expectedAnomaly, generatedAnomalies.get(0));
   }
 
   @Test
   public void getAnomalies_returnsListOfAnomaliesWithSizeTwo() {
     anomalyGenerator = SimpleAnomalyGenerator.createGeneratorWithString(
-      inputForAnomalyGenerator(), SET_THRESHOLD_LOW, SET_DATAPOINTS
+      MockTestHelper.inputForAnomalyGenerator(SAMPLE_DATA), 
+      SET_THRESHOLD_LOW, SET_DATAPOINTS
     );
     // Avg = 70, only 2 data points exceed 74.
     ImmutableMap<Timestamp, MetricValue> expectedDataPoints1 = ImmutableMap.of(
@@ -104,17 +107,9 @@ public class SimpleAnomalyGeneratorTest {
 
     List<Anomaly> generatedAnomalies = anomalyGenerator.getAnomalies();
 
-    assertEquals(generatedAnomalies.size(), 2);
-    assertEquals(generatedAnomalies.get(0), expectedAnomaly1);
-    assertEquals(generatedAnomalies.get(1), expectedAnomaly2);
-  }
-
-  private static String inputForAnomalyGenerator() {
-    StringBuilder str = new StringBuilder("");
-    for (Map.Entry<String, Integer> entry : SAMPLE_DATA.entrySet()) {
-      str.append(entry.getKey() + "," + entry.getValue().toString() + "\n");
-    }
-    return str.toString();
+    assertEquals(2, generatedAnomalies.size());
+    assertEquals(expectedAnomaly1, generatedAnomalies.get(0));
+    assertEquals(expectedAnomaly2, generatedAnomalies.get(1));
   }
 
 }

@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
 import com.google.blackswan.mock.*;
 import com.google.models.*;
 import com.google.common.collect.ImmutableMap;
@@ -39,11 +39,13 @@ public class SimpleAlertGeneratorTest {
   private static final int SET_THRESHOLD_LOW = 2;
   private static final int SET_DATAPOINTS = 2;
   private static final int EXPECTED_ALERT_SIZE = 2;
-  private static final AlertGenerator alertGenerator = new SimpleAlertGenerator(
+  private static final AlertGenerator ALERT_GENERATOR = new SimpleAlertGenerator(
     SimpleAnomalyGenerator.createGeneratorWithString(
-      inputForAnomalyGenerator(), SET_THRESHOLD_LOW, SET_DATAPOINTS
+      MockTestHelper.inputForAnomalyGenerator(SAMPLE_DATA), 
+      SET_THRESHOLD_LOW, SET_DATAPOINTS
     )
   );
+
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
@@ -99,19 +101,11 @@ public class SimpleAlertGeneratorTest {
       Alert.StatusType.UNRESOLVED
     );
 
-    List<Alert> generatedAlerts = alertGenerator.getAlerts();
+    List<Alert> generatedAlerts = ALERT_GENERATOR.getAlerts();
 
-    assertEquals(generatedAlerts.size(), EXPECTED_ALERT_SIZE);
-    assertEquals(generatedAlerts.get(0), expectedAlertJuly);
-    assertEquals(generatedAlerts.get(1), expectedAlertAugust);
-  }
-
-  private static String inputForAnomalyGenerator() {
-    StringBuilder str = new StringBuilder("");
-    for (Map.Entry<String, Integer> entry : SAMPLE_DATA.entrySet()) {
-      str.append(entry.getKey() + "," + entry.getValue().toString() + "\n");
-    }
-    return str.toString();
+    assertEquals(EXPECTED_ALERT_SIZE, generatedAlerts.size());
+    assertEquals(expectedAlertJuly, generatedAlerts.get(0));
+    assertEquals(expectedAlertAugust, generatedAlerts.get(1));
   }
 
 }
