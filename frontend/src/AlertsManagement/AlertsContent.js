@@ -11,6 +11,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import AlertsList from './AlertsList';
 import { convertTimestampToDate } from '../time_utils';
+import { tabLabels, UNRESOLVED_STATUS } from './management_constants';
 
 const styles = ({
   root: {
@@ -47,12 +48,7 @@ TabPanel.propTypes = {
 };
 
 // TODO: create constants file. ref: https://stackoverflow.com/questions/39036457/react-create-constants-file.
-const tabLabels = {
-  UNRESOLVED: 0,
-  RESOLVED: 1,
-  ALL: 2,
-};
-const UNRESOLVED_STATUS = "UNRESOLVED";
+
 
 /*
  * Data structure explanation: (can remove later on)
