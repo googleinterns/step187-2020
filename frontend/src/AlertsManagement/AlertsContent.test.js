@@ -53,8 +53,8 @@ describe("handleCheckbox", () => {
     timestamp: "2019-08-06",
     anomalies: 2,
   });
-  const fakeUnresolved = [0, 1];
-  const fakeResolved = [2];
+  const fakeUnresolvedIds = [0, 1];
+  const fakeResolvedIds = [2];
 
   // Expected mock data.
   const editUnchecked = [1];
@@ -67,8 +67,8 @@ describe("handleCheckbox", () => {
     wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
     wrapper.setState({ 
       allAlerts: fakeAlerts,
-      unchecked: fakeUnresolved,
-      checked: fakeResolved,
+      unchecked: fakeUnresolvedIds,
+      checked: fakeResolvedIds,
     });
   });
 

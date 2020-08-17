@@ -9,7 +9,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-
+import com.google.common.collect.ImmutableList; 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,16 +62,15 @@ public class AlertsDataServletTest {
   @Test
   public void doGet_returnAlertEntitiesAsJson() throws IOException, ServletException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Alert newAlertOne = new Alert(Timestamp.getDummyTimestamp(0), new ArrayList<Anomaly>(), 
+    Alert newAlert = new Alert(Timestamp.getDummyTimestamp(0), new ArrayList<Anomaly>(), 
         Alert.StatusType.UNRESOLVED);
-    datastore.put(newAlertOne.toEntity());
-    List<Alert> newAlerts = new ArrayList<>();
-    newAlerts.add(newAlertOne);
+    datastore.put(newAlert.toEntity());
 
     alertsDataServlet.doGet(request, response);
 
     verify(response).setContentType(CONTENT_TYPE);
-    JsonElement expected = JsonParser.parseString(new Gson().toJson(newAlerts));
+    JsonElement expected = JsonParser.parseString(
+      new Gson().toJson(ImmutableList.of(newAlert)));
     JsonElement result = JsonParser.parseString(stringWriter.getBuffer().toString().trim());
     assertEquals(expected, result);
   }

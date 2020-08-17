@@ -10,6 +10,7 @@ import AllInboxIcon from '@material-ui/icons/AllInbox';
 import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import AlertsList from './AlertsList';
+import { convertTimestampToDate } from '../time_utils';
 
 const styles = ({
   root: {
@@ -51,15 +52,7 @@ const tabLabels = {
   RESOLVED: 1,
   ALL: 2,
 };
-
-/*
- * Helper function to create Date from Timestamp model.
- */
-const createDate = (timestampDate) => {
-  return new Date(
-    timestampDate.date.year, timestampDate.date.month - 1, timestampDate.date.day, 0, 0, 0, 0)
-    .toDateString();
-}
+const UNRESOLVED_STATUS = "UNRESOLVED";
 
 /*
  * Data structure explanation: (can remove later on)
@@ -93,10 +86,10 @@ class AlertsContent extends Component {
     alertsResponse.forEach((alert, value) => {
       // TODO: replace value with actual alert ID (received from JSON, e.g. alert.id).
       this.state.allAlerts.set(value, {
-        timestamp: createDate(alert.timestampDate), 
+        timestamp: convertTimestampToDate(alert.timestampDate), 
         anomalies: alert.anomalies.length
       });
-      if (alert.status === "UNRESOLVED") {
+      if (alert.status === UNRESOLVED_STATUS) {
         unresolvedAlerts.push(value);
       } else {
         resolvedAlerts.push(value);
