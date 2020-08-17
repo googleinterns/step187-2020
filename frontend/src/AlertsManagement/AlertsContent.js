@@ -47,9 +47,6 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-// TODO: create constants file. ref: https://stackoverflow.com/questions/39036457/react-create-constants-file.
-
-
 /*
  * Data structure explanation: (can remove later on)
  * const allAlerts = {id1: {timestamp, # of anomalies}, id2: {timestamp, # of anomalies}, ...};
