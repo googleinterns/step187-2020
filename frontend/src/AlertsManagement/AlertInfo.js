@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Line } from 'react-chartjs-2';
+import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -23,9 +24,11 @@ export default function AlertInfo(props) {
   return (
     <div className="alert-info">
       <Divider variant="middle"/>
-      <IconButton size="small" id="back-button" onClick={props.changeDisplay}>
+      <Link to="/alerts">
+        <IconButton size="small" id="back-button">
           <ArrowBackIcon />
-      </IconButton>
+        </IconButton>
+      </Link>
       <Typography variant="h5" align="center">
         Alert on {alert.timestampDate}
       </Typography>

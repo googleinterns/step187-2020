@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Checkbox from '@material-ui/core/Checkbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -29,10 +30,12 @@ class AlertsList extends Component {
                   />
                 </Tooltip>
               </ListItemIcon>
-              <ListItemText id={labelId} onClick={() => this.props.showInfo(allAlerts.get(alertId))}
-                primary={`Alert ${alertId} on ${allAlerts.get(alertId).timestampDate} has 
-                          ${allAlerts.get(alertId).anomalies.length} anomalies`} 
-              />
+              <Link to={"/alerts/" + alertId} style={{ color: "inherit", textDecoration: "none"}} >
+                <ListItemText id={labelId} 
+                  primary={`Alert ${alertId} on ${allAlerts.get(alertId).timestampDate} has 
+                            ${allAlerts.get(alertId).anomalies.length} anomalies`} 
+                />
+              </Link>
             </ListItem>
           );
         })}
