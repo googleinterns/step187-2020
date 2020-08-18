@@ -35,7 +35,7 @@ describe("handleTabs", () => {
   });
 });
 
-describe("fake", () => {
+describe("handleCheckbox", () => {
   // Mock data for the alerts, unresolved and resolved.
   const fakeAlerts = new Map();
   fakeAlerts.set(0, {
