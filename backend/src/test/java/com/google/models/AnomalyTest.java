@@ -141,8 +141,10 @@ public final class AnomalyTest {
     EmbeddedEntity anomalyEmbeddedEntity = ANOMALY.toEmbeddedEntity();
     Anomaly convertedAnomaly = Anomaly.createAnomalyFromEmbeddedEntity(anomalyEmbeddedEntity);
 
+    // DATA_POINTS is already in sorted order by timestamp, so now line below is comparing 
+    // if the DATA_POINTS after entity -> anomaly conversion still has the points in order.
     assertEquals(
-      convertedAnomaly.getDataPoints().keySet().stream().sorted().collect(Collectors.toList()), 
+      DATA_POINTS.keySet().stream().collect(Collectors.toList()), 
       convertedAnomaly.getDataPoints().keySet().stream().collect(Collectors.toList())
     );
   }

@@ -78,8 +78,8 @@ public final class TimestampTest {
         new Timestamp(DAY_CONST + 1, MONTH_CONST, YEAR_CONST);
 
     assertEquals(0, baseTimestamp.compareTo(sameTimestamp));
-    assertTrue(baseTimestamp.compareTo(largerTimestamp) <= 1);
-    assertTrue(largerTimestamp.compareTo(baseTimestamp) >= -1);
+    assertTrue(baseTimestamp.compareTo(largerTimestamp) <= -1);
+    assertTrue(largerTimestamp.compareTo(baseTimestamp) >= 1);
   }
 
 }

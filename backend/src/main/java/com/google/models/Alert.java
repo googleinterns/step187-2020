@@ -94,7 +94,7 @@ public final class Alert {
     List<EmbeddedEntity> listEE = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
 
     if (listEE == null) {
-      throw new AssertionError("No anomalies list embedded entity found.");
+      throw new AssertionError("No list of anomaly embedded entity found.");
     }
 
     List<Anomaly> listAnomaly = listEE.stream()
