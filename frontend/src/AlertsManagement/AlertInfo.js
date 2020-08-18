@@ -66,7 +66,7 @@ export default function AlertInfo(props) {
 
           return (
             <Fragment>
-              <ListItem key={index} role={undefined} dense>
+              <ListItem key={index} dense>
                 <ListItemText id={index} 
                   primary={`Anomaly in ${anomaly.metricName} for ${anomaly.dimensionName} on ${anomaly.timestampDate}`} 
                 />

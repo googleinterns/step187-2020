@@ -8,7 +8,12 @@ import { tabLabels } from './management_constants';
 import { getAlertsData } from './management_helpers';
 import './AlertsManagement.css';
 
-
+/*
+ * Data structure explanation: (can remove later on)
+ * const allAlerts = {id1: {timestampDate, anomalies, status}, ...}; Map between alert id and Object with info
+ * const unresolvedAlerts = [id1, id2, ...] which stores the ids of the alerts in allAlerts
+ * const resolvedAlerts = [id3, ...] also stores ids of alerts in allAlerts
+ */
 class AlertsManagement extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +27,9 @@ class AlertsManagement extends Component {
 
   async componentDidMount() {
     var results = await getAlertsData();
+    if (results.length != 3) {
+      throw new Error("getAlertsData() did not return the correct alerts data.")
+    }
     this.setState({
       allAlerts: new Map(results[0]),
       unchecked: results[1].slice(),

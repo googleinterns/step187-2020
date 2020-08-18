@@ -46,12 +46,6 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-/*
- * Data structure explanation: (can remove later on)
- * const allAlerts = {id1: {timestampDate, anomalies, status}, ...};
- * const unresolvedAlerts = [id1, id2, ...] which stores the ids of the alerts in allAlerts
- * const resolvedAlerts = [id3, ...] also stores ids of alerts in allAlerts
- */
 class AlertsContent extends Component {
   a11yProps = (index) => {
     return {
