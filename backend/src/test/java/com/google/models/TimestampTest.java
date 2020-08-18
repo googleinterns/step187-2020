@@ -19,7 +19,7 @@ public final class TimestampTest {
   private static final int DAY_CONST = 1;
   private static final int MONTH_CONST = 1;
   private static final int YEAR_CONST = 2000;
-  private static final Timestamp timestamp = new Timestamp(DAY_CONST, MONTH_CONST, YEAR_CONST);
+  private static final Timestamp TIMESTAMP = new Timestamp(DAY_CONST, MONTH_CONST, YEAR_CONST);
 
   @Test
   public void constructor_convertStringToDate() {
@@ -27,15 +27,15 @@ public final class TimestampTest {
     Timestamp stringTimestampPaddedZero = new Timestamp("2020-12-05");
     Timestamp stringTimestampDiff = new Timestamp("2020-1-01");
 
-    assertEquals(stringTimestamp.getDay(), 5);
-    assertEquals(stringTimestamp.getMonth(), 12);
-    assertEquals(stringTimestamp.getYear(), 2020);
-    assertEquals(stringTimestampPaddedZero.getDay(), 5);
-    assertEquals(stringTimestampPaddedZero.getMonth(), 12);
-    assertEquals(stringTimestampPaddedZero.getYear(), 2020);
-    assertEquals(stringTimestampDiff.getDay(), 1);
-    assertEquals(stringTimestampDiff.getMonth(), 1);
-    assertEquals(stringTimestampDiff.getYear(), 2020);
+    assertEquals(5, stringTimestamp.getDay());
+    assertEquals(12, stringTimestamp.getMonth());
+    assertEquals(2020, stringTimestamp.getYear());
+    assertEquals(5, stringTimestampPaddedZero.getDay());
+    assertEquals(12, stringTimestampPaddedZero.getMonth());
+    assertEquals(2020, stringTimestampPaddedZero.getYear());
+    assertEquals(1, stringTimestampDiff.getDay());
+    assertEquals(1, stringTimestampDiff.getMonth());
+    assertEquals(2020, stringTimestampDiff.getYear());
   }
 
   @Test(expected = DateTimeParseException.class)
@@ -55,8 +55,11 @@ public final class TimestampTest {
 
   @Test
   public void toString_correctConversion() {
-    assertEquals(timestamp.toString(),
-        YEAR_CONST + "-" + String.format("%02d", MONTH_CONST) + "-" + String.format("%02d", DAY_CONST));
+    assertEquals(
+      YEAR_CONST + "-" + String.format("%02d", MONTH_CONST) + "-" + 
+          String.format("%02d", DAY_CONST),
+      TIMESTAMP.toString()
+    );
   }
 
   @Test
@@ -64,10 +67,10 @@ public final class TimestampTest {
     Timestamp sameTimestamp = new Timestamp(DAY_CONST, MONTH_CONST, YEAR_CONST);
     Timestamp diffTimestamp = new Timestamp(DAY_CONST + 1, MONTH_CONST, YEAR_CONST);
 
-    assertEquals(timestamp, timestamp);
-    assertEquals(sameTimestamp, timestamp);
-    assertFalse(timestamp.equals(diffTimestamp));
-    assertFalse(timestamp.equals(null));
+    assertEquals(TIMESTAMP, TIMESTAMP);
+    assertEquals(TIMESTAMP, sameTimestamp);
+    assertFalse(TIMESTAMP.equals(diffTimestamp));
+    assertFalse(TIMESTAMP.equals(null));
   }
 
 }

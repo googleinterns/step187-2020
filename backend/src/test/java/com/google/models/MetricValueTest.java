@@ -16,11 +16,11 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class MetricValueTest {
   private static final int VALUE_CONST = 1;
-  private static final MetricValue metricValue = new MetricValue(VALUE_CONST);
+  private static final MetricValue METRIC_VALUE = new MetricValue(VALUE_CONST);
 
   @Test
   public void getValue_workingGetter() {
-    assertEquals(metricValue.getValue(), VALUE_CONST);
+    assertEquals(VALUE_CONST, METRIC_VALUE.getValue());
   }
 
   @Test
@@ -28,10 +28,10 @@ public final class MetricValueTest {
     MetricValue sameMetricValue = new MetricValue(VALUE_CONST);
     MetricValue diffMetricValue = new MetricValue(VALUE_CONST + 1);
 
-    assertEquals(metricValue, metricValue);
-    assertEquals(sameMetricValue, metricValue);
-    assertFalse(metricValue.equals(diffMetricValue));
-    assertFalse(metricValue.equals(null));
+    assertEquals(METRIC_VALUE, METRIC_VALUE);
+    assertEquals(METRIC_VALUE, sameMetricValue);
+    assertFalse(METRIC_VALUE.equals(diffMetricValue));
+    assertFalse(METRIC_VALUE.equals(null));
   }
 
   /** TODO: Add tests for toString() and other methods once logic of Metric Value complicates. */
