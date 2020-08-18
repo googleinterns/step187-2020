@@ -81,7 +81,7 @@ public final class Alert {
     alertEntity.setProperty(STATUS_PROPERTY, status.name());
 
     List<EmbeddedEntity> list = anomalies.stream()
-        .map(anomaly -> anomaly.toEmbeddedEntity())
+        .map(Anomaly::toEmbeddedEntity)
         .collect(ImmutableList.toImmutableList());
 
     alertEntity.setProperty(ANOMALIES_LIST_PROPERTY, list);
@@ -98,7 +98,7 @@ public final class Alert {
     }
 
     List<Anomaly> listAnomaly = listEE.stream()
-        .map(embeddedAnomaly -> Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly))
+        .map(Anomaly::createAnomalyFromEmbeddedEntity)
         .collect(ImmutableList.toImmutableList());
 
     return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
