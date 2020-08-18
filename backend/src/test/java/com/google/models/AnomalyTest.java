@@ -19,6 +19,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /** Contain tests for methods in {@link Anomaly} class. */
 @RunWith(JUnit4.class)
@@ -133,6 +134,17 @@ public final class AnomalyTest {
     Anomaly convertedAnomaly = Anomaly.createAnomalyFromEmbeddedEntity(anomalyEmbeddedEntity);
 
     assertEquals(convertedAnomaly, ANOMALY);
+  }
+
+  @Test
+  public void createAnomalyFromEmbeddedEntity_dataPointsInChronologicalOrder() {
+    EmbeddedEntity anomalyEmbeddedEntity = ANOMALY.toEmbeddedEntity();
+    Anomaly convertedAnomaly = Anomaly.createAnomalyFromEmbeddedEntity(anomalyEmbeddedEntity);
+
+    assertEquals(
+      convertedAnomaly.getDataPoints().keySet().stream().sorted().collect(Collectors.toList()), 
+      convertedAnomaly.getDataPoints().keySet().stream().collect(Collectors.toList())
+    );
   }
 
 

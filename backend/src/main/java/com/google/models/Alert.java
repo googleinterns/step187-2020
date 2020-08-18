@@ -16,6 +16,7 @@ package com.google.models;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.common.collect.ImmutableList;
 import com.google.models.Anomaly;
 import com.google.models.Timestamp;
 import java.util.List;
@@ -33,12 +34,12 @@ public final class Alert {
   };
 
   private final Timestamp timestampDate;
-  private final List<Anomaly> anomalies;
+  private final ImmutableList<Anomaly> anomalies;
   private StatusType status;
 
   public Alert(Timestamp timestampDate, List<Anomaly> anomalies, StatusType status) {
     this.timestampDate = timestampDate;
-    this.anomalies = new ArrayList<>(anomalies);
+    this.anomalies = ImmutableList.copyOf(anomalies);
     this.status = status;
   }
 
@@ -79,8 +80,9 @@ public final class Alert {
     alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, timestampDate.toString());
     alertEntity.setProperty(STATUS_PROPERTY, status.name());
 
-    List<EmbeddedEntity> list = new ArrayList<EmbeddedEntity>();
-    anomalies.forEach(anomaly -> list.add(anomaly.toEmbeddedEntity()));
+    List<EmbeddedEntity> list = anomalies.stream()
+        .map(anomaly -> anomaly.toEmbeddedEntity())
+        .collect(ImmutableList.toImmutableList());
 
     alertEntity.setProperty(ANOMALIES_LIST_PROPERTY, list);
 
@@ -91,10 +93,13 @@ public final class Alert {
   public static Alert createAlertFromEntity(Entity alertEntity) {
     List<EmbeddedEntity> listEE = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
 
-    List<Anomaly> listAnomaly = new ArrayList<Anomaly>();
-    if (listEE != null) {
-      listEE.forEach(embeddedAnomaly -> listAnomaly.add(Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly)));
+    if (listEE == null) {
+      throw new AssertionError("No anomalies list embedded entity found.");
     }
+
+    List<Anomaly> listAnomaly = listEE.stream()
+        .map(embeddedAnomaly -> Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly))
+        .collect(ImmutableList.toImmutableList());
 
     return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
         listAnomaly, 

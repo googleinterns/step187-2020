@@ -20,7 +20,8 @@ import com.google.models.Timestamp;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.time.format.DateTimeParseException;
 
 /** 
@@ -35,22 +36,22 @@ public final class Anomaly {
 
   private static final String DUMMY_METRIC_NAME = "Sample metric name";
   private static final String DUMMY_DIMENSION_NAME = "Sample dimension name";
-  private static final Map<Timestamp, MetricValue> DUMMY_DATA_POINTS = ImmutableMap.of( 
-      Timestamp.getDummyTimestamp(1), new MetricValue(1), 
-      Timestamp.getDummyTimestamp(2), new MetricValue(2), 
-      Timestamp.getDummyTimestamp(3), new MetricValue(3));
+  private static final ImmutableMap<Timestamp, MetricValue> DUMMY_DATA_POINTS = 
+      ImmutableMap.of(Timestamp.getDummyTimestamp(1), new MetricValue(1), 
+                      Timestamp.getDummyTimestamp(2), new MetricValue(2), 
+                      Timestamp.getDummyTimestamp(3), new MetricValue(3));
   
   private final Timestamp timestampDate;
   private final String metricName;
   private final String dimensionName;
-  private final Map<Timestamp, MetricValue> dataPoints;
+  private final ImmutableMap<Timestamp, MetricValue> dataPoints;
   
   public Anomaly(Timestamp timestampDate, String metricName, String dimensionName, 
       Map<Timestamp, MetricValue> dataPoints) {
     this.timestampDate = timestampDate;
     this.metricName = metricName;
     this.dimensionName = dimensionName;
-    this.dataPoints = new HashMap<Timestamp, MetricValue>(dataPoints);
+    this.dataPoints = ImmutableMap.copyOf(dataPoints);
   }
 
   public Timestamp getTimestamp() {
@@ -131,7 +132,7 @@ public final class Anomaly {
 
   public static Anomaly createAnomalyFromEmbeddedEntity(EmbeddedEntity anomalyEmbeddedEntity) {
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(DATA_POINTS_PROPERTY);
-    Map<Timestamp, MetricValue> dataPointsMap = new HashMap<>();
+    SortedMap<Timestamp, MetricValue> dataPointsMap = new TreeMap<>();
 
     if (dataPointsEE != null) {
       for (String key : dataPointsEE.getProperties().keySet()) {

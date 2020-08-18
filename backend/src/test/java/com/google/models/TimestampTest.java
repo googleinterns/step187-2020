@@ -70,4 +70,16 @@ public final class TimestampTest {
     assertFalse(timestamp.equals(null));
   }
 
+  @Test
+  public void compareTo_workingComparator() {
+    Timestamp baseTimestamp = new Timestamp(DAY_CONST, MONTH_CONST, YEAR_CONST);
+    Timestamp sameTimestamp = new Timestamp(DAY_CONST, MONTH_CONST, YEAR_CONST);
+    Timestamp largerTimestamp = 
+        new Timestamp(DAY_CONST + 1, MONTH_CONST, YEAR_CONST);
+
+    assertEquals(0, baseTimestamp.compareTo(sameTimestamp));
+    assertTrue(baseTimestamp.compareTo(largerTimestamp) <= 1);
+    assertTrue(largerTimestamp.compareTo(baseTimestamp) >= -1);
+  }
+
 }
