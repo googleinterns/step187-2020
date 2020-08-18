@@ -81,7 +81,7 @@ public final class Alert {
     return target.timestampDate.equals(timestampDate) 
         && target.status.equals(status)
         && target.anomalies.equals(anomalies)
-        && target.id.orElse(DEFAULT_ID) == id.orElse(DEFAULT_ID);
+        && target.getAlertId() == getAlertId();
   }
 
   public Entity toEntity() {
