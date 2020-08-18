@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Collections;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedListMultimap;
 
 /** Generate list of alerts by grouping anomalies by their month. */
 public class SimpleAlertGenerator implements AlertGenerator {
@@ -33,7 +33,7 @@ public class SimpleAlertGenerator implements AlertGenerator {
   /** TODO: Make flexible so can not only group anomalies by month but other time span. */
   private static ImmutableList<Alert> groupAnomaliesToAlerts(AnomalyGenerator anomalyGenerator) {
     List<Anomaly> anomaliesList = anomalyGenerator.getAnomalies();
-    ListMultimap<Timestamp, Anomaly> anomalyGroups = ArrayListMultimap.create();
+    ListMultimap<Timestamp, Anomaly> anomalyGroups = LinkedListMultimap.create();
 
     // Group anomalies by month.
     for (Anomaly currAnomaly : anomaliesList) {

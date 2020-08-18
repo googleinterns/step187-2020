@@ -59,7 +59,14 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
     // Find instances where exceed threshold.
     Map<Timestamp, Integer> anomalyPoints = data.entrySet().stream()
         .filter(entry -> entry.getValue() - avg > threshold)
-        .collect(toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+        .collect(toMap(
+            entry -> entry.getKey(), 
+            entry -> entry.getValue(),
+            // In case of conflicting keys, pick value of second key. 
+            // But there should not be conflicting keys at all. 
+            (x, y) -> y,
+            LinkedHashMap::new
+          ));
 
     // Create anomaly objects from those instances.
     return anomalyPoints.keySet().stream()
