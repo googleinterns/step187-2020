@@ -1,52 +1,49 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
+import React, { useState, Fragment } from 'react';
+import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import ConfigForm from './ConfigForm'
+import ControlPanel from './ControlPanel';
+import Footer from './Footer';
+import ConfigList from './ConfigList';
 
 const useStyles = makeStyles((theme) => ({
-  controlPanel: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6),
-    marginBottom: 10,
-  },
-  configForm: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6),
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
   },
 }));
 
-export default function ControlPanel({ addConfig }) {
+export default function AlertConfiguration() {
   const classes = useStyles();
 
-  const [showConfigForm, setShowConfigForm] = React.useState(false);
-  
-  const handleShowConfigForm = () => {
-    setShowConfigForm(!showConfigForm);
-  };
+  const [configs, setConfigs] = useState([]);
 
-  return(
-    <div>
+  function addConfig(config) {
+    setConfigs([config, ...configs]);
+  }
+
+  return (
+    <Fragment>
       <CssBaseline />
-      <div className={classes.controlPanel}>
-        <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-          Alert Configuration
-        </Typography>
-        <Typography variant="h5" align="center" color="textSecondary" paragraph>
-          Create custom configurations for GreySwan alerts
-        </Typography>        
-        <Grid container spacing={2} justify="center">
-          <Grid item>
-            <Button variant="contained" color="primary" onClick={handleShowConfigForm}>Create</Button>
-          </Grid>
-          <Grid item>
-            <Button variant="outlined" color="primary">Delete</Button>
-          </Grid>
-        </Grid>
-      </div>
-      { showConfigForm ? <div className={classes.configForm}><ConfigForm addConfig={addConfig} /></div>: null }
-    </div>
+      {/* TODO: Replace with Catherine's NavBar */}
+      {/* Navigation bar START */}
+      <AppBar position="relative">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" noWrap>
+            Alert Configuration
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      {/* Navigation bar END */}
+
+      <main className={classes.main}>
+        <ControlPanel addConfig={addConfig}/>
+        <ConfigList configs={configs}/>
+      </main>
+      <Footer />
+    </Fragment>
   );
 }

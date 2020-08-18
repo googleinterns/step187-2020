@@ -1,47 +1,49 @@
-import React from 'react';
+import React, { useState, Fragment } from 'react';
+import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Container from '@material-ui/core/Container';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import ControlPanel from './ControlPanel';
+import Footer from './Footer';
+import ConfigList from './ConfigList';
 
 const useStyles = makeStyles((theme) => ({
-  margin: {
-    marginTop: 50,
-  },
-  footer: {
-    padding: theme.spacing(3, 2),
-    marginTop: 'auto',
-    backgroundColor: '#3f50b5',
-    color: "white",
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
   },
 }));
 
-function Copyright() {
-  return (
-    <Typography variant="body2">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        GreySwan
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-export default function Footer() {
+export default function AlertConfiguration() {
   const classes = useStyles();
 
+  const [configs, setConfigs] = useState([]);
+
+  function addConfig(config) {
+    setConfigs([config, ...configs]);
+  }
+
   return (
-    <div className={classes.margin}>
+    <Fragment>
       <CssBaseline />
-      <footer className={classes.footer}>
-        <Container maxWidth="sm" align="center">
-          <Typography variant="body1">STEP 2020</Typography>
-          <Copyright />
-        </Container>
-      </footer>
-    </div>
+      {/* TODO: Replace with Catherine's NavBar */}
+      {/* Navigation bar START */}
+      <AppBar position="relative">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" noWrap>
+            Alert Configuration
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      {/* Navigation bar END */}
+
+      <main className={classes.main}>
+        <ControlPanel addConfig={addConfig}/>
+        <ConfigList configs={configs}/>
+      </main>
+      <Footer />
+    </Fragment>
   );
 }
