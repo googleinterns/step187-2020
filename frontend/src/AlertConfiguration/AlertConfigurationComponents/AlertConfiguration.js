@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/** Alert Configuration Feature
+ * Consists of ControlPanel (a control panel used for creating new configurations and deleting old configurations)
+ * as well as a ConfigList (a list of the user's current configurations)
+*/
 export default function AlertConfiguration() {
   const classes = useStyles();
 

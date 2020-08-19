@@ -17,6 +17,9 @@ const useStyles = makeStyles({
   },
 });
 
+/** A control panel for creating new configurations and deleting old configurations
+ * Takes as input addConfig (a function for creating new configurations)
+ */
 export default function ControlPanel({ addConfig }) {
   const classes = useStyles();
 

@@ -18,41 +18,47 @@ const useStyles = makeStyles({
   },
 });
 
-
+/** Form used to create a single user configuration
+ * Takes as input, addConfig (a function for adding a single configuration to a list of all user configurations)
+ */
 export default function ConfigForm({ addConfig }) {
   const classes = useStyles();
 
   const [config, setConfig] = useState({
     id: '',
     data: '',
-    rData: '',
+    relatedData: '',
   });
 
+  const DEFAULT_ID = 10;
+
   {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
-  const dimensionsMetrics = ["noodle", "spice", "egg", "soup", "instant noodle"];
-  const rDimensionsMetrics = ["noodle", "spice", "egg", "soup", "instant noodle"];
+  const POSSIBLE_DIMENSIONS = ["noodle", "spice", "egg", "soup", "instant noodle"];
+  const RELATED_POSSIBLE_DIMENSIONS = ["noodle", "spice", "egg", "soup", "instant noodle"];
+  const dimensions = POSSIBLE_DIMENSIONS
+  const relatedDimensions = RELATED_POSSIBLE_DIMENSIONS
 
   const dataOptions = (
-    dimensionsMetrics.map((d) => <MenuItem value={d}>{d}</MenuItem>)
+    dimensions.map((d) => <MenuItem value={d}>{d}</MenuItem>)
   );
 
   const rDataOptions = (
-    rDimensionsMetrics.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>)
+    relatedDimensions.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>)
   );
 
   function handleDataChange(event) {
     setConfig({ ...config, data: event.target.value });
   };
 
-  function handleRDataChange(event) {
-    setConfig({ ...config, rData: event.target.value });
+  function handledRelatedDataChange(event) {
+    setConfig({ ...config, relatedData: event.target.value });
   };
 
   function handleSubmit(event) {
     event.preventDefault();
-    if (config.data.trim() && config.rData.trim()) {
-      addConfig({ ...config, id: 10 });
-      setConfig({ ...config, data: "", rData: ""});
+    if (config.data.trim() && config.relatedData.trim()) {
+      addConfig({ ...config, id: DEFAULT_ID });
+      setConfig({ ...config, data: "", relatedData: ""});
     }
   }
 
@@ -92,8 +98,8 @@ export default function ConfigForm({ addConfig }) {
           <Select
             labelId="id"
             id="id"
-            value={config.rData}
-            onChange={handleRDataChange}
+            value={config.relatedData}
+            onChange={handledRelatedDataChange}
             displayEmpty
           >
             <MenuItem value="">

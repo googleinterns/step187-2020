@@ -17,6 +17,9 @@ const useStyles = (theme) => makeStyles({
   },
 });
 
+/** A card that visually represents information about a single configuration
+ * Takes as input, card (an object that stores data for a single configuration) 
+*/
 export default function ConfigCard(card) {
   const classes = useStyles();
 
