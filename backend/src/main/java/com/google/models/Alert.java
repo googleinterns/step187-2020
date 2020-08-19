@@ -20,7 +20,7 @@ import com.google.models.Anomaly;
 import com.google.models.Timestamp;
 import java.util.List;
 import java.util.ArrayList;
-import java.time.format.DateTimeParseException;
+import java.util.OptionalLong;
 
 /** Store alert-related data. */
 public final class Alert {
@@ -32,14 +32,18 @@ public final class Alert {
     UNRESOLVED
   };
 
+  private static final long DEFAULT_ID = 0L;
+
   private final Timestamp timestampDate;
   private final List<Anomaly> anomalies;
+  private final OptionalLong id;
   private StatusType status;
 
-  public Alert(Timestamp timestampDate, List<Anomaly> anomalies, StatusType status) {
+  private Alert(Timestamp timestampDate, List<Anomaly> anomalies, StatusType status, OptionalLong id) {
     this.timestampDate = timestampDate;
     this.anomalies = new ArrayList<>(anomalies);
     this.status = status;
+    this.id = id;
   }
 
   public List<Anomaly> getAnomalies() {
@@ -52,6 +56,10 @@ public final class Alert {
 
   public StatusType getStatus() {
     return status;
+  }
+
+  public long getAlertId() {
+    return id.orElse(DEFAULT_ID);
   }
 
   public void setStatus(StatusType status) {
@@ -80,8 +88,10 @@ public final class Alert {
 
     Alert target = (Alert) o;
 
-    return target.timestampDate.equals(timestampDate) && target.status.equals(status)
-        && target.anomalies.equals(anomalies);
+    return target.timestampDate.equals(timestampDate) 
+        && target.status.equals(status)
+        && target.anomalies.equals(anomalies)
+        && target.getAlertId() == getAlertId();
   }
 
   public Entity toEntity() {
@@ -97,18 +107,34 @@ public final class Alert {
     return alertEntity;
   }
 
+  /** Used when an alert is first created and not converted from an entity. */
+  public static Alert createAlertWithoutId(Timestamp timestampDate, 
+      List<Anomaly> anomalies, StatusType status) {
+    return new Alert(timestampDate, anomalies, status, OptionalLong.empty());
+  }
+
   @SuppressWarnings("unchecked")
   public static Alert createAlertFromEntity(Entity alertEntity) {
-    List<EmbeddedEntity> listEE = (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
+    List<EmbeddedEntity> listEE = 
+        (List<EmbeddedEntity>) alertEntity.getProperty(ANOMALIES_LIST_PROPERTY);
 
     List<Anomaly> listAnomaly = new ArrayList<Anomaly>();
     if (listEE != null) {
-      listEE.forEach(embeddedAnomaly -> listAnomaly.add(Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly)));
+      listEE.forEach(
+        embeddedAnomaly -> listAnomaly.add(
+          Anomaly.createAnomalyFromEmbeddedEntity(embeddedAnomaly)
+        )
+      );
     }
 
-    return new Alert(new Timestamp((String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
-        listAnomaly, 
-        StatusType.valueOf((String) alertEntity.getProperty(STATUS_PROPERTY)));
+    return new Alert(
+      new Timestamp(
+        (String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)
+      ), 
+      listAnomaly, 
+      StatusType.valueOf((String) alertEntity.getProperty(STATUS_PROPERTY)),
+      OptionalLong.of(alertEntity.getKey().getId())
+    );
   }
 
 }

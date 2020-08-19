@@ -70,7 +70,7 @@ public class SimpleAlertGeneratorTest {
     Anomaly expectedAnomalyGroup1 = new Anomaly(
       new Timestamp("2019-07-21"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints1
     );
-    Alert expectedAlertJuly = new Alert(
+    Alert expectedAlertJuly = Alert.createAlertWithoutId(
       new Timestamp("2019-08-01"), 
       Arrays.asList(expectedAnomalyGroup1), 
       Alert.StatusType.UNRESOLVED
@@ -95,7 +95,7 @@ public class SimpleAlertGeneratorTest {
     Anomaly expectedAnomalyGroup2_2 = new Anomaly(
       new Timestamp("2019-08-11"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints3
     );
-    Alert expectedAlertAugust = new Alert(
+    Alert expectedAlertAugust = Alert.createAlertWithoutId(
       new Timestamp("2019-09-01"), 
       Arrays.asList(expectedAnomalyGroup2_1, expectedAnomalyGroup2_2), 
       Alert.StatusType.UNRESOLVED
