@@ -67,6 +67,16 @@ public final class Alert {
   }
 
   @Override
+  public String toString() {
+    StringBuilder str = new StringBuilder("");
+    str.append("Timestamp: " + timestampDate + "\n");
+    str.append("Status: " + status.name() + "\n");
+    str.append("Anomalies: \n");
+    anomalies.forEach(anomaly -> str.append(anomaly.toString()));
+    return str.toString();
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (o == this) {
       return true;

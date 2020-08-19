@@ -1,13 +1,21 @@
 import React from "react";
-import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
 import { shallow, configure} from "enzyme";
 import Adapter from 'enzyme-adapter-react-16';
-import { createShallow } from '@material-ui/core/test-utils';
+import { enableFetchMocks } from 'jest-fetch-mock';
+enableFetchMocks();
 import { PureAlertsContent as AlertsContent } from "./AlertsContent";
 import AlertsList from "./AlertsList";
 
 configure({ adapter: new Adapter() });
+
+const styles = { 
+  root: {
+    flexGrow: 1,
+    maxWidth: 900,
+    margin: 'auto',
+  }
+};
 
 describe("handleTabs", () => {
   const tabLabels = {
@@ -16,17 +24,9 @@ describe("handleTabs", () => {
     ALL: 2,
   };
 
-  const styles = { 
-    root: {
-      flexGrow: 1,
-      maxWidth: 900,
-      margin: 'auto',
-    }
-  };
-
   it("should display the right tabpanel when the tab is changed", () => {
-    const wrapper = shallow(<AlertsContent classes={styles} />);
-    wrapper.setState({ tab: tabLabels.ALL });
+    const wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
+    wrapper.setState({ tab: tabLabels.ALL }); 
 
     act(() => {
       const tabs = wrapper.find('WithStyles(ForwardRef(Tabs))');
@@ -39,22 +39,44 @@ describe("handleTabs", () => {
 });
 
 describe("handleCheckbox", () => {
-  const editUnchecked = [1, 2, 3];
-  const editChecked = [4, 5, 6, 0];
-  const missingChecked = [4, 5, 6];
-  const doubleChecked = [0, 4, 5, 6];
+  // Mock data for the alerts, unresolved and resolved.
+  const fakeAlerts = new Map();
+  fakeAlerts.set(0, {
+    timestamp: "2020-01-20",
+    anomalies: 3,
+  });
+  fakeAlerts.set(1, {
+    timestamp: "2019-09-19",
+    anomalies: 2,
+  });
+  fakeAlerts.set(2, {
+    timestamp: "2019-08-06",
+    anomalies: 2,
+  });
+  const fakeUnresolvedIds = [0, 1];
+  const fakeResolvedIds = [2];
 
-  const styles = { 
-    root: {
-      flexGrow: 1,
-      maxWidth: 900,
-      margin: 'auto',
-    }
-  };
+  // Expected mock data.
+  const editUnchecked = [1];
+  const editChecked = [2, 0];
+  const doubleChecked = [0, 2];
+
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
+    wrapper.setState({ 
+      allAlerts: fakeAlerts,
+      unchecked: fakeUnresolvedIds,
+      checked: fakeResolvedIds,
+    });
+  });
+
+  afterEach(() => {
+    wrapper.unmount();
+  })
 
   it("should maintain the correct unresolved and resolved elements after click", () => {
-    const wrapper = shallow(<AlertsContent classes={styles} />);
-
     act(() => {
       const boxes = wrapper.find(AlertsList).at(0).dive().find('WithStyles(ForwardRef(Checkbox))');
       boxes.at(0).simulate('click');
@@ -65,25 +87,80 @@ describe("handleCheckbox", () => {
   });
 
   it("should throw error if alert is considered both unresolved and resolved", () => {
-   const wrapper = shallow(<AlertsContent classes={styles} />);
     wrapper.setState({ checked: doubleChecked });
-    const boxes = wrapper.find(AlertsList).at(0).dive().find('WithStyles(ForwardRef(Checkbox))');
 
+    const boxes = wrapper.find(AlertsList).at(0).dive().find('WithStyles(ForwardRef(Checkbox))');
     function testCheckbox() { boxes.at(0).simulate('click'); }
 
-    expect(testCheckbox).toThrowError('Misplaced alert')
+    expect(testCheckbox).toThrowError('Misplaced alert');
   });
 
   it("should throw error if alert is neither unresolved nor resolved", () => {
-    const wrapper = shallow(<AlertsContent classes={styles} />);
-    wrapper.setState({ checked: missingChecked });
     const boxes = wrapper.find(AlertsList).at(0).dive().find('WithStyles(ForwardRef(Checkbox))');
     wrapper.setState({ unchecked: editUnchecked });
-
     function testCheckbox() { boxes.at(0).simulate('click'); }
 
     expect(testCheckbox).toThrowError('Misplaced alert')
   });
 
   // TODO: write test for sending POST request to servlet
+});
+
+describe("fetch alerts", () => {
+  // Fake alert JSON data. TODO: add ID property in the future.
+  const fakeAlerts = [{
+    anomalies: [
+      { dataPoints: {"2019-11-24": {value: 79}, }, 
+        dimensionName: "Ramen", metricName: "Interest Over Time",
+        timestampDate: {date: {year: 2019, month: 12, day: 29}}
+      },
+      { dataPoints: {"2019-10-27": {value: 53}, }, 
+        dimensionName: "Ramen", metricName: "Interest Over Time",
+        timestampDate: {date: {year: 2019, month: 12, day: 1}}
+      },
+    ],
+    status: "UNRESOLVED",
+    timestampDate: {date: {year: 2019, month: 12, day: 8}},
+  }, 
+  {
+    anomalies: [
+      { dataPoints: {"2019-10-24": {value: 46}, }, 
+        dimensionName: "Ramen", metricName: "Interest Over Time",
+        timestampDate: {date: {year: 2019, month: 11, day: 27}}
+      },
+    ],
+    status: "RESOLVED",
+    timestampDate: {date: {year: 2019, month: 12, day: 27}},
+  }];
+
+  // Expected allAlerts, unchecked, and checked.
+  const expectedAlerts = new Map();
+  expectedAlerts.set(0, {
+    timestamp: "Sun Dec 08 2019",
+    anomalies: 2,
+  });
+  expectedAlerts.set(1, {
+    timestamp: "Fri Dec 27 2019",
+    anomalies: 1,
+  });
+  const expectedUnchecked = [0];
+  const expectedChecked = [1]
+
+  beforeEach(() => {
+    fetch.resetMocks();
+  });
+
+  it("correctly sets alert information in state based on alert data", async () => {
+    fetch.mockResponseOnce(JSON.stringify(fakeAlerts)); 
+
+    let component;
+    await act(async () => {
+      component = shallow(<AlertsContent classes={styles} />);
+    });
+    
+    component.update()
+    expect(component.state('allAlerts')).toEqual(expectedAlerts);
+    expect(component.state('unchecked')).toEqual(expectedUnchecked);
+    expect(component.state('checked')).toEqual(expectedChecked);
+  });
 });

@@ -8,13 +8,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 class AlertsList extends Component {
   render() {
-    const alerts = this.props.alerts;
-
+    const displayAlerts = this.props.displayAlerts;
+    const allAlerts = this.props.allAlerts;
+    
     return (
       <List className="alerts-list">
-        {/* alert represents the index of the actual alert in allAlerts array. */}
-        {alerts.map((alertIndex, value) => {
-          const labelId = `checkbox-list-label-${alertIndex}`;
+        {displayAlerts.map((alertId, value) => {
+          const labelId = `checkbox-list-label-${alertId}`;
 
           return (
             <ListItem key={value} role={undefined} dense divider>
@@ -22,14 +22,16 @@ class AlertsList extends Component {
                 <Tooltip title="Resolved?" placement="left">
                   <Checkbox
                     edge="start"
-                    checked={this.props.checked.indexOf(alertIndex) !== -1}
+                    checked={this.props.checked.indexOf(alertId) !== -1}
                     tabIndex={-1}
-                    onClick={() => this.props.handleToggle(alertIndex)}
+                    onClick={() => this.props.handleToggle(alertId)}
                     inputProps={{ 'aria-labelledby': labelId }}
                   />
                 </Tooltip>
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`Alert number ${this.props.allAlerts[alertIndex] + 1}`} />
+              <ListItemText id={labelId} 
+                primary={`Alert ${alertId} on ${allAlerts.get(alertId).timestamp} has ${allAlerts.get(alertId).anomalies} anomalies`} 
+              />
             </ListItem>
           );
         })}
