@@ -7,7 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import ControlPanel from './ControlPanel';
 import Footer from './Footer';
 import ConfigList from './ConfigList';
-import NavBar from '../../NavBar'
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -29,7 +28,7 @@ export default function AlertConfiguration() {
   return (
     <Fragment>
       <CssBaseline />
-      <NavBar />
+      {/** TODO: Add Catherine's NavBar during integration*/}
       <main className={classes.main}>
         <ControlPanel addConfig={addConfig}/>
         <ConfigList configs={configs}/>

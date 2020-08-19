@@ -1,49 +1,65 @@
-import React, { useState, Fragment } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React from 'react';
+import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import ControlPanel from './ControlPanel';
-import Footer from './Footer';
-import ConfigList from './ConfigList';
+import ConfigForm from './ConfigForm'
 
-const useStyles = makeStyles((theme) => ({
-  main: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
+const useStyles = makeStyles({
+  controlPanel: {
+    backgroundColor: 'white',
+    padding: 50,
+    width: '100wv'
   },
-}));
+  configForm: {
+    padding: 25,
+  },
+});
 
-export default function AlertConfiguration() {
+export default function ControlPanel({ addConfig }) {
   const classes = useStyles();
 
-  const [configs, setConfigs] = useState([]);
+  const [configForm, setConfigForm] = React.useState(false);
+  
+  const handleConfigForm = () => {
+    setConfigForm(!configForm);
+  };
 
-  function addConfig(config) {
-    setConfigs([config, ...configs]);
-  }
-
-  return (
-    <Fragment>
-      <CssBaseline />
-      {/* TODO: Replace with Catherine's NavBar */}
-      {/* Navigation bar START */}
-      <AppBar position="relative">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Alert Configuration
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      {/* Navigation bar END */}
-
-      <main className={classes.main}>
-        <ControlPanel addConfig={addConfig}/>
-        <ConfigList configs={configs}/>
-      </main>
-      <Footer />
-    </Fragment>
+  return(
+    <div className={classes.controlPanel}>
+      <Container>
+        <Typography
+          component="h1"
+          variant="h2"
+          align="center"
+          color="textPrimary"
+          gutterBottom
+        >
+          Alert Configuration
+        </Typography>
+        <Typography
+          variant="h5"
+          align="center"
+          color="textSecondary"
+          paragraph
+        >
+          Create custom configurations for GreySwan alerts
+        </Typography>        
+        <Grid container spacing={2} justify="center">
+          <Grid item>
+            <Button variant="contained" color="primary" onClick={handleConfigForm}>
+              Create
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button variant="outlined" color="primary">
+              Delete
+            </Button>
+          </Grid>
+        </Grid>
+      </Container>
+        { configForm ? <Container className={classes.configForm}><ConfigForm addConfig={addConfig} /></Container> : null }
+    </div>
   );
 }

@@ -1,49 +1,24 @@
-import React, { useState, Fragment } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React from 'react';
+import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import ControlPanel from './ControlPanel';
-import Footer from './Footer';
-import ConfigList from './ConfigList';
+import ConfigCard from './ConfigCard';
 
-const useStyles = makeStyles((theme) => ({
-  main: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-  },
-}));
+const useStyles = makeStyles({
+  configList: {
+    marginTopBottom: '50',
+  }
+});
 
-export default function AlertConfiguration() {
+export default function ConfigList({ configs }) {
   const classes = useStyles();
 
-  const [configs, setConfigs] = useState([]);
+  const configList = (
+    configs.map((config) => ConfigCard(config))
+  );
 
-  function addConfig(config) {
-    setConfigs([config, ...configs]);
-  }
-
-  return (
-    <Fragment>
-      <CssBaseline />
-      {/* TODO: Replace with Catherine's NavBar */}
-      {/* Navigation bar START */}
-      <AppBar position="relative">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Alert Configuration
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      {/* Navigation bar END */}
-
-      <main className={classes.main}>
-        <ControlPanel addConfig={addConfig}/>
-        <ConfigList configs={configs}/>
-      </main>
-      <Footer />
-    </Fragment>
+  return(
+    <Container className={classes.configList} maxWidth="md">
+      { configList }
+    </Container>
   );
 }

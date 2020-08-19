@@ -1,49 +1,47 @@
-import React, { useState, Fragment } from 'react';
-import AppBar from '@material-ui/core/AppBar';
+import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Container from '@material-ui/core/Container';
+import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import ControlPanel from './ControlPanel';
-import Footer from './Footer';
-import ConfigList from './ConfigList';
 
 const useStyles = makeStyles((theme) => ({
-  main: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
+  margin: {
+    marginTop: 50,
+  },
+  footer: {
+    padding: theme.spacing(3, 2),
+    marginTop: 'auto',
+    backgroundColor: '#3f50b5',
+    color: "white",
   },
 }));
 
-export default function AlertConfiguration() {
+function Copyright() {
+  return (
+    <Typography variant="body2">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        GreySwan
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+export default function Footer() {
   const classes = useStyles();
 
-  const [configs, setConfigs] = useState([]);
-
-  function addConfig(config) {
-    setConfigs([config, ...configs]);
-  }
-
   return (
-    <Fragment>
+    <div className={classes.margin}>
       <CssBaseline />
-      {/* TODO: Replace with Catherine's NavBar */}
-      {/* Navigation bar START */}
-      <AppBar position="relative">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Alert Configuration
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      {/* Navigation bar END */}
-
-      <main className={classes.main}>
-        <ControlPanel addConfig={addConfig}/>
-        <ConfigList configs={configs}/>
-      </main>
-      <Footer />
-    </Fragment>
+      <footer className={classes.footer}>
+        <Container maxWidth="sm" align="center">
+          <Typography variant="body1">STEP 2020</Typography>
+          <Copyright />
+        </Container>
+      </footer>
+    </div>
   );
 }

@@ -1,49 +1,39 @@
-import React, { useState, Fragment } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import ControlPanel from './ControlPanel';
-import Footer from './Footer';
-import ConfigList from './ConfigList';
+import Container from '@material-ui/core/Container';
 
-const useStyles = makeStyles((theme) => ({
-  main: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
+
+const useStyles = (theme) => makeStyles({
+  card: {
+    paddingTopBottom: 50,
+    marginTop: 50,
+    marginBottom: 50,
   },
-}));
+  cardContent: {
+    flexGrow: 1,
+  },
+});
 
-export default function AlertConfiguration() {
+export default function ConfigCard(card) {
   const classes = useStyles();
 
-  const [configs, setConfigs] = useState([]);
-
-  function addConfig(config) {
-    setConfigs([config, ...configs]);
-  }
-
   return (
-    <Fragment>
-      <CssBaseline />
-      {/* TODO: Replace with Catherine's NavBar */}
-      {/* Navigation bar START */}
-      <AppBar position="relative">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Alert Configuration
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      {/* Navigation bar END */}
-
-      <main className={classes.main}>
-        <ControlPanel addConfig={addConfig}/>
-        <ConfigList configs={configs}/>
-      </main>
-      <Footer />
-    </Fragment>
+    <Card className={classes.card} style={{marginTop: "50px", marginBottom: "50px"}}>
+      <CardContent className={classes.cardContent}>
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="h2"
+        >
+          Alert Configuration for "{ card.data }"
+        </Typography>
+        <Typography>
+          When sent an alert regarding "{ card.data }", you will also be sent data for "{ card.rData }".
+         </Typography>
+      </CardContent>
+    </Card>
   );
 }
