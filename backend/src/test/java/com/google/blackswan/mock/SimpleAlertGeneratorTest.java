@@ -68,7 +68,8 @@ public class SimpleAlertGeneratorTest {
       new Timestamp("2019-08-04"), new MetricValue(75)
     );
     Anomaly expectedAnomalyGroup1 = new Anomaly(
-      new Timestamp("2019-07-21"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints1
+      new Timestamp("2019-07-21"), METRIC_NAME, DIMENSION_NAME, 
+      expectedDataPoints1, ImmutableList.of(RelatedData.getDummyRelatedData())
     );
     Alert expectedAlertJuly = new Alert(
       new Timestamp("2019-08-01"), 
@@ -84,7 +85,8 @@ public class SimpleAlertGeneratorTest {
       new Timestamp("2019-08-18"), new MetricValue(67)
     );
     Anomaly expectedAnomalyGroup2_1 = new Anomaly(
-      new Timestamp("2019-08-04"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints2
+      new Timestamp("2019-08-04"), METRIC_NAME, DIMENSION_NAME, 
+      expectedDataPoints2, ImmutableList.of(RelatedData.getDummyRelatedData())
     );
     ImmutableMap<Timestamp, MetricValue> expectedDataPoints3 = ImmutableMap.of(
       new Timestamp("2019-07-28"), new MetricValue(59),
@@ -93,7 +95,8 @@ public class SimpleAlertGeneratorTest {
       new Timestamp("2019-08-18"), new MetricValue(67)
     );
     Anomaly expectedAnomalyGroup2_2 = new Anomaly(
-      new Timestamp("2019-08-11"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints3
+      new Timestamp("2019-08-11"), METRIC_NAME, DIMENSION_NAME, 
+      expectedDataPoints3, ImmutableList.of(RelatedData.getDummyRelatedData())
     );
     Alert expectedAlertAugust = new Alert(
       new Timestamp("2019-09-01"), 

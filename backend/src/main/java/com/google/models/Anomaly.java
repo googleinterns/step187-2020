@@ -15,12 +15,18 @@
 package com.google.models;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import com.google.models.MetricValue;
 import com.google.models.Timestamp;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.time.format.DateTimeParseException;
 
 /** 
@@ -32,6 +38,7 @@ public final class Anomaly {
   public static final String METRIC_NAME_PROPERTY = "metricName";
   public static final String DIMENSION_NAME_PROPERTY = "dimensionName";
   public static final String DATA_POINTS_PROPERTY = "dataPoints";
+  public static final String RELATED_DATA_LIST_PROPERTY = "relatedDataList";
 
   private static final String DUMMY_METRIC_NAME = "Sample metric name";
   private static final String DUMMY_DIMENSION_NAME = "Sample dimension name";
@@ -44,13 +51,15 @@ public final class Anomaly {
   private final String metricName;
   private final String dimensionName;
   private final Map<Timestamp, MetricValue> dataPoints;
+  private final List<RelatedData> relatedDataList;
   
   public Anomaly(Timestamp timestampDate, String metricName, String dimensionName, 
-      Map<Timestamp, MetricValue> dataPoints) {
+      Map<Timestamp, MetricValue> dataPoints, List<RelatedData> relatedDataList) {
     this.timestampDate = timestampDate;
     this.metricName = metricName;
     this.dimensionName = dimensionName;
-    this.dataPoints = new HashMap<Timestamp, MetricValue>(dataPoints);
+    this.dataPoints = ImmutableMap.copyOf(dataPoints);
+    this.relatedDataList = ImmutableList.copyOf(relatedDataList);
   }
 
   public Timestamp getTimestamp() {
@@ -67,6 +76,10 @@ public final class Anomaly {
 
   public Map<Timestamp, MetricValue> getDataPoints() {
     return dataPoints;
+  }
+
+  public List<RelatedData> getRelatedDataList() {
+    return relatedDataList;
   }
 
   @Override
@@ -98,12 +111,14 @@ public final class Anomaly {
     dataPoints.forEach((key, value) -> 
       str.append(key + ": " + value + "\n")
     );
+    str.append("Related Data: \n");
+    relatedDataList.forEach(data -> str.append(data));
     return str.toString();
   }
 
   public static Anomaly getDummyAnomaly() {
     return new Anomaly(Timestamp.getDummyTimestamp(1), DUMMY_METRIC_NAME, DUMMY_DIMENSION_NAME, 
-        DUMMY_DATA_POINTS);
+        DUMMY_DATA_POINTS, ImmutableList.of(RelatedData.getDummyRelatedData()));
   }
 
   public Entity toEntity() {
@@ -118,6 +133,11 @@ public final class Anomaly {
         dataPointsEntity.setProperty(timestamp.toString(), (long) metricValue.getValue()));
     anomalyEntity.setProperty(DATA_POINTS_PROPERTY, dataPointsEntity);
 
+    List<EmbeddedEntity> relatedDataEntityList = relatedDataList.stream()
+        .map(relatedData -> relatedData.toEmbeddedEntity())
+        .collect(ImmutableList.toImmutableList());
+    anomalyEntity.setProperty(RELATED_DATA_LIST_PROPERTY, relatedDataEntityList);
+
     return anomalyEntity;
   }
 
@@ -130,10 +150,11 @@ public final class Anomaly {
     
     return anomalyEmbeddedEntity;
   }
-
+  
+  @SuppressWarnings("unchecked")
   public static Anomaly createAnomalyFromEmbeddedEntity(EmbeddedEntity anomalyEmbeddedEntity) {
     EmbeddedEntity dataPointsEE = (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(DATA_POINTS_PROPERTY);
-    Map<Timestamp, MetricValue> dataPointsMap = new HashMap<>();
+    SortedMap<Timestamp, MetricValue> dataPointsMap = new TreeMap<>();
 
     if (dataPointsEE != null) {
       for (String key : dataPointsEE.getProperties().keySet()) {
@@ -141,10 +162,21 @@ public final class Anomaly {
       }
     }
 
+    List<EmbeddedEntity> relatedDataEE = (List<EmbeddedEntity>) anomalyEmbeddedEntity.getProperty(RELATED_DATA_LIST_PROPERTY);
+
+    if (relatedDataEE == null) {
+      throw new AssertionError("Cannot get property of related data.");
+    }
+
+    List<RelatedData> listRelatedData = relatedDataEE.stream()
+        .map(relatedData -> RelatedData.createFromEmbeddedEntity(relatedData))
+        .collect(ImmutableList.toImmutableList());
+
     return new Anomaly(new Timestamp((String) anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
         (String) anomalyEmbeddedEntity.getProperty(METRIC_NAME_PROPERTY),
         (String) anomalyEmbeddedEntity.getProperty(DIMENSION_NAME_PROPERTY),
-        dataPointsMap);
+        dataPointsMap,
+        listRelatedData);
   }
 
 }
