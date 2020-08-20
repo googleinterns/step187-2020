@@ -39,14 +39,6 @@ export default function ConfigForm({ addConfig }) {
   const dimensions = POSSIBLE_DIMENSIONS
   const relatedDimensions = RELATED_POSSIBLE_DIMENSIONS
 
-  const dataOptions = (
-    dimensions.map((d) => <MenuItem value={d}>{d}</MenuItem>)
-  );
-
-  const rDataOptions = (
-    relatedDimensions.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>)
-  );
-
   function handleDataChange(event) {
     setConfig({ ...config, data: event.target.value });
   };
@@ -87,7 +79,7 @@ export default function ConfigForm({ addConfig }) {
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            { dataOptions }
+            { relatedDimensions.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>) }
           </Select>
           <FormHelperText>Select a metric or dimension.</FormHelperText>
         </FormControl>
@@ -106,7 +98,7 @@ export default function ConfigForm({ addConfig }) {
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            { rDataOptions }
+            { relatedDimensions.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>) }
           </Select>
           <FormHelperText>Select a correlated metric or dimension.</FormHelperText>
         </FormControl>
