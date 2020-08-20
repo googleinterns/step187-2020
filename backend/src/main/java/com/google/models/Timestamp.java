@@ -24,7 +24,7 @@ import java.lang.Math;
  * Wrapper for LocalDate object with day, month, year fields. This class is immutable. 
  * Accepts format in yyyy-MM-dd or yyyy-M-d or yyyy-MM-d or yyyy-M-dd, but prints format in yyyy-MM-dd.
  */
-public final class Timestamp {
+public final class Timestamp implements Comparable<Timestamp> {
   public static final String TIMESTAMP_PROPERTY = "timestamp";
   private static final String EXCEPTION_MESSAGE = "Invalid string format.";
   private static final int NUM_OF_MONTHS = 12;
@@ -84,6 +84,11 @@ public final class Timestamp {
     Timestamp target = (Timestamp) o;
 
     return target.date.equals(date);
+  }
+
+  @Override
+  public int compareTo(Timestamp otherTimestamp) {
+    return this.date.compareTo(otherTimestamp.date);
   }
 
   public static Timestamp getDummyTimestamp(int random) {
