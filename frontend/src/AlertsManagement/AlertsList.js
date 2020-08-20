@@ -30,7 +30,7 @@ class AlertsList extends Component {
                 </Tooltip>
               </ListItemIcon>
               <ListItemText id={labelId} 
-                primary={`Alert ${alertId} on ${allAlerts.get(alertId).timestamp} has ${allAlerts.get(alertId).anomalies} anomalies`} 
+                primary={`Alert on ${allAlerts.get(alertId).timestamp} has ${allAlerts.get(alertId).anomalies} anomalies`} 
               />
             </ListItem>
           );

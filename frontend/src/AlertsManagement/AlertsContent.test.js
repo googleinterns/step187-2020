@@ -61,6 +61,9 @@ describe("handleCheckbox", () => {
   const editChecked = [2, 0];
   const doubleChecked = [0, 2];
 
+  const SERVLET_ROUTE = '/api/v1/alerts-data';
+  const POST_DATA = {"body": "0 RESOLVED", "method": "POST",};
+
   let wrapper;
 
   beforeEach(() => {
@@ -70,10 +73,12 @@ describe("handleCheckbox", () => {
       unchecked: fakeUnresolvedIds,
       checked: fakeResolvedIds,
     });
+    fetch.resetMocks();
   });
 
   afterEach(() => {
     wrapper.unmount();
+    jest.clearAllMocks();
   })
 
   it("should maintain the correct unresolved and resolved elements after click", () => {
@@ -103,11 +108,23 @@ describe("handleCheckbox", () => {
     expect(testCheckbox).toThrowError('Misplaced alert')
   });
 
-  // TODO: write test for sending POST request to servlet
+  it("sends a POST request with the correct data to change alert status", () => {
+    jest.spyOn(global, 'fetch');
+
+    act(() => {
+      const boxes = wrapper.find(AlertsList).at(0).dive().find('WithStyles(ForwardRef(Checkbox))');
+      boxes.at(0).simulate('click');
+    });
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledWith(SERVLET_ROUTE, POST_DATA);
+  });
+
+  // TODO: write tests for dealing with error response from backend (e.g. 404 code).
 });
 
 describe("fetch alerts", () => {
-  // Fake alert JSON data. TODO: add ID property in the future.
+  // Fake alert JSON data.
   const fakeAlerts = [{
     anomalies: [
       { dataPoints: {"2019-11-24": {value: 79}, }, 
@@ -119,6 +136,10 @@ describe("fetch alerts", () => {
         timestampDate: {date: {year: 2019, month: 12, day: 1}}
       },
     ],
+    id: {
+      isPresent: true,
+      value: 1234567890123456,
+    },
     status: "UNRESOLVED",
     timestampDate: {date: {year: 2019, month: 12, day: 8}},
   }, 
@@ -129,22 +150,26 @@ describe("fetch alerts", () => {
         timestampDate: {date: {year: 2019, month: 11, day: 27}}
       },
     ],
+    id: {
+      isPresent: true,
+      value: 1987654321098765,
+    },
     status: "RESOLVED",
     timestampDate: {date: {year: 2019, month: 12, day: 27}},
   }];
 
   // Expected allAlerts, unchecked, and checked.
   const expectedAlerts = new Map();
-  expectedAlerts.set(0, {
+  expectedAlerts.set(1234567890123456, {
     timestamp: "Sun Dec 08 2019",
     anomalies: 2,
   });
-  expectedAlerts.set(1, {
+  expectedAlerts.set(1987654321098765, {
     timestamp: "Fri Dec 27 2019",
     anomalies: 1,
   });
-  const expectedUnchecked = [0];
-  const expectedChecked = [1]
+  const expectedUnchecked = [1234567890123456];
+  const expectedChecked = [1987654321098765]
 
   beforeEach(() => {
     fetch.resetMocks();

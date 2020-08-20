@@ -1,14 +1,16 @@
 package com.google.backend.servlets;
 
+import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.common.collect.ImmutableList; 
@@ -18,8 +20,10 @@ import com.google.gson.JsonParser;
 import com.google.models.Alert;
 import com.google.models.Anomaly;
 import com.google.models.Timestamp;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.ArrayList;
@@ -29,7 +33,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
@@ -42,8 +48,17 @@ public class AlertsDataServletTest {
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
 
-  private static final String CONTENT_TYPE = "application/json;";
-  private static final String ENTITY_KIND = Alert.ALERT_ENTITY_KIND;
+  @Rule // JUnit 4 uses Rules for testing specific messages
+  public ExpectedException thrown = ExpectedException.none();
+
+  private static final String RESPONSE_CONTENT_TYPE = "application/json;";
+  private static final String REQUEST_CONTENT_TYPE = "text/plain;";
+  private static final String REQUEST_CHARSET = "UTF-8";
+  private static final Long FAKE_ID = 1L;
+  private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
+  private static final String ENTITY_NOT_FOUND_ERROR = 
+    "com.google.appengine.api.datastore.EntityNotFoundException: "
+    + "No entity was found matching the key: alert(1)";
 
   private static final AlertsDataServlet alertsDataServlet = new AlertsDataServlet();
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
@@ -63,22 +78,68 @@ public class AlertsDataServletTest {
   }
 
   @Test
-  public void doGet_returnAlertEntitiesAsJson() throws IOException, ServletException {
+  public void doGet_ReturnsAlertEntitiesAsJson() throws IOException, ServletException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
         Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
     datastore.put(newAlert.toEntity());
-
-    // ExpectedAlert needs to be queried from the datastore in order to contain a valid id. 
+    // The new alert needs to be queried from the datastore in order to contain a valid id. 
     Query query = new Query(Alert.ALERT_ENTITY_KIND);
     Alert expectedAlert = Alert.createAlertFromEntity(datastore.prepare(query).asSingleEntity());
 
     alertsDataServlet.doGet(request, response);
 
-    verify(response).setContentType(CONTENT_TYPE);
+    verify(response).setContentType(RESPONSE_CONTENT_TYPE);
     JsonElement expected = JsonParser.parseString(
       new Gson().toJson(ImmutableList.of(expectedAlert)));
     JsonElement result = JsonParser.parseString(stringWriter.getBuffer().toString().trim());
     assertEquals(expected, result);
   }
+
+  @Test
+  public void doPost_ChangesAlertStatusInDatastore() throws IOException, ServletException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+    Entity newAlertEntity = newAlert.toEntity();
+    datastore.put(newAlertEntity);
+    Long id = newAlertEntity.getKey().getId();
+
+    String data = id + " " + Alert.StatusType.RESOLVED;
+    when(request.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
+    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
+    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
+
+
+    alertsDataServlet.doPost(request, response);
+
+    assertEquals(1, datastore.prepare(new Query(Alert.ALERT_ENTITY_KIND)).countEntities(withLimit(10)));
+    Query query = new Query(Alert.ALERT_ENTITY_KIND);
+    Entity resultEntity = datastore.prepare(query).asSingleEntity();
+    assertEquals(Alert.StatusType.RESOLVED.name(), resultEntity.getProperty(Alert.STATUS_PROPERTY).toString());
+  }
+
+  @Test
+  public void doPost_EmptyRequestBody_ThrowsException() throws IOException, ServletException {
+    when(request.getReader()).thenReturn(new BufferedReader(new StringReader("")));
+    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
+    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
+
+    thrown.expect(ServletException.class);
+    thrown.expectMessage(EMPTY_BODY_ERROR);
+    alertsDataServlet.doPost(request, response);
+  }
+
+  @Test
+  public void doPost_EntityNotInDatastore_ThrowsException() throws IOException, ServletException {
+    String data = FAKE_ID + " " + Alert.StatusType.RESOLVED;
+    when(request.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
+    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
+    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
+
+    thrown.expect(ServletException.class);
+    thrown.expectMessage(ENTITY_NOT_FOUND_ERROR);
+    alertsDataServlet.doPost(request, response);    
+  }
+
 }

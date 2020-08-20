@@ -11,7 +11,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import AlertsList from './AlertsList';
 import { convertTimestampToDate } from '../time_utils';
-import { tabLabels, UNRESOLVED_STATUS } from './management_constants';
+import { tabLabels, UNRESOLVED_STATUS, RESOLVED_STATUS } from './management_constants';
 
 const styles = ({
   root: {
@@ -76,16 +76,16 @@ class AlertsContent extends Component {
     let resolvedAlerts = [];
 
     const alertsResponse = await fetch('/api/v1/alerts-data').then(response => response.json());
-    alertsResponse.forEach((alert, value) => {
-      // TODO: replace value with actual alert ID (received from JSON, e.g. alert.id).
-      this.state.allAlerts.set(value, {
+    alertsResponse.forEach((alert) => {
+      const alertId = alert.id.value;
+      this.state.allAlerts.set(alertId, {
         timestamp: convertTimestampToDate(alert.timestampDate), 
         anomalies: alert.anomalies.length
       });
       if (alert.status === UNRESOLVED_STATUS) {
-        unresolvedAlerts.push(value);
+        unresolvedAlerts.push(alertId);
       } else {
-        resolvedAlerts.push(value);
+        resolvedAlerts.push(alertId);
       }
     });
 
@@ -108,14 +108,18 @@ class AlertsContent extends Component {
     const currentUncheckedIndex = unchecked.indexOf(alertId);
     const currentCheckedIndex = checked.indexOf(alertId);
 
+    let changeStatus;
+
     if (currentCheckedIndex === -1 && currentUncheckedIndex !== -1) {
       // Was unresolved and now want to resolve it, second check is a sanity check.
       newChecked.push(alertId);
       newUnchecked.splice(currentUncheckedIndex, 1);
+      changeStatus = RESOLVED_STATUS;
     } else if (currentUncheckedIndex === -1 && currentCheckedIndex !== -1) {
       // Was resolved and now want to unresolve it, second check is a sanity check.
       newUnchecked.push(alertId);
       newChecked.splice(currentCheckedIndex, 1);
+      changeStatus = UNRESOLVED_STATUS;
     } else {
       throw new Error("Misplaced alert: " + this.state.allAlerts[alertId]);
     }
@@ -125,7 +129,10 @@ class AlertsContent extends Component {
       checked: newChecked,
     });
 
-    // TODO: send POST request to servlet with status change of alert with alertId.
+    fetch('/api/v1/alerts-data', {
+      method: 'POST',
+      body: alertId + " " + changeStatus,
+    });
   };
 
   render() {
