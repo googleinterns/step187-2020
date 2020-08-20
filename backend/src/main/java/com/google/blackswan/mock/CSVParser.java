@@ -37,7 +37,6 @@ import com.google.common.collect.ImmutableList;
 
 /** Generate list of anomalies based on data in the csv file using average and threshold. */
 public final class CSVParser {
-  private static final String DATA_FILE_LOCATION = "/sample-ramen-data.csv";
   private static final String EXCEPTION_MESSAGE = "Invalid row format.";
   private static final String COMMA_DELIMITER = ",";
   private static final Logger log = 

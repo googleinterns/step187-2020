@@ -26,7 +26,7 @@ import java.util.SortedMap;
 import java.time.format.DateTimeParseException;
 
 /** 
- * Store related-data and metadata. 
+ * Store related data with data points and meta data.
  * This is an immutable class. 
  */
 public final class RelatedData {
@@ -115,9 +115,9 @@ public final class RelatedData {
 
   public Entity toEntity() {
     Entity relatedDataEntity = new Entity(RELATED_DATA_ENTITY_KIND);
+    relatedDataEntity.setProperty(USERNAME_PROPERTY, username);
     relatedDataEntity.setProperty(METRIC_NAME_PROPERTY, metricName);
     relatedDataEntity.setProperty(DIMENSION_NAME_PROPERTY, dimensionName);
-    relatedDataEntity.setProperty(USERNAME_PROPERTY, username);
 
     EmbeddedEntity dataPointsEntity = new EmbeddedEntity();
     // Datastore stores numbers as long, so to metricValue should be cast to a long. 
