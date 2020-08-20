@@ -17,16 +17,17 @@ const useStyles = makeStyles({
   },
 });
 
-/** A control panel for creating new configurations and deleting old configurations
- * Takes as input addConfig (a function for creating new configurations)
+/** 
+ * ControlPanle is a control panel for creating new configurations and deleting old configurations.
+ * It takes as input addConfig (a function for creating new configurations).
  */
 export default function ControlPanel({ addConfig }) {
   const classes = useStyles();
 
-  const [configForm, setConfigForm] = React.useState(false);
+  const [displayConfigForm, setDisplayConfigForm] = React.useState(false);
   
-  const handleConfigForm = () => {
-    setConfigForm(!configForm);
+  const handleDisplayConfigForm = () => {
+    setDisplayConfigForm(!displayConfigForm);
   };
 
   return(
@@ -62,7 +63,7 @@ export default function ControlPanel({ addConfig }) {
           </Grid>
         </Grid>
       </Container>
-        { configForm ? <Container className={classes.configForm}><ConfigForm addConfig={addConfig} /></Container> : null }
+        { displayConfigForm ? <Container className={classes.configForm}><ConfigForm addConfig={addConfig} /></Container> : null }
     </div>
   );
 }

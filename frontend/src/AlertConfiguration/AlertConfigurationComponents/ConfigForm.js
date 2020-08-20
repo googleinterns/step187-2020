@@ -18,8 +18,9 @@ const useStyles = makeStyles({
   },
 });
 
-/** Form used to create a single user configuration
- * Takes as input, addConfig (a function for adding a single configuration to a list of all user configurations)
+/** 
+ * ConfigForm is a form used to create a single user configuration.
+ * It takes as input, addConfig (a function for adding a single configuration to a list of all user configurations).
  */
 export default function ConfigForm({ addConfig }) {
   const classes = useStyles();
@@ -50,7 +51,7 @@ export default function ConfigForm({ addConfig }) {
     setConfig({ ...config, data: event.target.value });
   };
 
-  function handledRelatedDataChange(event) {
+  function handleRelatedDataChange(event) {
     setConfig({ ...config, relatedData: event.target.value });
   };
 
@@ -99,7 +100,7 @@ export default function ConfigForm({ addConfig }) {
             labelId="id"
             id="id"
             value={config.relatedData}
-            onChange={handledRelatedDataChange}
+            onChange={handleRelatedDataChange}
             displayEmpty
           >
             <MenuItem value="">
@@ -110,7 +111,7 @@ export default function ConfigForm({ addConfig }) {
           <FormHelperText>Select a correlated metric or dimension.</FormHelperText>
         </FormControl>
         <br />
-          <Button onClick={handleSubmit} variant="contained" color="primary">Submit</Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary">Submit</Button>
       </form>
     </div>
   );

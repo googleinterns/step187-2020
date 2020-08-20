@@ -9,8 +9,9 @@ const useStyles = makeStyles({
   }
 });
 
-/** A list that visually represents information about all configurations
- *  Takes as input, configs (an array of all user configurations)
+/** 
+ * ConfigList is a list that visually represents information about all configurations.
+ * It takes as input configs (an array of all user configurations).
  */
 export default function ConfigList({ configs }) {
   const classes = useStyles();
