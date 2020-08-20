@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/v1/alerts-data")
 public class AlertsDataServlet extends HttpServlet {
 
-
   private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
   private static final Logger log = Logger.getLogger(AlertsDataServlet.class.getName());
   
