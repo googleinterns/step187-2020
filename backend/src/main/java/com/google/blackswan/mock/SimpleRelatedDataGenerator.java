@@ -29,7 +29,7 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private static final String TARGET_DIMENSION = "Ramen";
   private static final String RELATED_METRIC = "Interest Over Time";
   private static final String CONFIG_USERNAME = "catyu@";
-  private static final ImmutableMap<String, String> FILE_LOCATION = ImmutableMap.of(
+  private static final ImmutableMap<String, String> FILE_LOCATIONS = ImmutableMap.of(
                                                                       "Udon", "/udon-data.csv",
                                                                       "Pho", "/pho-data.csv"
                                                                     );
@@ -47,7 +47,7 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
 
   /** 
    * Simulates action of querying configs from datastore and adding to 
-   * relatedDataMap. Currently, manually adds these relationship.
+   * relatedDataMap. Currently, manually adds these relationships.
    */
   private void prefillRelatedData() {
     // TODO: Replace with call for querying configs from datastore.
@@ -63,11 +63,9 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     //       does not include logic for metric, should be similar.
     if (relatedDataMap.containsKey(dimensionName)) {
       for (DataInfo relatedTopic : relatedDataMap.get(dimensionName)) {
-        Map<Timestamp, Integer> topicDataPoints = 
-            getTopicDataPoints(relatedTopic.getDimensionName());
-
         Map<Timestamp, MetricValue> dataPointsPlot = 
-            getDataPointsInRange(topicDataPoints, startTime, endTime);
+            getDataPointsInRange(relatedTopic.getDimensionName(), startTime, endTime);
+        
         if (dataPointsPlot.isEmpty()) {
           continue;
         }
@@ -84,16 +82,17 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private ImmutableMap<Timestamp, Integer> getTopicDataPoints(String topic) {
     if (!csvDataCache.containsKey(topic)) {
       csvDataCache.put(topic, CSVParser.parseCSV(
-        SimpleRelatedDataGenerator.class.getResourceAsStream(FILE_LOCATION.get(topic))
+        SimpleRelatedDataGenerator.class.getResourceAsStream(FILE_LOCATIONS.get(topic))
       ));
     }
 
     return ImmutableMap.copyOf(csvDataCache.get(topic));
   }
 
-  private static ImmutableMap<Timestamp, MetricValue> getDataPointsInRange
-      (Map<Timestamp, Integer> topicDataPoints, Timestamp startTime, Timestamp endTime) {
-    
+  private ImmutableMap<Timestamp, MetricValue> getDataPointsInRange
+      (String topic, Timestamp startTime, Timestamp endTime) {
+    Map<Timestamp, Integer> topicDataPoints = getTopicDataPoints(topic);
+
     List<Timestamp> listKeys = new ArrayList<Timestamp>(topicDataPoints.keySet());
     int indexOfStart = listKeys.indexOf(startTime);
     int indexOfEnd = listKeys.indexOf(endTime);

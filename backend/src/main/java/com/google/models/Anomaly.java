@@ -168,6 +168,8 @@ public final class Anomaly {
       throw new AssertionError("Cannot get property of related data.");
     }
 
+    // TODO: take care of case when related data list is empty. 
+
     List<RelatedData> listRelatedData = relatedDataEE.stream()
         .map(relatedData -> RelatedData.createFromEmbeddedEntity(relatedData))
         .collect(ImmutableList.toImmutableList());

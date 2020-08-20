@@ -16,7 +16,7 @@ package com.google.models;
 
 
 /** 
- * Wrapper for a type of data.
+ * Wrapper for meta data of a related data type used in RelatedDataGenerator.
  * This is an immutable class.  
  */
 public final class DataInfo {

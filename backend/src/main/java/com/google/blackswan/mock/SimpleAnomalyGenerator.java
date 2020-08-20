@@ -103,8 +103,6 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
       dataPoints.put(listKeys.get(k), new MetricValue(data.get(listKeys.get(k))));
     }
 
-    // TODO: Use related data generator to get List<RelatedData>.
-    // Pass in metric, dimension name, time range (listkeys.get(firstindex), lastindex).
     List<RelatedData> relatedDataList = SimpleRelatedDataGenerator.createGenerator()
         .getRelatedData(metricName, dimensionName, 
                         listKeys.get(firstDataPointIndex),
