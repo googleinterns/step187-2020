@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 export default function ControlPanel({ addConfig }) {
   const classes = useStyles();
 
-  const [displayConfigForm, setDisplayConfigForm] = React.useState(false);
+  const [displayConfigForm, setDisplayConfigForm] = useState(false);
   
   const handleDisplayConfigForm = () => {
     setDisplayConfigForm(!displayConfigForm);

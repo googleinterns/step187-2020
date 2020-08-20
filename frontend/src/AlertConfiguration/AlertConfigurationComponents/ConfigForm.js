@@ -41,11 +41,11 @@ export default function ConfigForm({ addConfig }) {
 
   function handleDataChange(event) {
     setConfig({ ...config, data: event.target.value });
-  };
+  }
 
   function handleRelatedDataChange(event) {
     setConfig({ ...config, relatedData: event.target.value });
-  };
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
