@@ -12,8 +12,8 @@ ReactDOM.render(
         <Route exact path="/" component={App}>
         </Route>
         {/* Dummy is a temporary component to routing works */}
-        <Route path="/alerts" component={Dummy}>
-          {/* TODO: import AlertsManagement */}
+        <Route path="/alerts" component={Dummy}>	
+          {/* TODO: import AlertsManagement */}	
         </Route>
         <Route path="/configs">
           {/* TODO: import AlertConfiguration */}
