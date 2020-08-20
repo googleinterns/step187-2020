@@ -14,6 +14,8 @@
 
 package com.google.models;
 
+import static java.lang.Math.toIntExact;
+
 /** 
  * Wrapper for a metric value.
  * This is an immutable class. 
@@ -25,6 +27,10 @@ public final class MetricValue {
 
   public MetricValue(int value) {
     this.value = value;
+  }
+
+  public MetricValue(long value) {
+    this.value = toIntExact(value);
   }
 
   public int getValue() {

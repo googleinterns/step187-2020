@@ -21,11 +21,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Logger;
 import com.google.blackswan.mock.*;
-import com.google.models.*;
+import com.google.models.Alert;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import java.util.*;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 /**
 * Servlet to run cron job that generates Alerts to store in the datastore.
@@ -38,19 +41,32 @@ public class CronServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // TODO: Update or clean up log message. 
     log.info("Cron job ran.");
-    
-    // TODO: Logic for cron job to run blackswan mock. (#13)
-    storeAlertInDatastore();
-    
+
+    // Simple logic for cron job, since we only have one set of alerts for now. 
+    clearCurrentAlertsInDatastore(); // Need to clear alerts as we only have one set of alerts now. 
+    storeAlertsInDatastoreSimple();
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
 
-  /** Temporary method for storing dummy alert into datastore. */
-  private void storeAlertInDatastore() {
-    AlertGenerator testAlertGenerator = new DummyAlertGenerator(new DummyAnomalyGenerator());
-    List<Alert> alerts = testAlertGenerator.getAlerts();
+  private void clearCurrentAlertsInDatastore() {
+    Query query = new Query(Alert.ALERT_ENTITY_KIND);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
 
-    DatastoreServiceFactory.getDatastoreService().put(alerts.get(0).toEntity());
+    // Iterate through the entities to delete all alert objects.
+    for (Entity entity : results.asIterable()) {
+      long id = entity.getKey().getId();
+      Key alertEntityKey = KeyFactory.createKey(Alert.ALERT_ENTITY_KIND, id);
+      datastore.delete(alertEntityKey);
+    }
+
   }
 
+  /** Store alerts from simpleGenerator into the datastore. */
+  private void storeAlertsInDatastoreSimple() {
+    AlertGenerator simpleGenerator = new SimpleAlertGenerator(SimpleAnomalyGenerator.createGenerator());
+    simpleGenerator.getAlerts().forEach(alert -> {
+      DatastoreServiceFactory.getDatastoreService().put(alert.toEntity());
+    });
+  }
 }

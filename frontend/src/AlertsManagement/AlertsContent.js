@@ -10,6 +10,8 @@ import AllInboxIcon from '@material-ui/icons/AllInbox';
 import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import AlertsList from './AlertsList';
+import { convertTimestampToDate } from '../time_utils';
+import { tabLabels, UNRESOLVED_STATUS } from './management_constants';
 
 const styles = ({
   root: {
@@ -45,30 +47,20 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-// TODO: fetch alerts from backend and save in arrays.
-// Intended plan for reference: 
-// const allAlerts = [id1, id2, id3] where id'x' is the id of AlertX
-// const alertsMap = {id1: <Alert1>, 2: <Alert2>, 3: <Alert3>, ...};
-// const unresolvedAlerts = [0, 1] which stores the indices of the alerts in allAlerts
-// const resolvedAlerts = [2]
-const allAlerts = [0, 1, 2, 3, 4, 5, 6];
-const unresolvedAlerts = [0, 1, 2, 3];
-const resolvedAlerts = [4, 5, 6]
-
-// TODO: create constants file. ref: https://stackoverflow.com/questions/39036457/react-create-constants-file.
-const tabLabels = {
-  UNRESOLVED: 0,
-  RESOLVED: 1,
-  ALL: 2,
-};
-
+/*
+ * Data structure explanation: (can remove later on)
+ * const allAlerts = {id1: {timestamp, # of anomalies}, id2: {timestamp, # of anomalies}, ...};
+ * const unresolvedAlerts = [id1, id2, ...] which stores the ids of the alerts in allAlerts
+ * const resolvedAlerts = [id3, ...] also stores ids of alerts in allAlerts
+ */
 class AlertsContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tab: tabLabels.UNRESOLVED,
-      unchecked: unresolvedAlerts.slice(), 
-      checked: resolvedAlerts.slice(), 
+      allAlerts: new Map(),
+      unchecked: [], 
+      checked: [], 
     };
   }
 
@@ -78,30 +70,54 @@ class AlertsContent extends Component {
       'aria-controls': `tabpanel-${index}`,
     };
   }
+
+  async componentDidMount() {
+    let unresolvedAlerts = [];
+    let resolvedAlerts = [];
+
+    const alertsResponse = await fetch('/api/v1/alerts-data').then(response => response.json());
+    alertsResponse.forEach((alert, value) => {
+      // TODO: replace value with actual alert ID (received from JSON, e.g. alert.id).
+      this.state.allAlerts.set(value, {
+        timestamp: convertTimestampToDate(alert.timestampDate), 
+        anomalies: alert.anomalies.length
+      });
+      if (alert.status === UNRESOLVED_STATUS) {
+        unresolvedAlerts.push(value);
+      } else {
+        resolvedAlerts.push(value);
+      }
+    });
+
+    this.setState({
+      unchecked: unresolvedAlerts.slice(),
+      checked: resolvedAlerts.slice(),
+    });
+  }
   
   handleTabs = (event, newTab) => {
     this.setState({tab: newTab});
   };
 
-  handleCheckbox = (value) => {
+  handleCheckbox = (alertId) => {
     const unchecked = this.state.unchecked.slice();
     const checked = this.state.checked.slice();
     const newUnchecked = [...unchecked];
     const newChecked = [...checked];
 
-    const currentUncheckedIndex = unchecked.indexOf(value);
-    const currentCheckedIndex = checked.indexOf(value);
+    const currentUncheckedIndex = unchecked.indexOf(alertId);
+    const currentCheckedIndex = checked.indexOf(alertId);
 
     if (currentCheckedIndex === -1 && currentUncheckedIndex !== -1) {
       // Was unresolved and now want to resolve it, second check is a sanity check.
-      newChecked.push(value);
+      newChecked.push(alertId);
       newUnchecked.splice(currentUncheckedIndex, 1);
     } else if (currentUncheckedIndex === -1 && currentCheckedIndex !== -1) {
       // Was resolved and now want to unresolve it, second check is a sanity check.
-      newUnchecked.push(value);
+      newUnchecked.push(alertId);
       newChecked.splice(currentCheckedIndex, 1);
     } else {
-      throw new Error("Misplaced alert: " + allAlerts[value]);
+      throw new Error("Misplaced alert: " + this.state.allAlerts[alertId]);
     }
 
     this.setState({
@@ -109,11 +125,11 @@ class AlertsContent extends Component {
       checked: newChecked,
     });
 
-    // TODO: send POST request to servlet with status change of alert at index = value.
+    // TODO: send POST request to servlet with status change of alert with alertId.
   };
 
   render() {
-    const { tab, unchecked, checked } = this.state;
+    const { tab, allAlerts, unchecked, checked } = this.state;
     const { classes } = this.props;
     return (
       <div className={classes.root}>
@@ -133,24 +149,24 @@ class AlertsContent extends Component {
         </Paper>
         <TabPanel value={tab} index={tabLabels.UNRESOLVED}>
           <AlertsList 
-            allAlerts = {allAlerts}
-            alerts={unchecked} 
+            allAlerts={allAlerts}
+            displayAlerts={unchecked} 
             checked={checked}
             handleToggle={this.handleCheckbox} 
           />
         </TabPanel>
         <TabPanel value={tab} index={tabLabels.RESOLVED}>
           <AlertsList 
-            allAlerts = {allAlerts}
-            alerts={checked} 
+            allAlerts={allAlerts}
+            displayAlerts={checked} 
             checked={checked}
             handleToggle={this.handleCheckbox} 
           />
         </TabPanel>
         <TabPanel value={tab} index={tabLabels.ALL}>
           <AlertsList 
-            allAlerts = {allAlerts}
-            alerts={unchecked.concat(checked)} 
+            allAlerts={allAlerts}
+            displayAlerts={unchecked.concat(checked)} 
             checked={checked}
             handleToggle={this.handleCheckbox}
           />

@@ -114,8 +114,9 @@ public final class Anomaly {
     anomalyEntity.setProperty(DIMENSION_NAME_PROPERTY, dimensionName);
 
     EmbeddedEntity dataPointsEntity = new EmbeddedEntity();
+    // Datastore stores numbers as long, so to metricValue should be cast to a long. 
     dataPoints.forEach((timestamp, metricValue) -> 
-        dataPointsEntity.setProperty(timestamp.toString(), metricValue.getValue()));
+        dataPointsEntity.setProperty(timestamp.toString(), (long) metricValue.getValue()));
     anomalyEntity.setProperty(DATA_POINTS_PROPERTY, dataPointsEntity);
 
     return anomalyEntity;
@@ -127,6 +128,7 @@ public final class Anomaly {
     EmbeddedEntity anomalyEmbeddedEntity = new EmbeddedEntity();
     anomalyEmbeddedEntity.setKey(anomalyEntity.getKey());
     anomalyEmbeddedEntity.setPropertiesFrom(anomalyEntity);
+    
     return anomalyEmbeddedEntity;
   }
 
@@ -136,7 +138,7 @@ public final class Anomaly {
 
     if (dataPointsEE != null) {
       for (String key : dataPointsEE.getProperties().keySet()) {
-        dataPointsMap.put(new Timestamp(key), new MetricValue((int) dataPointsEE.getProperty(key)));
+        dataPointsMap.put(new Timestamp(key), new MetricValue(((long) dataPointsEE.getProperty(key))));
       }
     }
 

@@ -45,6 +45,10 @@ public final class Timestamp implements Comparable<Timestamp> {
     date = LocalDate.parse(dateString, DATE_FORMATTER);
   }
 
+  public Timestamp(LocalDate date) {
+    this.date = date;
+  }
+
   public int getDay() {
     return date.getDayOfMonth();
   }
@@ -89,6 +93,10 @@ public final class Timestamp implements Comparable<Timestamp> {
 
   public static Timestamp getDummyTimestamp(int random) {
     return new Timestamp(1, Math.abs(random) % NUM_OF_MONTHS + 1, 2000);
+  }
+
+  public Timestamp getFirstDayOfNextMonth() {
+    return new Timestamp(LocalDate.of(getYear(), getMonth(), 1).plusMonths(1));
   }
 
 }
