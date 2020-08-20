@@ -8,3 +8,4 @@ export const tabLabels = {
   ALL: 2,
 };
 export const UNRESOLVED_STATUS = "UNRESOLVED";
+export const RESOLVED_STATUS = "RESOLVED";
