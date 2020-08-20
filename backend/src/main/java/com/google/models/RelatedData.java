@@ -26,7 +26,7 @@ import java.util.SortedMap;
 import java.time.format.DateTimeParseException;
 
 /** 
- * Store related data with data points and meta data.
+ * Store related data for anomalies with data points and meta data.
  * This is an immutable class. 
  */
 public final class RelatedData {
