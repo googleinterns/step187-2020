@@ -76,6 +76,8 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
           );        
       }
     }
+    // When neither dimension name nor metric name is found in relatedDataMap, empty
+    // list is returned. 
     return relatedDataList;
   }
 
