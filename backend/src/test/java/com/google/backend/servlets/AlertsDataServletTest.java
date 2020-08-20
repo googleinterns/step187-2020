@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,8 +65,8 @@ public class AlertsDataServletTest {
   @Test
   public void doGet_returnAlertEntitiesAsJson() throws IOException, ServletException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), new ArrayList<Anomaly>(), 
-        Alert.StatusType.UNRESOLVED);
+    Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
     datastore.put(newAlert.toEntity());
 
     // ExpectedAlert needs to be queried from the datastore in order to contain a valid id. 
