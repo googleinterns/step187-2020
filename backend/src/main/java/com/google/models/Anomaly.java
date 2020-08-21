@@ -103,11 +103,11 @@ public final class Anomaly {
 
   @Override
   public String toString() {
-    StringBuilder str = new StringBuilder("");
-    str.append("Timestamp: ").append(timestampDate).append("\n");
-    str.append("Metric Name: ").append(metricName).append("\n");
-    str.append("Dimension Name: ").append(dimensionName).append("\n");
-    str.append("Datapoints: \n");
+    StringBuilder str = new StringBuilder()
+        .append("Timestamp: ").append(timestampDate).append("\n")
+        .append("Metric Name: ").append(metricName).append("\n")
+        .append("Dimension Name: ").append(dimensionName).append("\n")
+        .append("Datapoints: \n");
     dataPoints.forEach((key, value) -> 
       str.append(key).append(": ").append(value).append("\n")
     );

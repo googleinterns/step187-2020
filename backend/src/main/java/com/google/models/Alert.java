@@ -60,10 +60,10 @@ public final class Alert {
 
   @Override
   public String toString() {
-    StringBuilder str = new StringBuilder("");
-    str.append("Timestamp: ").append(timestampDate).append("\n");
-    str.append("Status: ").append(status.name()).append("\n");
-    str.append("Anomalies: \n");
+    StringBuilder str = new StringBuilder()
+        .append("Timestamp: ").append(timestampDate).append("\n")
+        .append("Status: ").append(status.name()).append("\n")
+        .append("Anomalies: \n");
     anomalies.forEach(str::append);
     return str.toString();
   }

@@ -97,11 +97,11 @@ public final class RelatedData {
 
   @Override
   public String toString() {
-    StringBuilder str = new StringBuilder("");
-    str.append(INDENT).append("Username: ").append(username).append("\n");
-    str.append(INDENT).append("Metric Name: ").append(metricName).append("\n");
-    str.append(INDENT).append("Dimension Name: ").append(dimensionName).append("\n");
-    str.append(INDENT).append("Datapoints: \n");
+    StringBuilder str = new StringBuilder()
+        .append(INDENT).append("Username: ").append(username).append("\n")
+        .append(INDENT).append("Metric Name: ").append(metricName).append("\n")
+        .append(INDENT).append("Dimension Name: ").append(dimensionName).append("\n")
+        .append(INDENT).append("Datapoints: \n");
     dataPoints.forEach((key, value) -> 
       str.append(INDENT_DOUBLE).append(key).append(": ").append(value).append("\n")
     );
