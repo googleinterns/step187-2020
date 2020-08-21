@@ -34,8 +34,8 @@ export default function ConfigForm({ addConfig }) {
 
   {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
   const POSSIBLE_DIMENSIONS = ["noodle", "spice", "egg", "soup", "instant noodle"];
-  const dimensions = POSSIBLE_DIMENSIONS
-  const relatedDimensions = POSSIBLE_DIMENSIONS
+  const dimensions = POSSIBLE_DIMENSIONS;
+  const relatedDimensions = POSSIBLE_DIMENSIONS;
 
   function handleDataChange(event) {
     setConfig({ ...config, data: event.target.value });
