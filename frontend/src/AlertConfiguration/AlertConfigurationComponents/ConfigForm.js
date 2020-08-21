@@ -48,8 +48,17 @@ export default function ConfigForm({ addConfig }) {
   function handleSubmit(event) {
     event.preventDefault();
     if (config.data.trim() && config.relatedData.trim()) {
-      addConfig({ ...config, id: DEFAULT_ID });
-      setConfig({ ...config, data: "", relatedData: ""});
+      fetch("/api/v1/configurations", {
+        method: 'POST',
+        headers: {'Content-type': 'application/json'},
+        body: JSON.stringify(config),
+      })
+      .then(response => response.json())
+      .then(res => { 
+        if (res) {
+          console.log("New configuration created.");
+        }
+      });
     }
   }
 
