@@ -6,7 +6,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import uuid from "uuid";
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 
@@ -35,9 +34,8 @@ export default function ConfigForm({ addConfig }) {
 
   {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
   const POSSIBLE_DIMENSIONS = ["noodle", "spice", "egg", "soup", "instant noodle"];
-  const RELATED_POSSIBLE_DIMENSIONS = ["noodle", "spice", "egg", "soup", "instant noodle"];
   const dimensions = POSSIBLE_DIMENSIONS
-  const relatedDimensions = RELATED_POSSIBLE_DIMENSIONS
+  const relatedDimensions = POSSIBLE_DIMENSIONS
 
   function handleDataChange(event) {
     setConfig({ ...config, data: event.target.value });
@@ -79,7 +77,7 @@ export default function ConfigForm({ addConfig }) {
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            { relatedDimensions.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>) }
+            { dimensions.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>) }
           </Select>
           <FormHelperText>Select a metric or dimension.</FormHelperText>
         </FormControl>

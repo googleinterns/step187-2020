@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 });
 
 /** 
- * ControlPanle is a control panel for creating new configurations and deleting old configurations.
+ * ControlPanlel is a control panel for creating new configurations and deleting old configurations.
  * It takes as input addConfig (a function for creating new configurations).
  */
 export default function ControlPanel({ addConfig }) {
