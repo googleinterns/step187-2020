@@ -45,17 +45,10 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     prefillRelatedData(); // TODO: Remove when connected to datastore.
   }
 
-  /** 
-   * Simulates action of querying configs from datastore and adding to 
-   * relatedDataMap. Currently, manually adds these relationships.
-   */
-  private void prefillRelatedData() {
-    // TODO: Replace with call for querying configs from datastore.
-    relatedDataMap.put("Ramen", new DataInfo(RELATED_METRIC, "Udon", CONFIG_USERNAME));
-    relatedDataMap.put("Ramen", new DataInfo(RELATED_METRIC, "Pho", CONFIG_USERNAME));
-    // Multimap looks like this right now: {{Ramen,{Udon, Pho}}, ...}.
+  public static SimpleRelatedDataGenerator createGenerator() {
+    return INSTANCE;
   }
-
+  
   public List<RelatedData> getRelatedData(String metricName, String dimensionName, 
       Timestamp startTime, Timestamp endTime) {
     List<RelatedData> relatedDataList = new ArrayList<RelatedData>();
@@ -81,16 +74,25 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     return relatedDataList;
   }
 
-  private ImmutableMap<Timestamp, Integer> getTopicDataPoints(String topic) {
-    if (!csvDataCache.containsKey(topic)) {
-      csvDataCache.put(topic, CSVParser.parseCSV(
-        SimpleRelatedDataGenerator.class.getResourceAsStream(FILE_LOCATIONS.get(topic))
-      ));
-    }
-
-    return ImmutableMap.copyOf(csvDataCache.get(topic));
+  /** 
+   * Simulates action of querying configs from datastore and adding to 
+   * relatedDataMap. Currently, manually adds these relationships.
+   */
+  private void prefillRelatedData() {
+    // TODO: Replace with call for querying configs from datastore.
+    relatedDataMap.put("Ramen", new DataInfo(RELATED_METRIC, "Udon", CONFIG_USERNAME));
+    relatedDataMap.put("Ramen", new DataInfo(RELATED_METRIC, "Pho", CONFIG_USERNAME));
+    // Multimap looks like this right now: {{Ramen,{Udon, Pho}}, ...}.
   }
 
+  /** TODO: Convert parameter topic to be two variables, metric and dimension. */
+  private ImmutableMap<Timestamp, Integer> getTopicDataPoints(String topic) {
+    return ImmutableMap.copyOf(csvDataCache.computeIfAbsent(topic, key -> CSVParser.parseCSV(
+        SimpleRelatedDataGenerator.class.getResourceAsStream(FILE_LOCATIONS.get(key))
+      )));
+  }
+
+  /** TODO: Convert parameter topic to be two variables, metric and dimension. */
   private ImmutableMap<Timestamp, MetricValue> getDataPointsInRange
       (String topic, Timestamp startTime, Timestamp endTime) {
     Map<Timestamp, Integer> topicDataPoints = getTopicDataPoints(topic);
@@ -114,7 +116,4 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     return ImmutableMap.copyOf(dataPoints);
   }
 
-  public static SimpleRelatedDataGenerator createGenerator() {
-    return INSTANCE;
-  }
 }

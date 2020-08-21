@@ -46,11 +46,11 @@ public final class DataInfo {
 
   @Override
   public String toString() {
-    StringBuilder str = new StringBuilder("");
-    str.append("Metric Name: " + metricName + "\n");
-    str.append("Dimension Name: " + dimensionName + "\n");
-    str.append("Username: " + username + "\n");
-    return str.toString();
+    return new StringBuilder()
+        .append("Metric Name: ").append(metricName).append("\n")
+        .append("Dimension Name: ").append(dimensionName).append("\n")
+        .append("Username: ").append(username).append("\n")
+        .toString();
   }
 
   @Override
