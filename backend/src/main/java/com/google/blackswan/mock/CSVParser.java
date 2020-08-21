@@ -18,29 +18,27 @@ import static java.util.stream.Collectors.toMap;
 
 import com.google.models.*;
 import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.HashMap;
 import java.util.AbstractMap;
 import java.util.logging.Logger;
 import java.text.ParseException;
 import java.time.format.DateTimeParseException;
-import java.lang.Math;
-import java.lang.Object;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.io.ByteArrayInputStream;
 import com.google.common.collect.ImmutableList;
 
-/** Generate list of anomalies based on data in the csv file using average and threshold. */
+/** Parse csv data and return map version of the data. */
 public final class CSVParser {
   private static final String EXCEPTION_MESSAGE = "Invalid row format.";
   private static final String COMMA_DELIMITER = ",";
   private static final Logger log = 
     Logger.getLogger(CSVParser.class.getName());
+  
+  /** No instances. */
+  private CSVParser() {}
 
   public static Map<Timestamp, Integer> parseCSV(InputStream inputSource) {
     Scanner scanner = new Scanner(inputSource);
@@ -54,6 +52,7 @@ public final class CSVParser {
         data.put(entry.getKey(), entry.getValue());
       } catch (ParseException e) {
         // Catch ParseException, but keep scanning.
+        log.warning(e.getMessage());
         continue;
       }
     }
@@ -69,8 +68,7 @@ public final class CSVParser {
       throws ParseException {
     String[] cells = row.split(COMMA_DELIMITER);
     if (cells.length != 2) {
-      log.warning("Cannot parse row: " + row);
-      throw new ParseException(EXCEPTION_MESSAGE, 0);
+      throw new ParseException("Cannot parse row: " + row, 0);
     }
 
     Timestamp date;
@@ -78,21 +76,18 @@ public final class CSVParser {
     try {
       date = new Timestamp(cells[0]);
     } catch (DateTimeParseException e) {
-      log.warning("Cannot create Timestamp object: " + cells[0]);
-      throw new ParseException(EXCEPTION_MESSAGE, 0);
+      throw new ParseException("Cannot create Timestamp object: " + cells[0], 0);
     }
     
     int popularity;
     try {
       popularity = Integer.parseInt(cells[1]);
     } catch (NumberFormatException e) {
-      log.warning("Cannot parse interest over time: " + cells[1]);
-      throw new ParseException(EXCEPTION_MESSAGE, 1);
+      throw new ParseException("Cannot parse interest over time: " + cells[1], 1);
     }
 
     if (popularity < 0 || popularity > 100) {
-      log.warning("Interest over time out of range: " + popularity);
-      throw new ParseException(EXCEPTION_MESSAGE, 1);
+      throw new ParseException("Interest over time out of range: " + popularity, 1);
     }
 
     return new AbstractMap.SimpleEntry<Timestamp, Integer>(date, popularity);

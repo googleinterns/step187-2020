@@ -15,33 +15,29 @@
 package com.google.blackswan.mock;
 
 import com.google.models.*;
-import java.util.List;
-import java.util.ArrayList;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 /** Generate list of hard-coded related data. */
 public class DummyRelatedDataGenerator implements RelatedDataGenerator {
-  private static final int SET_GROUP_SIZE = 1;
+  private static final ImmutableList<RelatedData> relatedDataList = 
+        new ImmutableList.Builder<RelatedData>()
+        .add(RelatedData.getDummyRelatedData())
+        .build();
 
-  private List<RelatedData> relatedDataList;
+  private DummyRelatedDataGenerator() {}
 
-  public DummyRelatedDataGenerator() {
-    relatedDataList = new ArrayList<RelatedData>();
-    for (int k = 0; k < SET_GROUP_SIZE; k++) {
-      relatedDataList.add(RelatedData.getDummyRelatedData());
-    }
+  public static RelatedDataGenerator createGenerator() {
+    return new DummyRelatedDataGenerator();
   }
 
   /** 
    * Input parameters are not used at all, since this implementation generates 
    * dummy related data objects that do not depend on input. 
    */
-  public List<RelatedData> getRelatedData(String metricName, String dimensionName,
-      Timestamp startTime, Timestamp endTime) {
-    return ImmutableList.copyOf(relatedDataList);
+  public ImmutableList<RelatedData> getRelatedData(String metricName, String dimensionName,
+      Timestamp startTimeInclusive, Timestamp endTimeInclusive) {
+    return relatedDataList;
   }
-
-  public static RelatedDataGenerator createGenerator() {
-    return new DummyRelatedDataGenerator();
-  }
+  
 }

@@ -104,15 +104,15 @@ public final class Anomaly {
   @Override
   public String toString() {
     StringBuilder str = new StringBuilder("");
-    str.append("Timestamp: " + timestampDate + "\n");
-    str.append("Metric Name: " + metricName + "\n");
-    str.append("Dimension Name: " + dimensionName + "\n");
+    str.append("Timestamp: ").append(timestampDate).append("\n");
+    str.append("Metric Name: ").append(metricName).append("\n");
+    str.append("Dimension Name: ").append(dimensionName).append("\n");
     str.append("Datapoints: \n");
     dataPoints.forEach((key, value) -> 
-      str.append(key + ": " + value + "\n")
+      str.append(key).append(": ").append(value).append("\n")
     );
     str.append("Related Data: \n");
-    relatedDataList.forEach(data -> str.append(data));
+    relatedDataList.forEach(str::append);
     return str.toString();
   }
 
@@ -134,7 +134,7 @@ public final class Anomaly {
     anomalyEntity.setProperty(DATA_POINTS_PROPERTY, dataPointsEntity);
 
     List<EmbeddedEntity> relatedDataEntityList = relatedDataList.stream()
-        .map(relatedData -> relatedData.toEmbeddedEntity())
+        .map(RelatedData::toEmbeddedEntity)
         .collect(ImmutableList.toImmutableList());
     anomalyEntity.setProperty(RELATED_DATA_LIST_PROPERTY, relatedDataEntityList);
 
@@ -169,7 +169,7 @@ public final class Anomaly {
     }
 
     List<RelatedData> listRelatedData = relatedDataEE.stream()
-        .map(relatedData -> RelatedData.createFromEmbeddedEntity(relatedData))
+        .map(RelatedData::createFromEmbeddedEntity)
         .collect(ImmutableList.toImmutableList());
 
     return new Anomaly(new Timestamp((String) anomalyEmbeddedEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 

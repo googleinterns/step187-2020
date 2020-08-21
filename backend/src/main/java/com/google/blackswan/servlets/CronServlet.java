@@ -29,9 +29,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import java.util.List;
-import java.util.ArrayList;
-import com.google.gson.*;
+
 
 /**
 * Servlet to run cron job that generates Alerts to store in the datastore.

@@ -98,12 +98,12 @@ public final class RelatedData {
   @Override
   public String toString() {
     StringBuilder str = new StringBuilder("");
-    str.append(INDENT + "Username: " + username + "\n");
-    str.append(INDENT + "Metric Name: " + metricName + "\n");
-    str.append(INDENT + "Dimension Name: " + dimensionName + "\n");
-    str.append(INDENT + "Datapoints: \n");
+    str.append(INDENT).append("Username: ").append(username).append("\n");
+    str.append(INDENT).append("Metric Name: ").append(metricName).append("\n");
+    str.append(INDENT).append("Dimension Name: ").append(dimensionName).append("\n");
+    str.append(INDENT).append("Datapoints: \n");
     dataPoints.forEach((key, value) -> 
-      str.append(INDENT_DOUBLE + key + ": " + value + "\n")
+      str.append(INDENT_DOUBLE).append(key).append(": ").append(value).append("\n")
     );
     return str.toString();
   }

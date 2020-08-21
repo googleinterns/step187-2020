@@ -15,13 +15,13 @@
 package com.google.blackswan.mock;
 
 import com.google.models.*;
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 /** 
  * Related Data Generator that generates related data based on time range,
  * metric/dimension and config in Datastore. 
  */
 public interface RelatedDataGenerator {  
-  List<RelatedData> getRelatedData(String metricName, String dimensionName,
-      Timestamp startTime, Timestamp endTime);
+  ImmutableList<RelatedData> getRelatedData(String metricName, String dimensionName,
+      Timestamp startTimeInclusive, Timestamp endTimeInclusive);
 }
