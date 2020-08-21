@@ -18,7 +18,7 @@ const styles = {
 };
 
 describe("handleTabs", () => {
-  it("should display the right tabpanel when the tab is changed", () => {
+  it("should display the correct tabpanel when the tab is changed", () => {
     const wrapper = shallow(<AlertsManagement />, { disableLifecycleMethods: true });
     wrapper.setState({ tab: tabLabels.ALL }); 
     const child = shallow(<AlertsContent classes={styles} tab={wrapper.state('tab')}
