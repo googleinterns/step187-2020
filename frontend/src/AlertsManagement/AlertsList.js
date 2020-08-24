@@ -7,6 +7,16 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Tooltip from '@material-ui/core/Tooltip';
 
+/**
+ * Displays alerts in a list given information passed down as props from AlertsContent.
+ * Clicking on the text for an alert will route the user to a page containing 
+ * more information and data about that alert (AlertInfo component).
+ * Props include:
+ * displayAlerts = an Array of alerts to display
+ * allAlerts = the same Map between alert ID and Object with alert info
+ * checked = the same Array of ids of alerts that are resolved
+ * handleToggle = callback function to handle clicking on the checkbox
+ */
 class AlertsList extends Component {
   render() {
     const displayAlerts = this.props.displayAlerts;
@@ -30,9 +40,9 @@ class AlertsList extends Component {
                   />
                 </Tooltip>
               </ListItemIcon>
-              <Link to={"/alerts/" + alertId} style={{ color: "inherit", textDecoration: "none"}} >
+              <Link to={`/alerts/${alertId}`} style={{ color: "inherit", textDecoration: "none"}} >
                 <ListItemText id={labelId} 
-                  primary={`Alert ${alertId} on ${allAlerts.get(alertId).timestampDate} has 
+                  primary={`Alert on ${allAlerts.get(alertId).timestampDate} has 
                             ${allAlerts.get(alertId).anomalies.length} anomalies`} 
                 />
               </Link>
