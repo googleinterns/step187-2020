@@ -49,7 +49,7 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     return INSTANCE;
   }
   
-  public List<RelatedData> getRelatedData(String metricName, String dimensionName, 
+  public ImmutableList<RelatedData> getRelatedData(String metricName, String dimensionName, 
       Timestamp startTime, Timestamp endTime) {
     List<RelatedData> relatedDataList = new ArrayList<RelatedData>();
     // TODO: Currently only tries to find related data for dimension, ex. Ramen -> Pho, 
@@ -71,7 +71,7 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     }
     // When neither dimension name nor metric name is found in relatedDataMap, empty
     // list is returned. 
-    return relatedDataList;
+    return ImmutableList.copyOf(relatedDataList);
   }
 
   /** 
