@@ -26,7 +26,7 @@ import java.util.SortedMap;
 import java.time.format.DateTimeParseException;
 
 /** 
- * Store related-data and metadata. 
+ * Store related data for anomalies with data points and meta data.
  * This is an immutable class. 
  */
 public final class RelatedData {
@@ -97,17 +97,18 @@ public final class RelatedData {
 
   @Override
   public String toString() {
-    StringBuilder str = new StringBuilder("");
-    str.append(INDENT + "Username: " + username + "\n");
-    str.append(INDENT + "Metric Name: " + metricName + "\n");
-    str.append(INDENT + "Dimension Name: " + dimensionName + "\n");
-    str.append(INDENT + "Datapoints: \n");
+    StringBuilder str = new StringBuilder()
+        .append(INDENT).append("Username: ").append(username).append("\n")
+        .append(INDENT).append("Metric Name: ").append(metricName).append("\n")
+        .append(INDENT).append("Dimension Name: ").append(dimensionName).append("\n")
+        .append(INDENT).append("Datapoints: \n");
     dataPoints.forEach((key, value) -> 
-      str.append(INDENT_DOUBLE + key + ": " + value + "\n")
+      str.append(INDENT_DOUBLE).append(key).append(": ").append(value).append("\n")
     );
     return str.toString();
   }
 
+  /** Return a hard-coded RelatedData used for tests and DummyRelatedDataGenerator. */
   public static RelatedData getDummyRelatedData() {
     return new RelatedData(DUMMY_USERNAME, DUMMY_METRIC_NAME, DUMMY_DIMENSION_NAME, 
         DUMMY_DATA_POINTS);
@@ -115,9 +116,9 @@ public final class RelatedData {
 
   public Entity toEntity() {
     Entity relatedDataEntity = new Entity(RELATED_DATA_ENTITY_KIND);
+    relatedDataEntity.setProperty(USERNAME_PROPERTY, username);
     relatedDataEntity.setProperty(METRIC_NAME_PROPERTY, metricName);
     relatedDataEntity.setProperty(DIMENSION_NAME_PROPERTY, dimensionName);
-    relatedDataEntity.setProperty(USERNAME_PROPERTY, username);
 
     EmbeddedEntity dataPointsEntity = new EmbeddedEntity();
     // Datastore stores numbers as long, so to metricValue should be cast to a long. 
