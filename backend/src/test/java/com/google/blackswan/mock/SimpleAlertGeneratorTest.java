@@ -71,7 +71,7 @@ public class SimpleAlertGeneratorTest {
       new Timestamp("2019-07-21"), METRIC_NAME, DIMENSION_NAME, 
       expectedDataPoints1, ImmutableList.of(RelatedData.getDummyRelatedData())
     );
-    Alert expectedAlertJuly = new Alert(
+    Alert expectedAlertJuly = Alert.createAlertWithoutId(
       new Timestamp("2019-08-01"), 
       Arrays.asList(expectedAnomalyGroup1), 
       Alert.StatusType.UNRESOLVED
@@ -98,7 +98,7 @@ public class SimpleAlertGeneratorTest {
       new Timestamp("2019-08-11"), METRIC_NAME, DIMENSION_NAME, 
       expectedDataPoints3, ImmutableList.of(RelatedData.getDummyRelatedData())
     );
-    Alert expectedAlertAugust = new Alert(
+    Alert expectedAlertAugust = Alert.createAlertWithoutId(
       new Timestamp("2019-09-01"), 
       Arrays.asList(expectedAnomalyGroup2_1, expectedAnomalyGroup2_2), 
       Alert.StatusType.UNRESOLVED

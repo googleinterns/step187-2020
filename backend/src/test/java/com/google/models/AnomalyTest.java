@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableList;
 import java.util.Map;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 /** Contain tests for methods in {@link Anomaly} class. */
 @RunWith(JUnit4.class)
@@ -28,7 +29,7 @@ public final class AnomalyTest {
   private static final int TIMESTAMP_CONSTANT = 1;
   private static final String METRIC_NAME = "Sample metric name";
   private static final String DIMENSION_NAME = "Sample dimension name";
-  private static final Map<Timestamp, MetricValue> DATA_POINTS = ImmutableMap.of( 
+  private static final Map<Timestamp, MetricValue> SORTED_DATA_POINTS = ImmutableMap.of( 
       Timestamp.getDummyTimestamp(1), new MetricValue(1), 
       Timestamp.getDummyTimestamp(2), new MetricValue(2), 
       Timestamp.getDummyTimestamp(3), new MetricValue(3));
@@ -38,7 +39,7 @@ public final class AnomalyTest {
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private static final Anomaly ANOMALY = new Anomaly(
       Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-      METRIC_NAME, DIMENSION_NAME, DATA_POINTS, 
+      METRIC_NAME, DIMENSION_NAME, SORTED_DATA_POINTS, 
       RELATED_DATA_LIST
     );
 
@@ -70,7 +71,7 @@ public final class AnomalyTest {
 
   @Test
   public void getDataPoints_workingGetter() {
-    assertEquals(DATA_POINTS, ANOMALY.getDataPoints());
+    assertEquals(SORTED_DATA_POINTS, ANOMALY.getDataPoints());
   }
 
   @Test
@@ -81,13 +82,13 @@ public final class AnomalyTest {
   @Test
   public void equals_workingComparator() {
     Anomaly sameAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), METRIC_NAME, 
-        DIMENSION_NAME, DATA_POINTS, RELATED_DATA_LIST);
+        DIMENSION_NAME, SORTED_DATA_POINTS, RELATED_DATA_LIST);
     Anomaly diffTimeAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), 
-        METRIC_NAME, DIMENSION_NAME, DATA_POINTS, RELATED_DATA_LIST);
+        METRIC_NAME, DIMENSION_NAME, SORTED_DATA_POINTS, RELATED_DATA_LIST);
     Anomaly diffMetricNameAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-        "diff name", DIMENSION_NAME, DATA_POINTS, RELATED_DATA_LIST);
+        "diff name", DIMENSION_NAME, SORTED_DATA_POINTS, RELATED_DATA_LIST);
     Anomaly diffDimensionNameAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-        METRIC_NAME, "diff name", DATA_POINTS, RELATED_DATA_LIST);
+        METRIC_NAME, "diff name", SORTED_DATA_POINTS, RELATED_DATA_LIST);
     Anomaly diffDataPointsAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
         METRIC_NAME, "diff name", ImmutableMap.of(Timestamp.getDummyTimestamp(2), new MetricValue(5), 
                                                   Timestamp.getDummyTimestamp(1), new MetricValue(2), 
@@ -159,6 +160,19 @@ public final class AnomalyTest {
         Anomaly.createAnomalyFromEmbeddedEntity(anomalyEmbeddedEntity);
 
     assertEquals(ANOMALY, convertedAnomaly);
+  }
+
+  @Test
+  public void createAnomalyFromEmbeddedEntity_dataPointsInChronologicalOrder() {
+    EmbeddedEntity anomalyEmbeddedEntity = ANOMALY.toEmbeddedEntity();
+    Anomaly convertedAnomaly = Anomaly.createAnomalyFromEmbeddedEntity(anomalyEmbeddedEntity);
+
+    // SORTED_DATA_POINTS is already in sorted order by timestamp, so now line below is comparing 
+    // if the SORTED_DATA_POINTS after entity -> anomaly conversion still has the points in order.
+    assertEquals(
+      SORTED_DATA_POINTS.keySet().stream().collect(Collectors.toList()), 
+      convertedAnomaly.getDataPoints().keySet().stream().collect(Collectors.toList())
+    );
   }
 
 
