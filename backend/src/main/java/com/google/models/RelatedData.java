@@ -108,6 +108,7 @@ public final class RelatedData {
     return str.toString();
   }
 
+  /** Return a hard-coded RelatedData used for tests and DummyRelatedDataGenerator. */
   public static RelatedData getDummyRelatedData() {
     return new RelatedData(DUMMY_USERNAME, DUMMY_METRIC_NAME, DUMMY_DIMENSION_NAME, 
         DUMMY_DATA_POINTS);
