@@ -103,7 +103,7 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
       dataPoints.put(listKeys.get(k), new MetricValue(data.get(listKeys.get(k))));
     }
 
-    List<RelatedData> relatedDataList = DummyRelatedDataGenerator.createGenerator()
+    List<RelatedData> relatedDataList = SimpleRelatedDataGenerator.createGenerator()
         .getRelatedData(metricName, dimensionName, 
                         listKeys.get(firstDataPointIndex),
                         listKeys.get(lastDataPointIndex));
