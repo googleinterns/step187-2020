@@ -22,7 +22,6 @@ class AlertInfo extends Component {
     this.state = {
       alert: null,
     }
-    this.handleStatusChange = this.handleStatusChange.bind(this);
   }
 
   async componentDidMount() {
@@ -31,12 +30,10 @@ class AlertInfo extends Component {
     if (result === null) {
       throw new Error("Could not find alert.")
     }
-    this.setState({
-      alert: result,
-    });
+    this.setState({ alert: result });
   }
 
-  handleStatusChange() {
+  handleStatusChange = () => {
     const { alert } = this.state;
     
     const changeStatus = alert.status === UNRESOLVED_STATUS ? RESOLVED_STATUS : UNRESOLVED_STATUS;

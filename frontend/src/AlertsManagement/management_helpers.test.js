@@ -3,7 +3,6 @@ import { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks();
 
 describe("getAlertsData", () => {
-  // Fake alert JSON data. 
   const fakeAlerts = [{
     anomalies: [
       { dataPoints: {"2019-11-24": {value: 79}, }, 
@@ -37,7 +36,6 @@ describe("getAlertsData", () => {
     timestampDate: {date: {year: 2019, month: 12, day: 27}},
   }];
 
-  // Expected allAlerts, unchecked, and checked.
   const expectedAlerts = new Map();
   expectedAlerts.set(1234567890123456, {
     timestampDate: "Sun Dec 08 2019",
@@ -76,7 +74,6 @@ describe("getAlertsData", () => {
 });
 
 describe("getAlertVisData", () => {
-  // Fake alert JSON data. 
   const fakeAlert = {
     anomalies: [
       { dataPoints: {"2019-10-24": {value: 46}, }, 
@@ -92,7 +89,6 @@ describe("getAlertVisData", () => {
     timestampDate: {date: {year: 2019, month: 12, day: 27}},
   };
 
-  // Expected result alert.
   const expectedAlert = {
     id: 1987654321098765, 
     timestampDate: "Fri Dec 27 2019",
