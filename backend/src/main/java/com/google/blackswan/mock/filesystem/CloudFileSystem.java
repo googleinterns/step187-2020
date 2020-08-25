@@ -42,28 +42,25 @@ public class CloudFileSystem implements FileSystem {
   private Storage storage;
 
   public static CloudFileSystem createSystem() {
-    return new CloudFileSystem();
-  }
-
-  public static CloudFileSystem createSystemForTest(Storage storage) {
-    return new CloudFileSystem(storage);
-  }
-
-  /** No instance. */
-  private CloudFileSystem() {
     // If key.json cannot be used to generate key, use Application Default
     // Credentials to try to get CloudStorage service.
+    Storage cloudStorage;
     try {
-      storage = StorageOptions.newBuilder()
+      cloudStorage = StorageOptions.newBuilder()
         .setProjectId(PROJECT_ID)
         .setCredentials(getCredentialsWithKey()).build()
         .getDefaultInstance().getService();
     } catch (IOException e) {
       log.warning(EXCEPTION_MESSAGE);
-      storage = StorageOptions.newBuilder()
+      cloudStorage = StorageOptions.newBuilder()
         .setProjectId(PROJECT_ID).build()
         .getDefaultInstance().getService();
     }
+    return new CloudFileSystem(cloudStorage);
+  }
+
+  public static CloudFileSystem createSystemForTest(Storage storage) {
+    return new CloudFileSystem(storage);
   }
 
   private CloudFileSystem(Storage storage) {
@@ -79,8 +76,9 @@ public class CloudFileSystem implements FileSystem {
     return Channels.newInputStream(requestedFileBlob.reader());
   }
 
-  private GoogleCredentials getCredentialsWithKey() throws IOException {
-    File credentialsPath = new File(getClass().getClassLoader().getResource(KEY_LOCATION).getFile());
+  private static GoogleCredentials getCredentialsWithKey() throws IOException {
+    File credentialsPath = new File(CloudFileSystem.class
+        .getClassLoader().getResource(KEY_LOCATION).getFile());
     if (!credentialsPath.exists()) {
       throw new IOException(EXCEPTION_MESSAGE);
     }

@@ -22,20 +22,15 @@ public class LocalFileSystem implements FileSystem {
   private final ClassLoader classLoader;
 
   public static LocalFileSystem createSystem() {
-    return new LocalFileSystem();
+    return new LocalFileSystem(LocalFileSystem.class.getClassLoader());
   }
 
   public static LocalFileSystem createSystemForTest(ClassLoader mock) {
     return new LocalFileSystem(mock);
   }
 
-  /** No instance. */
-  private LocalFileSystem() {
-    classLoader = LocalFileSystem.class.getClassLoader();
-  }
-
-  private LocalFileSystem(ClassLoader mock) {
-    this.classLoader = mock;
+  private LocalFileSystem(ClassLoader loader) {
+    this.classLoader = loader;
   }
 
   public InputStream getDataAsStream(String metric, String dimension) {
