@@ -77,7 +77,7 @@ public final class DataInfoTest {
   }
 
   @Test
-  public void equals_workingComparatorAndHashCodeBetParentAndChild() {
+  public void equals_workingComparatorAndHashCodeParentAndChild() {
     DataInfoUser diffUsername
         = DataInfoUser.of(METRIC_NAME, DIMENSION_NAME, "leodson@");
     DataInfoUser diffMetric
