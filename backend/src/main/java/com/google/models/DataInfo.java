@@ -19,7 +19,7 @@ package com.google.models;
  * Wrapper for meta data of a related data type used in RelatedDataGenerator.
  * This is an immutable class.  
  */
-public class DataInfo {
+public final class DataInfo {
   
   private final String metricName;
   private final String dimensionName;

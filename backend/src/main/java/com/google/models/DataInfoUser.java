@@ -20,7 +20,7 @@ package com.google.models;
  * requests the data.
  * This is an immutable class.  
  */
-public class DataInfoUser {
+public final class DataInfoUser {
   
   private final String username;
   private final DataInfo dataInfo;
