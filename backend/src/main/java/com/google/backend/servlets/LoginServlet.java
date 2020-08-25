@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,14 +35,12 @@ public class LoginServlet extends HttpServlet {
   
   private static final String REDIRECT_URL = "/";
   private static final String ENTITY_KIND = "User";
-  private static final String LOGGEDIN_STATUS = "logged in";
-  private static final String LOGGEDOUT_STATUS = "stranger";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // TODO: change to JSON format for better structure.
-    response.setContentType("text/html;");
+    response.setContentType("application/json;");
     UserService userService = UserServiceFactory.getUserService();
+    JsonObject json = new JsonObject();
 
     if (userService.isUserLoggedIn()) {
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -59,13 +59,15 @@ public class LoginServlet extends HttpServlet {
         datastore.put(newUser);
       }
 
-      String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
-      response.getWriter().println(LOGGEDIN_STATUS);
-      response.getWriter().println(logoutUrl);
+      String logoutURL = userService.createLogoutURL(REDIRECT_URL);
+      json.addProperty("isLoggedIn", true);
+      json.addProperty("logURL", logoutURL);
+      response.getWriter().println(json);
     } else {
-      String loginUrl = userService.createLoginURL(REDIRECT_URL);    
-      response.getWriter().println(LOGGEDOUT_STATUS);
-      response.getWriter().println(loginUrl);
+      String loginURL = userService.createLoginURL(REDIRECT_URL); 
+      json.addProperty("isLoggedIn", false);
+      json.addProperty("logURL", loginURL);
+      response.getWriter().println(json);
     }
   }
 }

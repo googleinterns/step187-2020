@@ -13,19 +13,20 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,12 +43,10 @@ public class LoginServletTest {
   @Mock HttpServletResponse response;
 
   private static final String AUTH_DOMAIN_NAME = "localhost";
-  private static final String CONTENT_TYPE = "text/html;";
+  private static final String CONTENT_TYPE = "application/json;";
   private static final String PROPERTY_NAME = "email";
   private static final String TEST_EMAIL = "test@example.com";
   private static final String REDIRECT_URL = "/";
-  private static final String LOGIN_STATUS = "logged in";
-  private static final String LOGOUT_STATUS = "stranger";
   private static final String ENTITY_KIND = "User";
   private static final int MAX_QUERIES = 1000;
 
@@ -72,13 +71,15 @@ public class LoginServletTest {
   public void doGet_loggedIn_sendLoginStatusAndUrlResponse() throws IOException, ServletException {
     helper.setEnvIsLoggedIn(true).setEnvEmail(TEST_EMAIL).setEnvAuthDomain(AUTH_DOMAIN_NAME);
     UserService userService = UserServiceFactory.getUserService();
-    String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
-    String loginResponse = LOGIN_STATUS + "\n" + logoutUrl;
+    String logoutURL = userService.createLogoutURL(REDIRECT_URL);
+    JsonObject expectedResponse = new JsonObject();
+    expectedResponse.addProperty("isLoggedIn", true);
+    expectedResponse.addProperty("logURL", logoutURL);
 
     loginServlet.doGet(request, response);
 
     verify(response).setContentType(CONTENT_TYPE);
-    assertEquals(loginResponse, stringWriter.getBuffer().toString().trim());
+    assertEquals(expectedResponse, JsonParser.parseString(stringWriter.getBuffer().toString().trim()));
   }
 
   @Test
@@ -120,12 +121,14 @@ public class LoginServletTest {
   public void doGet_loggedOut_sendLogoutStatusAndUrlResponse() throws IOException, ServletException {
     helper.setEnvIsLoggedIn(false);
     UserService userService = UserServiceFactory.getUserService();
-    String loginUrl = userService.createLoginURL(REDIRECT_URL);
-    String logoutResponse = LOGOUT_STATUS + "\n" + loginUrl;
+    String loginURL = userService.createLoginURL(REDIRECT_URL);
+    JsonObject expectedResponse = new JsonObject();
+    expectedResponse.addProperty("isLoggedIn", false);
+    expectedResponse.addProperty("logURL", loginURL);
 
     loginServlet.doGet(request, response);
 
     verify(response).setContentType(CONTENT_TYPE);
-    assertEquals(logoutResponse, stringWriter.getBuffer().toString().trim());
+    assertEquals(expectedResponse, JsonParser.parseString(stringWriter.getBuffer().toString().trim()));
   }
 }

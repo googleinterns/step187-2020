@@ -27,7 +27,7 @@ class AlertsManagement extends Component {
 
   async componentDidMount() {
     var results = await getAlertsData();
-    if (results.length != 3) {
+    if (results.length !== 3) {
       throw new Error("getAlertsData() did not return the correct alerts data.")
     }
     this.setState({

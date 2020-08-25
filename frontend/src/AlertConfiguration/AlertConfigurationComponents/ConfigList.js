@@ -20,7 +20,7 @@ export default function ConfigList({ configs }) {
     configs.map((config) => ConfigCard(config))
   );
 
-  return(
+  return (
     <Container className={classes.configList} maxWidth="md">
       { configList }
     </Container>
