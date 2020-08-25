@@ -4,6 +4,8 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import App from './App';
 import Dummy from './Dummy';
 import './index.css';
+/**Remove afterwards */
+import AlertConfiguration from './AlertConfiguration/AlertConfigurationComponents/AlertConfiguration'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,7 +17,7 @@ ReactDOM.render(
         <Route path="/alerts" component={Dummy}>
           {/* TODO: import AlertsManagement */}
         </Route>
-        <Route path="/configs">
+        <Route path="/configs" component={AlertConfiguration}>
           {/* TODO: import AlertConfiguration */}
         </Route>
       </Switch>

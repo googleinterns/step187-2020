@@ -45,12 +45,23 @@ export default function ConfigForm({ addConfig }) {
     setConfig({ ...config, relatedData: event.target.value });
   }
 
+  /**
   function handleSubmit(event) {
     event.preventDefault();
     if (config.data.trim() && config.relatedData.trim()) {
       addConfig({ ...config, id: DEFAULT_ID });
       setConfig({ ...config, data: "", relatedData: ""});
     }
+  }
+  */
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    fetch("/api/v1/configurations", {
+      method: 'POST',
+      headers: {'Content-type': 'application/json'},
+      body: JSON.stringify(config),
+    });
   }
 
   { /* TODO: create IDs */ }

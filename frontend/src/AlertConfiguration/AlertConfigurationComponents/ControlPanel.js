@@ -52,7 +52,7 @@ export default function ControlPanel({ addConfig }) {
         </Typography>        
         <Grid container spacing={2} justify="center">
           <Grid item>
-            <Button variant="contained" color="primary" onClick={handleConfigForm}>
+            <Button variant="contained" color="primary" onClick={handleDisplayConfigForm}>
               Create
             </Button>
           </Grid>
