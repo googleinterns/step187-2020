@@ -28,9 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** 
- * Servlet that returns data for requested specific Alert.
- */
+/** Servlet that returns data for requested specific Alert. */
 @WebServlet("/api/v1/alert-visualization")
 public class AlertVisualizationServlet extends HttpServlet {
 
