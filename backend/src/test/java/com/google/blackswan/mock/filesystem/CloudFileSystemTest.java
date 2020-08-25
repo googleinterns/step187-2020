@@ -48,7 +48,7 @@ public class CloudFileSystemTest {
   public void testGetDataAsStream_correctFileName() {
     CloudFileSystem system = CloudFileSystem.createSystemForTest(MOCK_STORAGE);
 
-    // Try finally block is necessary or else test will exist before reaching verify
+    // Try finally block is necessary or else test will exit before reaching verify
     // statement. 
     try {
       system.getDataAsStream(METRIC, DIMENSION);

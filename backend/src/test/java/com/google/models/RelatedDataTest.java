@@ -150,7 +150,7 @@ public final class RelatedDataTest {
   }
 
   @Test
-  public void createAnomalyFromEmbeddedEntity_correctEmbeddedEntityConversion() {
+  public void createFromEmbeddedEntity_correctEmbeddedEntityConversion() {
     EmbeddedEntity relatedDataEmbeddedEntity = RELATED_DATA.toEmbeddedEntity();
     RelatedData converted = 
         RelatedData.createFromEmbeddedEntity(relatedDataEmbeddedEntity);

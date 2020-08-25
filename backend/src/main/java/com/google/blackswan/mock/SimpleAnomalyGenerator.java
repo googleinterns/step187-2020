@@ -45,7 +45,10 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
 
   private final ImmutableList<Anomaly> anomalies;
 
-  /** TODO: Let generators take in parameters of dimension/metric names. */
+  /** 
+   * TODO: Let generators take in parameters of dimension/metric names. 
+   *       Can also take in THRESHOLD and NUM_POINTS as parameters.
+   */
   public static SimpleAnomalyGenerator createGenerator() {
     return new SimpleAnomalyGenerator(
       // For [push] to git, always use LocalFileSystem, as CloudFileSystem will fail 
