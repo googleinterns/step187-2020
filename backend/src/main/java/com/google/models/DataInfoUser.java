@@ -20,9 +20,10 @@ package com.google.models;
  * requests the data.
  * This is an immutable class.  
  */
-public class DataInfoUser extends DataInfo {
+public class DataInfoUser {
   
   private final String username;
+  private final DataInfo dataInfo;
 
   public static DataInfoUser of(String metricName, 
       String dimensionName, String username) {
@@ -31,8 +32,20 @@ public class DataInfoUser extends DataInfo {
 
   /** TODO: Change username to List to deal with multiple users requesting same related data. */
   public DataInfoUser(String metricName, String dimensionName, String username) {
-    super(metricName, dimensionName);
+    this.dataInfo = DataInfo.of(metricName, dimensionName);
     this.username = username;
+  }
+
+  public DataInfo getDataInfo() {
+    return dataInfo;
+  }
+
+  public String getMetricName() {
+    return dataInfo.getMetricName();
+  }
+
+  public String getDimensionName() {
+    return dataInfo.getDimensionName();
   }
 
   public String getUsername() {
@@ -40,15 +53,8 @@ public class DataInfoUser extends DataInfo {
   }
 
   @Override
-  public int hashCode() {
-    // Use parent's toString() in order for DataInfoUser and DataInfo 
-    // with same metric and dimension to have same hash code.  
-    return super.toString().hashCode();
-  }
-
-  @Override
   public String toString() {
-    return new StringBuilder(super.toString())
+    return new StringBuilder(dataInfo.toString())
         .append("Username: ").append(username).append("\n")
         .toString();
   }

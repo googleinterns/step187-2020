@@ -34,11 +34,6 @@ public final class DataInfoTest {
   }
 
   @Test
-  public void getUsername_workingGetter() {
-    assertEquals(USER_NAME, DATA_INFO_USER.getUsername());
-  }
-
-  @Test
   public void equals_workingComparatorAndHashCode() {
     DataInfo same = DataInfo.of(METRIC_NAME, DIMENSION_NAME);
     DataInfo diffMetric = DataInfo.of("Country", DIMENSION_NAME);
@@ -56,43 +51,16 @@ public final class DataInfoTest {
     assertFalse(DATA_INFO.equals(null));
   }
 
-  @Test
-  public void equals_workingComparatorAndHashCodeChild() {
-    DataInfoUser diffUsername
-        = DataInfoUser.of(METRIC_NAME, DIMENSION_NAME, "leodson@");
-    DataInfoUser diffMetric
-        = DataInfoUser.of("Country", DIMENSION_NAME, USER_NAME);
+  /** Tests for DataInfoUser class below. */
 
-    // DataInfoUser with different username but same metric and
-    // dimension should be equal. (Could change depending on future
-    // implementation for multiple user per DataInfoUser.)
-    assertEquals(DATA_INFO_USER, DATA_INFO_USER);
-    assertEquals(DATA_INFO_USER.hashCode(), DATA_INFO_USER.hashCode());
-    assertEquals(DATA_INFO_USER, diffUsername);
-    assertEquals(diffUsername, DATA_INFO_USER);
-    assertEquals(DATA_INFO_USER.hashCode(), diffUsername.hashCode());
-    assertFalse(DATA_INFO_USER.equals(diffMetric));
-    assertFalse(diffMetric.equals(DATA_INFO_USER));
-    assertFalse(DATA_INFO_USER.hashCode() == diffMetric.hashCode());
+  @Test
+  public void getUsername_workingGetter() {
+    assertEquals(USER_NAME, DATA_INFO_USER.getUsername());
   }
 
   @Test
-  public void equals_workingComparatorAndHashCodeParentAndChild() {
-    DataInfoUser diffUsername
-        = DataInfoUser.of(METRIC_NAME, DIMENSION_NAME, "leodson@");
-    DataInfoUser diffMetric
-        = DataInfoUser.of("Country", DIMENSION_NAME, USER_NAME);
-
-    // DataInfoUser with same metric and dimension should equal
-    // DataInfo with same metric and dimension.
-    assertEquals(DATA_INFO, DATA_INFO_USER);
-    assertEquals(DATA_INFO_USER, DATA_INFO);
-    assertEquals(DATA_INFO.hashCode(), DATA_INFO_USER.hashCode());
-    assertEquals(DATA_INFO, diffUsername);
-    assertEquals(DATA_INFO.hashCode(), diffUsername.hashCode());
-    assertFalse(DATA_INFO.equals(diffMetric));
-    assertFalse(diffMetric.equals(DATA_INFO));
-    assertFalse(DATA_INFO.hashCode() == diffMetric.hashCode());
+  public void getDataInfo_workingGetter() {
+    assertEquals(DATA_INFO, DATA_INFO_USER.getDataInfo());
   }
 
 }

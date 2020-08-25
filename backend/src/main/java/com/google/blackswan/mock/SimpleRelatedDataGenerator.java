@@ -57,7 +57,7 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     if (relatedDataMap.containsKey(dataInfo)) {
       for (DataInfoUser relatedTopic : relatedDataMap.get(dataInfo)) {
         Map<Timestamp, MetricValue> dataPointsPlot = 
-            getDataPointsInRange(relatedTopic, startTime, endTime);
+            getDataPointsInRange(relatedTopic.getDataInfo(), startTime, endTime);
         
         if (dataPointsPlot.isEmpty()) {
           continue;
