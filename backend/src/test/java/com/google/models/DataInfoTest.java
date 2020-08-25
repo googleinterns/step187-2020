@@ -19,9 +19,9 @@ public final class DataInfoTest {
   private static final String DIMENSION_NAME = "Ramen";
   private static final String USER_NAME = "catyu@";
   private static final DataInfo DATA_INFO 
-      = new DataInfo(METRIC_NAME, DIMENSION_NAME);
+      = DataInfo.of(METRIC_NAME, DIMENSION_NAME);
   private static final DataInfoUser DATA_INFO_USER 
-      = new DataInfoUser(METRIC_NAME, DIMENSION_NAME, USER_NAME);
+      = DataInfoUser.of(METRIC_NAME, DIMENSION_NAME, USER_NAME);
 
   @Test
   public void getMetricName_workingGetter() {
@@ -40,9 +40,9 @@ public final class DataInfoTest {
 
   @Test
   public void equals_workingComparatorAndHashCode() {
-    DataInfo same = new DataInfo(METRIC_NAME, DIMENSION_NAME);
-    DataInfo diffMetric = new DataInfo("Country", DIMENSION_NAME);
-    DataInfo diffDimension = new DataInfo(METRIC_NAME, "Udon");
+    DataInfo same = DataInfo.of(METRIC_NAME, DIMENSION_NAME);
+    DataInfo diffMetric = DataInfo.of("Country", DIMENSION_NAME);
+    DataInfo diffDimension = DataInfo.of(METRIC_NAME, "Udon");
 
     assertEquals(DATA_INFO, DATA_INFO);
     assertEquals(DATA_INFO.hashCode(), DATA_INFO.hashCode());
@@ -59,9 +59,9 @@ public final class DataInfoTest {
   @Test
   public void equals_workingComparatorAndHashCodeChild() {
     DataInfoUser diffUsername
-        = new DataInfoUser(METRIC_NAME, DIMENSION_NAME, "leodson@");
+        = DataInfoUser.of(METRIC_NAME, DIMENSION_NAME, "leodson@");
     DataInfoUser diffMetric
-        = new DataInfoUser("Country", DIMENSION_NAME, USER_NAME);
+        = DataInfoUser.of("Country", DIMENSION_NAME, USER_NAME);
 
     // DataInfoUser with different username but same metric and
     // dimension should be equal. (Could change depending on future
@@ -79,9 +79,9 @@ public final class DataInfoTest {
   @Test
   public void equals_workingComparatorAndHashCodeBetParentAndChild() {
     DataInfoUser diffUsername
-        = new DataInfoUser(METRIC_NAME, DIMENSION_NAME, "leodson@");
+        = DataInfoUser.of(METRIC_NAME, DIMENSION_NAME, "leodson@");
     DataInfoUser diffMetric
-        = new DataInfoUser("Country", DIMENSION_NAME, USER_NAME);
+        = DataInfoUser.of("Country", DIMENSION_NAME, USER_NAME);
 
     // DataInfoUser with same metric and dimension should equal
     // DataInfo with same metric and dimension.
