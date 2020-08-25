@@ -55,7 +55,7 @@ export default function ConfigForm({ addConfig }) {
     }
   }
 
-  // TODO: create IDs
+  // TODO: Create IDs.
   return (
     <div>
       <Tooltip title="If an anomaly is detected regarding the data, the related data will automatically accompany the generated alert.">

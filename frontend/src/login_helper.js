@@ -5,6 +5,6 @@ export async function getLoginStatus() {
   const loginResponse = await fetch("/api/v1/login").then(response => response.json());
   return ({
     isLoggedIn: loginResponse.isLoggedIn,
-    logURL: loginResponse.logURL,
+    logURL: loginResponse.logURL
   });
 }

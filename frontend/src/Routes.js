@@ -5,9 +5,7 @@ import AlertsManagement from './AlertsManagement/AlertsManagement';
 import App from './App';
 import ErrorPage from './ErrorPage';
 
-/**
- * Create routes for application.
- */
+/** Create routes for application. */
 export default function Routes() {
   return (
     <Switch>

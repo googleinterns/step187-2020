@@ -18,6 +18,6 @@ describe("fetch login status", () => {
 
     const results = await getLoginStatus();
 
-    expect(results).toMatchObject(fakeStatus)
+    expect(results).toMatchObject(fakeStatus);
   });
 });
