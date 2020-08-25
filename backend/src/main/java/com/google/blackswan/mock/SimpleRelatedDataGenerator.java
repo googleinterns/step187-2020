@@ -27,17 +27,18 @@ import com.google.common.collect.ArrayListMultimap;
 /** Singleton class to generate related data for a given anomaly. */
 public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private static final String TARGET_DIMENSION = "Ramen";
-  private static final String RELATED_METRIC = "Interest Over Time";
+  private static final String INTEREST_METRIC = "Interest Over Time";
   private static final String CONFIG_USERNAME = "catyu@";
-  private static final ImmutableMap<String, String> FILE_LOCATIONS = ImmutableMap.of(
-                                                                      "Udon", "/udon-data.csv",
-                                                                      "Pho", "/pho-data.csv"
-                                                                    );
+  // TODO: Replace FILE_LOCATIONS with a shared class that has map of metric to file names.
+  private static final ImmutableMap<DataInfo, String> FILE_LOCATIONS = ImmutableMap.of(
+                                                        DataInfo.of(INTEREST_METRIC, "Udon"), "/udon-data.csv",
+                                                        DataInfo.of(INTEREST_METRIC, "Pho"), "/pho-data.csv"
+                                                      );
 
   private static final SimpleRelatedDataGenerator INSTANCE = new SimpleRelatedDataGenerator();
 
-  private Multimap<String, DataInfo> relatedDataMap;
-  private Map<String, Map<Timestamp, Integer>> csvDataCache;
+  private Multimap<DataInfo, DataInfoUser> relatedDataMap;
+  private Map<DataInfo, Map<Timestamp, Integer>> csvDataCache;
 
   private SimpleRelatedDataGenerator() {
     relatedDataMap = ArrayListMultimap.create();
@@ -49,15 +50,14 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     return INSTANCE;
   }
   
-  public ImmutableList<RelatedData> getRelatedData(String metricName, String dimensionName, 
+  public ImmutableList<RelatedData> getRelatedData(DataInfo dataInfo, 
       Timestamp startTime, Timestamp endTime) {
     List<RelatedData> relatedDataList = new ArrayList<RelatedData>();
-    // TODO: Currently only tries to find related data for dimension, ex. Ramen -> Pho, 
-    //       does not include logic for metric, should be similar.
-    if (relatedDataMap.containsKey(dimensionName)) {
-      for (DataInfo relatedTopic : relatedDataMap.get(dimensionName)) {
+    
+    if (relatedDataMap.containsKey(dataInfo)) {
+      for (DataInfoUser relatedTopic : relatedDataMap.get(dataInfo)) {
         Map<Timestamp, MetricValue> dataPointsPlot = 
-            getDataPointsInRange(relatedTopic.getDimensionName(), startTime, endTime);
+            getDataPointsInRange(relatedTopic, startTime, endTime);
         
         if (dataPointsPlot.isEmpty()) {
           continue;
@@ -66,11 +66,11 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
         relatedDataList.add(new RelatedData(
             relatedTopic.getUsername(), relatedTopic.getMetricName(), 
             relatedTopic.getDimensionName(), dataPointsPlot)
-          );        
+          );
       }
     }
-    // When neither dimension name nor metric name is found in relatedDataMap, empty
-    // list is returned. 
+    // When dataInfo is not found in relatedDataMap, empty list
+    // is returned. 
     return ImmutableList.copyOf(relatedDataList);
   }
 
@@ -80,21 +80,23 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
    */
   private void prefillRelatedData() {
     // TODO: Replace with call for querying configs from datastore.
-    relatedDataMap.put("Ramen", new DataInfo(RELATED_METRIC, "Udon", CONFIG_USERNAME));
-    relatedDataMap.put("Ramen", new DataInfo(RELATED_METRIC, "Pho", CONFIG_USERNAME));
-    // Multimap looks like this right now: {{Ramen,{Udon, Pho}}, ...}.
+    // TODO: Deal with capitalizations when querying config from datastore.
+    relatedDataMap.put(DataInfo.of(INTEREST_METRIC, "Ramen"), 
+        DataInfoUser.of(INTEREST_METRIC, "Udon", CONFIG_USERNAME));
+    relatedDataMap.put(DataInfo.of(INTEREST_METRIC, "Ramen"), 
+        DataInfoUser.of(INTEREST_METRIC, "Pho", CONFIG_USERNAME));
+    // Multimap looks like this right now: 
+    // {{Interest Level, Ramen},{{Interest Level, Udon}, {Interest Level, Pho}}}, ...}.
   }
 
-  /** TODO: Convert parameter topic to be two variables, metric and dimension. */
-  private ImmutableMap<Timestamp, Integer> getTopicDataPoints(String topic) {
+  private ImmutableMap<Timestamp, Integer> getTopicDataPoints(DataInfo topic) {
     return ImmutableMap.copyOf(csvDataCache.computeIfAbsent(topic, key -> CSVParser.parseCSV(
         SimpleRelatedDataGenerator.class.getResourceAsStream(FILE_LOCATIONS.get(key))
       )));
   }
 
-  /** TODO: Convert parameter topic to be two variables, metric and dimension. */
   private ImmutableMap<Timestamp, MetricValue> getDataPointsInRange
-      (String topic, Timestamp startTime, Timestamp endTime) {
+      (DataInfo topic, Timestamp startTime, Timestamp endTime) {
     Map<Timestamp, Integer> topicDataPoints = getTopicDataPoints(topic);
 
     List<Timestamp> listKeys = new ArrayList<Timestamp>(topicDataPoints.keySet());
