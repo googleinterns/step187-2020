@@ -26,7 +26,6 @@ import com.google.gson.Gson;
 import com.google.models.Alert;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -46,6 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AlertsDataServlet extends HttpServlet {
 
   private static final int MAX_LIMIT = 1000;
+  private static final int DEFAULT_ALERTS_LIMIT = 5;
   private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
   private static final Logger log = Logger.getLogger(AlertsDataServlet.class.getName());
   
@@ -59,7 +59,14 @@ public class AlertsDataServlet extends HttpServlet {
       .map(Alert::createAlertFromEntity).collect(Collectors.toList());
     Collections.sort(alertList, Collections.reverseOrder());
 
-    int limit = Integer.parseInt(request.getParameter("limit"));
+    int limit;
+    try {
+      limit = Integer.parseInt(request.getParameter("limit"));
+    } catch (NumberFormatException e) {
+      log.warning("Received " + request.getParameter("limit") + " instead of an integer.");
+      limit = DEFAULT_ALERTS_LIMIT;
+    }
+
     try {
       alertList = alertList.subList(0, limit);
     } catch (IndexOutOfBoundsException e) {
