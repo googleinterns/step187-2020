@@ -45,3 +45,14 @@ To stop a cron job:
 ```
 gcloud app deploy cron.yaml
 ```
+
+## Running Python code
+To install dependencies:
+```
+
+pip3 install -r requirements.txt
+```
+To run server locally (make sure you're in `python` directory):
+```
+python3.7 main.py
+```

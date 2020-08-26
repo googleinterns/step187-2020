@@ -5,6 +5,9 @@ dispatch:
    service: backend
  - url: "*/blackswan/*"
    service: backend
+# Route python url 
+ - url: "*/python/*"
+   service: python
 # Route all other urls to the React.js frontend
  - url: "*/*"
    service: default
