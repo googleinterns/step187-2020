@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import ManagementRoutes from './ManagementRoutes';
 import NavBar from '../NavBar';
-import { tabLabels } from './management_constants';
-import { getAlertsData } from './management_helpers';
 import './AlertsManagement.css';
 
 /**
