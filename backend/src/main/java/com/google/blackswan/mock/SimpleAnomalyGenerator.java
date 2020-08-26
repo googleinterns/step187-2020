@@ -104,13 +104,14 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
     }
 
     List<RelatedData> relatedDataList = SimpleRelatedDataGenerator.createGenerator()
-        .getRelatedData(metricName, dimensionName, 
+        .getRelatedData(DataInfo.of(metricName, dimensionName), 
                         listKeys.get(firstDataPointIndex),
                         listKeys.get(lastDataPointIndex));
 
     return new Anomaly(time, metricName, dimensionName, dataPoints, relatedDataList);
   }
 
+  /** TODO: Specify which metric and dimension data to look at for this generator. */
   public static SimpleAnomalyGenerator createGenerator() {
     return new SimpleAnomalyGenerator(
       SimpleAnomalyGenerator.class.getResourceAsStream(DATA_FILE_LOCATION),

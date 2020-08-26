@@ -22,6 +22,6 @@ import com.google.common.collect.ImmutableList;
  * metric/dimension and config in Datastore. 
  */
 public interface RelatedDataGenerator {  
-  ImmutableList<RelatedData> getRelatedData(String metricName, String dimensionName,
+  ImmutableList<RelatedData> getRelatedData(DataInfo dataInfo,
       Timestamp startTimeInclusive, Timestamp endTimeInclusive);
 }
