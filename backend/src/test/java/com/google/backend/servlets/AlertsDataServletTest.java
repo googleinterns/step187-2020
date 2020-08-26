@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -56,9 +58,6 @@ public class AlertsDataServletTest {
   private static final String REQUEST_CHARSET = "UTF-8";
   private static final Long FAKE_ID = 1L;
   private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
-  private static final String ENTITY_NOT_FOUND_ERROR = 
-    "com.google.appengine.api.datastore.EntityNotFoundException: "
-    + "No entity was found matching the key: alert(1)";
 
   private static final AlertsDataServlet alertsDataServlet = new AlertsDataServlet();
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
@@ -138,7 +137,7 @@ public class AlertsDataServletTest {
     when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
 
     thrown.expect(ServletException.class);
-    thrown.expectMessage(ENTITY_NOT_FOUND_ERROR);
+    thrown.expectCause(IsInstanceOf.<Throwable>instanceOf(EntityNotFoundException.class));
     alertsDataServlet.doPost(request, response);    
   }
 

@@ -44,8 +44,8 @@ export async function getAlertsData() {
  * Fetch specific alert data from the Datastore given alert ID.
  * Returns an Object with processed alert data.
  */
-export async function getAlertVisData(requestId) {
-  const alert = await fetch('/api/v1/alert-visualization?id=' + requestId)
+export async function getSpecificAlertData(alertId) {
+  const alert = await fetch('/api/v1/alert-visualization?id=' + alertId)
     .then(response => response.json());
   let editedAnomalies = alert.anomalies.slice();
   for (let key in alert.anomalies) {

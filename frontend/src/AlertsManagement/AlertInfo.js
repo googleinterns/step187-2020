@@ -9,7 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { getAlertVisData } from './management_helpers';
+import { getSpecificAlertData } from './management_helpers';
 import { UNRESOLVED_STATUS, RESOLVED_STATUS } from './management_constants';
 
 /**
@@ -25,10 +25,10 @@ class AlertInfo extends Component {
   }
 
   async componentDidMount() {
-    var result = await getAlertVisData(this.props.match.params.alertId);
+    var result = await getSpecificAlertData(this.props.match.params.alertId);
     // TODO: instead of checking for null response, check for 404 status code.
     if (result === null) {
-      throw new Error("Could not find alert.")
+      throw new Error("Could not find alert with id " + this.props.match.params.alertId);
     }
     this.setState({ alert: result });
   }
@@ -36,14 +36,14 @@ class AlertInfo extends Component {
   handleStatusChange = () => {
     const { alert } = this.state;
     
-    const changeStatus = alert.status === UNRESOLVED_STATUS ? RESOLVED_STATUS : UNRESOLVED_STATUS;
+    const statusToChangeTo = alert.status === UNRESOLVED_STATUS ? RESOLVED_STATUS : UNRESOLVED_STATUS;
     fetch('/api/v1/alerts-data', {
       method: 'POST',
-      body: alert.id + " " + changeStatus,
+      body: alert.id + " " + statusToChangeTo,
     });
 
     const newAlert = Object.assign({}, alert);
-    newAlert.status = changeStatus;
+    newAlert.status = statusToChangeTo;
     this.setState({ alert: newAlert });
   }
   

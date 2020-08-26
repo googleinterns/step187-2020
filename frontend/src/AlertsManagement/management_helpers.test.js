@@ -1,4 +1,4 @@
-import { getAlertsData, getAlertVisData } from "./management_helpers";
+import { getAlertsData, getSpecificAlertData } from "./management_helpers";
 import { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks();
 
@@ -73,7 +73,7 @@ describe("getAlertsData", () => {
   });
 });
 
-describe("getAlertVisData", () => {
+describe("getSpecificAlertData", () => {
   const fakeAlert = {
     anomalies: [
       { dataPoints: {"2019-10-24": {value: 46}, }, 
@@ -109,7 +109,7 @@ describe("getAlertVisData", () => {
   it("returns the requested alert information", async () => {
     fetch.mockResponseOnce(JSON.stringify(fakeAlert)); 
 
-    const result = await getAlertVisData(REQUEST_ID);
+    const result = await getSpecificAlertData(REQUEST_ID);
 
     expect(result).toMatchObject(expectedAlert);
   });
