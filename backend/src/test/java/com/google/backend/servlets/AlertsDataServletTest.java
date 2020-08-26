@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -59,6 +60,8 @@ public class AlertsDataServletTest {
   private static final String ENTITY_NOT_FOUND_ERROR = 
     "com.google.appengine.api.datastore.EntityNotFoundException: "
     + "No entity was found matching the key: alert(1)";
+  private static final String LIMIT_PARAM = "limit";
+  private static final String FAKE_LIMIT = "2";
 
   private static final AlertsDataServlet alertsDataServlet = new AlertsDataServlet();
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
@@ -78,7 +81,7 @@ public class AlertsDataServletTest {
   }
 
   @Test
-  public void doGet_ReturnsAlertEntitiesAsJson() throws IOException, ServletException {
+  public void doGet_ReturnsAlertEntityAsJson() throws IOException, ServletException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
         Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
@@ -86,12 +89,49 @@ public class AlertsDataServletTest {
     // The new alert needs to be queried from the datastore in order to contain a valid id. 
     Query query = new Query(Alert.ALERT_ENTITY_KIND);
     Alert expectedAlert = Alert.createAlertFromEntity(datastore.prepare(query).asSingleEntity());
+    
+    when(request.getParameter(LIMIT_PARAM)).thenReturn(FAKE_LIMIT);
 
     alertsDataServlet.doGet(request, response);
 
     verify(response).setContentType(RESPONSE_CONTENT_TYPE);
     JsonElement expected = JsonParser.parseString(
       new Gson().toJson(ImmutableList.of(expectedAlert)));
+    JsonElement result = JsonParser.parseString(stringWriter.getBuffer().toString().trim());
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void doGet_ReturnsLimitedNumberOfSortedAlerts() throws IOException, ServletException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Alert newAlertOne = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+    Alert newAlertTwo = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(1), 
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+    Alert newAlertThree = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(2), 
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+    datastore.put(newAlertOne.toEntity());
+    datastore.put(newAlertTwo.toEntity());
+    datastore.put(newAlertThree.toEntity());
+
+    when(request.getParameter(LIMIT_PARAM)).thenReturn(FAKE_LIMIT);
+
+
+    List<Alert> expectedAlerts = new ArrayList<>();
+    try {
+      Entity alertThree = datastore.get(KeyFactory.createKey(Alert.ALERT_ENTITY_KIND, 3));
+      Entity alertTwo = datastore.get(KeyFactory.createKey(Alert.ALERT_ENTITY_KIND, 2));    
+      expectedAlerts.add(Alert.createAlertFromEntity(alertThree));
+      expectedAlerts.add(Alert.createAlertFromEntity(alertTwo));
+    } catch (EntityNotFoundException e) {
+      throw new ServletException(e);
+    }
+
+    alertsDataServlet.doGet(request, response);
+
+    verify(response).setContentType(RESPONSE_CONTENT_TYPE);
+    JsonElement expected = JsonParser.parseString(
+      new Gson().toJson(ImmutableList.copyOf(expectedAlerts)));
     JsonElement result = JsonParser.parseString(stringWriter.getBuffer().toString().trim());
     assertEquals(expected, result);
   }
