@@ -64,3 +64,4 @@ export async function getSpecificAlertData(alertId) {
     status: alert.status,
   });
 }
+

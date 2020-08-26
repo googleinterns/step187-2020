@@ -81,6 +81,7 @@ class AlertsContent extends Component {
     if (results.length !== 3) {
       throw new Error("getAlertsData() did not return the correct alerts data.")
     }
+
     this.setState({
       allAlerts: new Map(results[0]),
       unchecked: results[1].slice(),
