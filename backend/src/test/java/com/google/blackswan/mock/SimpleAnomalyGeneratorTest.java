@@ -69,7 +69,8 @@ public class SimpleAnomalyGeneratorTest {
       new Timestamp("2019-08-18"), new MetricValue(67)
     );
     Anomaly expectedAnomaly = new Anomaly(
-      new Timestamp("2019-08-11"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints
+      new Timestamp("2019-08-11"), METRIC_NAME, DIMENSION_NAME, 
+      expectedDataPoints, ImmutableList.of(RelatedData.getDummyRelatedData())
     );
 
     List<Anomaly> generatedAnomalies = anomalyGenerator.getAnomalies();
@@ -93,7 +94,8 @@ public class SimpleAnomalyGeneratorTest {
       new Timestamp("2019-08-18"), new MetricValue(67)
     );
     Anomaly expectedAnomaly1 = new Anomaly(
-      new Timestamp("2019-08-04"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints1
+      new Timestamp("2019-08-04"), METRIC_NAME, DIMENSION_NAME, 
+      expectedDataPoints1, ImmutableList.of(RelatedData.getDummyRelatedData())
     );
     ImmutableMap<Timestamp, MetricValue> expectedDataPoints2 = ImmutableMap.of(
       new Timestamp("2019-07-28"), new MetricValue(59),
@@ -102,7 +104,8 @@ public class SimpleAnomalyGeneratorTest {
       new Timestamp("2019-08-18"), new MetricValue(67)
     );
     Anomaly expectedAnomaly2 = new Anomaly(
-      new Timestamp("2019-08-11"), METRIC_NAME, DIMENSION_NAME, expectedDataPoints2
+      new Timestamp("2019-08-11"), METRIC_NAME, DIMENSION_NAME, 
+      expectedDataPoints2, ImmutableList.of(RelatedData.getDummyRelatedData())
     );
 
     List<Anomaly> generatedAnomalies = anomalyGenerator.getAnomalies();

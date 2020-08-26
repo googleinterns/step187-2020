@@ -18,7 +18,9 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import java.util.Map;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 /** Contain tests for methods in {@link Anomaly} class. */
@@ -31,11 +33,14 @@ public final class AnomalyTest {
       Timestamp.getDummyTimestamp(1), new MetricValue(1), 
       Timestamp.getDummyTimestamp(2), new MetricValue(2), 
       Timestamp.getDummyTimestamp(3), new MetricValue(3));
+  private static final ImmutableList<RelatedData> RELATED_DATA_LIST = 
+      ImmutableList.of(RelatedData.getDummyRelatedData());
   private static final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
   private static final Anomaly ANOMALY = new Anomaly(
       Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-      METRIC_NAME, DIMENSION_NAME, SORTED_DATA_POINTS
+      METRIC_NAME, DIMENSION_NAME, SORTED_DATA_POINTS, 
+      RELATED_DATA_LIST
     );
 
   @Before
@@ -70,21 +75,25 @@ public final class AnomalyTest {
   }
 
   @Test
+  public void getRelatedDataList_workingGetter() {
+    assertEquals(ANOMALY.getRelatedDataList(), RELATED_DATA_LIST);
+  }
+
+  @Test
   public void equals_workingComparator() {
     Anomaly sameAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), METRIC_NAME, 
-        DIMENSION_NAME, SORTED_DATA_POINTS);
+        DIMENSION_NAME, SORTED_DATA_POINTS, RELATED_DATA_LIST);
     Anomaly diffTimeAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), 
-        METRIC_NAME, DIMENSION_NAME, SORTED_DATA_POINTS);
+        METRIC_NAME, DIMENSION_NAME, SORTED_DATA_POINTS, RELATED_DATA_LIST);
     Anomaly diffMetricNameAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-        "diff name", DIMENSION_NAME, SORTED_DATA_POINTS);
+        "diff name", DIMENSION_NAME, SORTED_DATA_POINTS, RELATED_DATA_LIST);
     Anomaly diffDimensionNameAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-        METRIC_NAME, "diff name", SORTED_DATA_POINTS);
+        METRIC_NAME, "diff name", SORTED_DATA_POINTS, RELATED_DATA_LIST);
     Anomaly diffDataPointsAnomaly = new Anomaly(Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-      METRIC_NAME, "diff name", 
-      ImmutableMap.of(Timestamp.getDummyTimestamp(2), new MetricValue(5), 
-                      Timestamp.getDummyTimestamp(1), new MetricValue(2), 
-                      Timestamp.getDummyTimestamp(3), new MetricValue(3))
-    );
+        METRIC_NAME, "diff name", ImmutableMap.of(Timestamp.getDummyTimestamp(2), new MetricValue(5), 
+                                                  Timestamp.getDummyTimestamp(1), new MetricValue(2), 
+                                                  Timestamp.getDummyTimestamp(3), new MetricValue(3)),
+        RELATED_DATA_LIST);
 
     assertTrue(ANOMALY.equals(ANOMALY));
     assertTrue(ANOMALY.equals(sameAnomaly));
@@ -105,6 +114,8 @@ public final class AnomalyTest {
     ANOMALY.getDataPoints().forEach((key, value) -> 
       expectedStr.append(key + ": " + value + "\n")
     );
+    expectedStr.append("Related Data: \n");
+    ANOMALY.getRelatedDataList().forEach(data -> expectedStr.append(data));
 
     assertEquals(expectedStr.toString(), ANOMALY.toString());
   }
