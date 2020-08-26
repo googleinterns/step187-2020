@@ -13,6 +13,7 @@ const useStyles = makeStyles({
   },
 });
 
+/** This component is rendered when a 404 error is received. */
 export default function ErrorPage() {
   const classes = useStyles();
   return (

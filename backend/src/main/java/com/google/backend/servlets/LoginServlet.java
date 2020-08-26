@@ -40,7 +40,6 @@ public class LoginServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json;");
     UserService userService = UserServiceFactory.getUserService();
-    JsonObject json = new JsonObject();
 
     if (userService.isUserLoggedIn()) {
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -58,16 +57,17 @@ public class LoginServlet extends HttpServlet {
         newUser.setProperty("email", email);
         datastore.put(newUser);
       }
-
-      String logoutURL = userService.createLogoutURL(REDIRECT_URL);
-      json.addProperty("isLoggedIn", true);
-      json.addProperty("logURL", logoutURL);
-      response.getWriter().println(json);
-    } else {
-      String loginURL = userService.createLoginURL(REDIRECT_URL); 
-      json.addProperty("isLoggedIn", false);
-      json.addProperty("logURL", loginURL);
-      response.getWriter().println(json);
     }
+    
+    sendJsonResponse(userService.isUserLoggedIn(), response);
+  }
+
+  private void sendJsonResponse(boolean isLoggedIn, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+    JsonObject newJsonObject = new JsonObject();
+    String url = (isLoggedIn) ? userService.createLogoutURL(REDIRECT_URL) : userService.createLoginURL(REDIRECT_URL);
+    newJsonObject.addProperty("isLoggedIn", isLoggedIn);
+    newJsonObject.addProperty("logURL", url);
+    response.getWriter().println(newJsonObject);
   }
 }
