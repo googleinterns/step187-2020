@@ -30,12 +30,9 @@ class AlertsList extends Component {
                   />
                 </Tooltip>
               </ListItemIcon>
-              <Link to={"/alerts/" + alertId} style={{ color: "inherit", textDecoration: "none"}} >
-                <ListItemText id={labelId} 
-                  primary={`Alert ${alertId} on ${allAlerts.get(alertId).timestampDate} has 
-                            ${allAlerts.get(alertId).anomalies.length} anomalies`} 
-                />
-              </Link>
+              <ListItemText id={labelId} 
+                primary={`Alert on ${allAlerts.get(alertId).timestamp} has ${allAlerts.get(alertId).anomalies} anomalies`} 
+              />
             </ListItem>
           );
         })}

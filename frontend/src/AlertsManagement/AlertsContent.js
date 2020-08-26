@@ -10,7 +10,8 @@ import AllInboxIcon from '@material-ui/icons/AllInbox';
 import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import AlertsList from './AlertsList';
-import { tabLabels } from './management_constants';
+import { convertTimestampToDate } from '../time_utils';
+import { tabLabels, UNRESOLVED_STATUS, RESOLVED_STATUS } from './management_constants';
 
 const styles = ({
   root: {
@@ -46,7 +47,23 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
+/*
+ * Data structure explanation: (can remove later on)
+ * const allAlerts = {id1: {timestamp, # of anomalies}, id2: {timestamp, # of anomalies}, ...};
+ * const unresolvedAlerts = [id1, id2, ...] which stores the ids of the alerts in allAlerts
+ * const resolvedAlerts = [id3, ...] also stores ids of alerts in allAlerts
+ */
 class AlertsContent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: tabLabels.UNRESOLVED,
+      allAlerts: new Map(),
+      unchecked: [], 
+      checked: [], 
+    };
+  }
+
   a11yProps = (index) => {
     return {
       id: `tab-${index}`,
@@ -54,14 +71,79 @@ class AlertsContent extends Component {
     };
   }
 
+  async componentDidMount() {
+    let unresolvedAlerts = [];
+    let resolvedAlerts = [];
+
+    const alertsResponse = await fetch('/api/v1/alerts-data').then(response => response.json());
+    alertsResponse.forEach((alert) => {
+      const alertId = alert.id.value;
+      this.state.allAlerts.set(alertId, {
+        timestamp: convertTimestampToDate(alert.timestampDate), 
+        anomalies: alert.anomalies.length
+      });
+      if (alert.status === UNRESOLVED_STATUS) {
+        unresolvedAlerts.push(alertId);
+      } else {
+        resolvedAlerts.push(alertId);
+      }
+    });
+
+    this.setState({
+      unchecked: unresolvedAlerts.slice(),
+      checked: resolvedAlerts.slice(),
+    });
+  }
+  
+  handleTabs = (event, newTab) => {
+    this.setState({tab: newTab});
+  };
+
+  handleCheckbox = (alertId) => {
+    const unchecked = this.state.unchecked.slice();
+    const checked = this.state.checked.slice();
+    const newUnchecked = [...unchecked];
+    const newChecked = [...checked];
+
+    const currentUncheckedIndex = unchecked.indexOf(alertId);
+    const currentCheckedIndex = checked.indexOf(alertId);
+
+    let changeStatus;
+
+    if (currentCheckedIndex === -1 && currentUncheckedIndex !== -1) {
+      // Was unresolved and now want to resolve it, second check is a sanity check.
+      newChecked.push(alertId);
+      newUnchecked.splice(currentUncheckedIndex, 1);
+      changeStatus = RESOLVED_STATUS;
+    } else if (currentUncheckedIndex === -1 && currentCheckedIndex !== -1) {
+      // Was resolved and now want to unresolve it, second check is a sanity check.
+      newUnchecked.push(alertId);
+      newChecked.splice(currentCheckedIndex, 1);
+      changeStatus = UNRESOLVED_STATUS;
+    } else {
+      throw new Error("Misplaced alert: " + this.state.allAlerts[alertId]);
+    }
+
+    this.setState({
+      unchecked: newUnchecked,
+      checked: newChecked,
+    });
+
+    fetch('/api/v1/alerts-data', {
+      method: 'POST',
+      body: alertId + " " + changeStatus,
+    });
+  };
+
   render() {
-    const { classes, tab, allAlerts, unchecked, checked, handleTabs, handleCheckbox } = this.props;
+    const { tab, allAlerts, unchecked, checked } = this.state;
+    const { classes } = this.props;
     return (
       <div className={classes.root}>
         <Paper>
           <Tabs 
             value={tab} 
-            onChange={handleTabs}
+            onChange={this.handleTabs}
             variant="fullWidth"
             indicatorColor="secondary"
             textColor="secondary" 
@@ -77,7 +159,7 @@ class AlertsContent extends Component {
             allAlerts={allAlerts}
             displayAlerts={unchecked} 
             checked={checked}
-            handleToggle={handleCheckbox} 
+            handleToggle={this.handleCheckbox} 
           />
         </TabPanel>
         <TabPanel value={tab} index={tabLabels.RESOLVED}>
@@ -85,7 +167,7 @@ class AlertsContent extends Component {
             allAlerts={allAlerts}
             displayAlerts={checked} 
             checked={checked}
-            handleToggle={handleCheckbox} 
+            handleToggle={this.handleCheckbox} 
           />
         </TabPanel>
         <TabPanel value={tab} index={tabLabels.ALL}>
@@ -93,7 +175,7 @@ class AlertsContent extends Component {
             allAlerts={allAlerts}
             displayAlerts={unchecked.concat(checked)} 
             checked={checked}
-            handleToggle={handleCheckbox}
+            handleToggle={this.handleCheckbox}
           />
         </TabPanel>
       </div>
