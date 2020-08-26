@@ -105,29 +105,6 @@ public final class AlertTest {
     assertFalse(alert.equals(null));
   }
 
-  @Test
-  public void compareTo_workingComparator() {
-    Alert baseAlert = Alert.createAlertWithoutId(
-        Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-        dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.UNRESOLVED
-      );
-    Alert sameAlert = Alert.createAlertWithoutId(
-        Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
-        dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.UNRESOLVED
-      );
-    Alert newerAlert = Alert.createAlertWithoutId(
-        Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), 
-        dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.UNRESOLVED
-      );
-
-    assertEquals(0, baseAlert.compareTo(sameAlert));
-    assertTrue(baseAlert.compareTo(newerAlert) <= -1);
-    assertTrue(newerAlert.compareTo(baseAlert) >= 1);
-  }
-
   @SuppressWarnings("unchecked")
   @Test
   public void toEntity_correctAlertToEntityConversion() {

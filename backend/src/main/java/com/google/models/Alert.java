@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.OptionalLong;
 
 /** Store alert-related data. */
-public final class Alert implements Comparable<Alert> {
+public final class Alert {
   public static final String ALERT_ENTITY_KIND = "alert";
   public static final String STATUS_PROPERTY = "status";
   public static final String ANOMALIES_LIST_PROPERTY = "anomaliesList";
@@ -93,11 +93,6 @@ public final class Alert implements Comparable<Alert> {
         && target.status.equals(status)
         && target.anomalies.equals(anomalies)
         && target.getAlertId() == getAlertId();
-  }
-
-  @Override
-  public int compareTo(Alert other) {
-    return this.timestampDate.compareTo(other.timestampDate);
   }
 
   public Entity toEntity() {

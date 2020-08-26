@@ -46,8 +46,9 @@ export async function getAlertsData(alertsLimit) {
  * Returns an Object with processed alert data.
  */
 export async function getAlertVisData(requestId) {
-  const alert = await fetch('/api/v1/alert-visualization?id=' + requestId)
-    .then(response => response.json());
+  const alertResponse = await fetch('/api/v1/alert-visualization?id=' + requestId);
+  if (!alertResponse.ok) throw new Error('Error getting alert data for ' + requestId);
+  const alert = await alertResponse.json();
   let editedAnomalies = alert.anomalies.slice();
   for (let key in alert.anomalies) {
     editedAnomalies[key].timestampDate = convertTimestampToDate(alert.anomalies[key].timestampDate);

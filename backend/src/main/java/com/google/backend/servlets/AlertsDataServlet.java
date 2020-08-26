@@ -22,6 +22,7 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import com.google.models.Alert;
 import java.io.BufferedReader;
@@ -52,12 +53,8 @@ public class AlertsDataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // TODO: only get alerts that the user is subscribed to.
-    Query query = new Query(Alert.ALERT_ENTITY_KIND);
+    Query query = new Query(Alert.ALERT_ENTITY_KIND).addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(MAX_LIMIT));    
-    List<Alert> alertList = results.stream()
-      .map(Alert::createAlertFromEntity).collect(Collectors.toList());
-    Collections.sort(alertList, Collections.reverseOrder());
 
     int limit;
     try {
@@ -66,12 +63,9 @@ public class AlertsDataServlet extends HttpServlet {
       log.warning("Received " + request.getParameter("limit") + " instead of an integer.");
       limit = DEFAULT_ALERTS_LIMIT;
     }
-
-    try {
-      alertList = alertList.subList(0, limit);
-    } catch (IndexOutOfBoundsException e) {
-      alertList = alertList.subList(0, alertList.size());
-    }
+    
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
+    List<Alert> alertList = results.stream().map(Alert::createAlertFromEntity).collect(Collectors.toList());
     
     response.setContentType("application/json;");
     response.getWriter().println(new Gson().toJson(alertList));
