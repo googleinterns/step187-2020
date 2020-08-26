@@ -132,12 +132,11 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
     }
 
     List<RelatedData> relatedDataList = SimpleRelatedDataGenerator.createGenerator()
-        .getRelatedData(metricName, dimensionName, 
+        .getRelatedData(DataInfo.of(metricName, dimensionName), 
                         listKeys.get(firstDataPointIndex),
                         listKeys.get(lastDataPointIndex));
 
     return new Anomaly(time, metricName, dimensionName, dataPoints, relatedDataList);
   }
-
 
 }

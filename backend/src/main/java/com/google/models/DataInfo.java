@@ -23,13 +23,14 @@ public final class DataInfo {
   
   private final String metricName;
   private final String dimensionName;
-  private final String username;
 
-  /** TODO: Change username to List to deal with multiple users requesting same related data. */
-  public DataInfo(String metricName, String dimensionName, String username) {
+  public static DataInfo of(String metricName, String dimensionName) {
+    return new DataInfo(metricName, dimensionName);
+  }
+
+  public DataInfo(String metricName, String dimensionName) {
     this.metricName = metricName;
     this.dimensionName = dimensionName;
-    this.username = username;
   }
 
   public String getMetricName() {
@@ -40,17 +41,17 @@ public final class DataInfo {
     return dimensionName;
   }
 
-  public String getUsername() {
-    return username;
-  }
-
   @Override
   public String toString() {
     return new StringBuilder()
         .append("Metric Name: ").append(metricName).append("\n")
         .append("Dimension Name: ").append(dimensionName).append("\n")
-        .append("Username: ").append(username).append("\n")
         .toString();
+  }
+
+  @Override
+  public int hashCode() {
+    return toString().hashCode();
   }
 
   @Override

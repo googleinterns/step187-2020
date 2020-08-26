@@ -35,7 +35,7 @@ public class DummyRelatedDataGenerator implements RelatedDataGenerator {
    * Input parameters are not used at all, since this implementation generates 
    * dummy related data objects that do not depend on input. 
    */
-  public ImmutableList<RelatedData> getRelatedData(String metricName, String dimensionName,
+  public ImmutableList<RelatedData> getRelatedData(DataInfo dataInfo,
       Timestamp startTimeInclusive, Timestamp endTimeInclusive) {
     return relatedDataList;
   }

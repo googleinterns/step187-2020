@@ -44,9 +44,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito.*;
 import org.mockito.MockitoAnnotations;
 
-/** Contain tests for methods in {@link AlertsDataServlet} class. */
+/** Contain tests for methods in {@link AlertVisualizationServlet} class. */
 @RunWith(JUnit4.class)
-public class AlertsDataServletTest {
+public class AlertVisualizationServletTest {
   @Mock HttpServletRequest request;
   @Mock HttpServletResponse response;
 
@@ -54,12 +54,10 @@ public class AlertsDataServletTest {
   public ExpectedException thrown = ExpectedException.none();
 
   private static final String RESPONSE_CONTENT_TYPE = "application/json;";
-  private static final String REQUEST_CONTENT_TYPE = "text/plain;";
-  private static final String REQUEST_CHARSET = "UTF-8";
+  private static final String ID_PARAM = "id";
   private static final Long FAKE_ID = 1L;
-  private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
 
-  private static final AlertsDataServlet alertsDataServlet = new AlertsDataServlet();
+  private static final AlertVisualizationServlet alertVisualizationServlet = new AlertVisualizationServlet();
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
     new LocalDatastoreServiceTestConfig());
   private StringWriter stringWriter = new StringWriter();
@@ -77,68 +75,33 @@ public class AlertsDataServletTest {
   }
 
   @Test
-  public void doGet_ReturnsAlertEntitiesAsJson() throws IOException, ServletException {
+  public void doGet_ReturnsRequestedAlertEntity() throws IOException, ServletException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
         Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
     datastore.put(newAlert.toEntity());
-    // The new alert needs to be queried from the datastore in order to contain a valid id. 
+
     Query query = new Query(Alert.ALERT_ENTITY_KIND);
     Alert expectedAlert = Alert.createAlertFromEntity(datastore.prepare(query).asSingleEntity());
+    when(request.getParameter(ID_PARAM)).thenReturn(Long.toString(expectedAlert.getAlertId()));
 
-    alertsDataServlet.doGet(request, response);
+    
+    alertVisualizationServlet.doGet(request, response);
 
     verify(response).setContentType(RESPONSE_CONTENT_TYPE);
     JsonElement expected = JsonParser.parseString(
-      new Gson().toJson(ImmutableList.of(expectedAlert)));
+      new Gson().toJson(expectedAlert));
     JsonElement result = JsonParser.parseString(stringWriter.getBuffer().toString().trim());
     assertEquals(expected, result);
   }
 
   @Test
-  public void doPost_ChangesAlertStatusInDatastore() throws IOException, ServletException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
-        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
-    Entity newAlertEntity = newAlert.toEntity();
-    datastore.put(newAlertEntity);
-    Long id = newAlertEntity.getKey().getId();
-
-    String data = id + " " + Alert.StatusType.RESOLVED;
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
-
-
-    alertsDataServlet.doPost(request, response);
-
-    assertEquals(1, datastore.prepare(new Query(Alert.ALERT_ENTITY_KIND)).countEntities(withLimit(10)));
-    Query query = new Query(Alert.ALERT_ENTITY_KIND);
-    Entity resultEntity = datastore.prepare(query).asSingleEntity();
-    assertEquals(Alert.StatusType.RESOLVED.name(), resultEntity.getProperty(Alert.STATUS_PROPERTY).toString());
-  }
-
-  @Test
-  public void doPost_EmptyRequestBody_ThrowsException() throws IOException, ServletException {
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader("")));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
-
-    thrown.expect(ServletException.class);
-    thrown.expectMessage(EMPTY_BODY_ERROR);
-    alertsDataServlet.doPost(request, response);
-  }
-
-  @Test
-  public void doPost_EntityNotInDatastore_ThrowsException() throws IOException, ServletException {
-    String data = FAKE_ID + " " + Alert.StatusType.RESOLVED;
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
+  public void doGet_AlertIdNotFound_ThrowsException() throws IOException, ServletException {
+    when(request.getParameter(ID_PARAM)).thenReturn(Long.toString(FAKE_ID));
 
     thrown.expect(ServletException.class);
     thrown.expectCause(IsInstanceOf.<Throwable>instanceOf(EntityNotFoundException.class));
-    alertsDataServlet.doPost(request, response);    
+    alertVisualizationServlet.doGet(request, response);    
   }
 
 }
