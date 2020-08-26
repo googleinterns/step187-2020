@@ -3,11 +3,14 @@ import { render, unmountComponentAtNode } from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import { act } from "react-dom/test-utils";
 import NavBar from "./NavBar";
+import { enableFetchMocks } from 'jest-fetch-mock';
+enableFetchMocks();
 
 let container = null;
 beforeEach(() => {
   container = document.createElement("div");
   document.body.appendChild(container);
+  fetch.resetMocks();
 });
 
 afterEach(() => {
@@ -23,11 +26,7 @@ describe("when the user is logged in", () => {
       isLoggedIn: true,
       logURL: "/logout"
     };
-    jest.spyOn(global, "fetch").mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(fakeStatus)
-      })
-    );
+    fetch.mockResponseOnce(JSON.stringify(fakeStatus)); 
 
     await act(async () => {
       render(<BrowserRouter><NavBar /></BrowserRouter>, container);
@@ -56,11 +55,7 @@ describe("when the user is logged out", () => {
       isLoggedIn: false,
       logURL: "/login"
     };
-    jest.spyOn(global, "fetch").mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(fakeStatus)
-      })
-    );
+    fetch.mockResponseOnce(JSON.stringify(fakeStatus)); 
 
     await act(async () => {
       render(<BrowserRouter><NavBar /></BrowserRouter>, container);

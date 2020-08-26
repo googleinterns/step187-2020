@@ -11,9 +11,11 @@ export async function getAlertsData() {
   let unresolvedAlerts = [];
   let resolvedAlerts = [];
 
-  const alertsResponse = await fetch('/api/v1/alerts-data').then(response => response.json());
+  const alertsResponse = await fetch('/api/v1/alerts-data')
+  if (!alertsResponse.ok) throw new Error('Error getting alerts data: ' + alertsResponse.status);
+  const data = await alertsResponse.json();
   // TODO: replace value with actual alert ID (received from JSON, e.g. alert.id).
-  alertsResponse.forEach((alert, value) => {
+  data.forEach((alert, value) => {
     let editedAnomalies = alert.anomalies.slice();
     for (let key in alert.anomalies) {
       editedAnomalies[key].timestampDate = convertTimestampToDate(alert.anomalies[key].timestampDate);

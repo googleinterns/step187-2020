@@ -1,6 +1,8 @@
 import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
+import { enableFetchMocks } from 'jest-fetch-mock';
+enableFetchMocks();
 import Home from "./Home";
 
 let container = null;
@@ -16,8 +18,8 @@ afterEach(() => {
 });
 
 describe("homepage message", () => {
-  afterEach(() => {
-    global.fetch.mockRestore();
+  beforeEach(() => {
+    fetch.resetMocks();
   });
 
   it("displays login message when user is not logged in", async () => {
@@ -26,11 +28,7 @@ describe("homepage message", () => {
       isLoggedIn: false,
       logURL: "/"
     };
-    jest.spyOn(global, "fetch").mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(fakeStatus)
-      })
-    );
+    fetch.mockResponseOnce(JSON.stringify(fakeStatus)); 
 
     await act(async () => {
       render(<Home />, container);
@@ -45,11 +43,7 @@ describe("homepage message", () => {
       isLoggedIn: true,
       logURL: "/"
     };
-    jest.spyOn(global, "fetch").mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(fakeStatus)
-      })
-    );
+    fetch.mockResponseOnce(JSON.stringify(fakeStatus)); 
 
     await act(async () => {
       render(<Home />, container);
