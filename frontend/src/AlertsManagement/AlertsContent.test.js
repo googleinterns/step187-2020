@@ -6,6 +6,8 @@ import { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks();
 import { PureAlertsContent as AlertsContent } from "./AlertsContent";
 import AlertsList from "./AlertsList";
+import { tabLabels } from './management_constants';
+import * as helpers from './management_helpers';
 
 configure({ adapter: new Adapter() });
 
@@ -17,14 +19,58 @@ const styles = {
   }
 };
 
-describe("handleTabs", () => {
-  const tabLabels = {
-    UNRESOLVED: 0,
-    RESOLVED: 1,
-    ALL: 2,
-  };
+describe("componentDidMount", () => {
+  // Mock data for helper function return value.
+  const expectedAlerts = new Map();
+  expectedAlerts.set(1234567890123456, {
+    timestampDate: "Sun Dec 08 2019",
+    anomalies: [{
+      dimensionName: "Ramen", metricName: "Interest Over Time",
+      timestampDate: "Sun Dec 29 2019"
+    },
+    { 
+      dimensionName: "Ramen", metricName: "Interest Over Time",
+      timestampDate: "Sun Dec 01 2019",
+    }],
+    status: "UNRESOLVED",
+  });
+  expectedAlerts.set(1987654321098765, {
+    timestampDate: "Fri Dec 27 2019",
+    anomalies: [{ 
+      dimensionName: "Ramen", metricName: "Interest Over Time",
+      timestampDate: "Wed Nov 27 2019"
+    }],
+    status: "RESOLVED",
+  });
+  const expectedUnchecked = [1234567890123456];
+  const expectedChecked = [1987654321098765];
 
-  it("should display the right tabpanel when the tab is changed", () => {
+  it("should set state correctly with alerts information", async () => {
+    const mock = jest.spyOn(helpers, "getAlertsData")
+                  .mockReturnValue([expectedAlerts, expectedUnchecked, expectedChecked]);
+    const wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
+    
+    await wrapper.instance().componentDidMount();
+
+    expect(mock).toHaveBeenCalled();
+    expect(wrapper.state('allAlerts')).toMatchObject(expectedAlerts);
+    expect(wrapper.state('unchecked')).toMatchObject(expectedUnchecked);
+    expect(wrapper.state('checked')).toMatchObject(expectedChecked);
+  });
+
+  it("should throw an error when unexpected data is received", async () => {
+    const mock = jest.spyOn(helpers, "getAlertsData").mockReturnValue([expectedAlerts]);
+    const wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
+    const instance = wrapper.instance();
+
+    expect(mock).toHaveBeenCalled();
+    await expect(instance.componentDidMount()
+    ).rejects.toEqual(new Error("getAlertsData() did not return the correct alerts data."));
+  });
+})
+
+describe("handleTabs", () => {
+  it("should display the correct tabpanel when the tab is changed", () => {
     const wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
     wrapper.setState({ tab: tabLabels.ALL }); 
 
@@ -79,7 +125,7 @@ describe("handleCheckbox", () => {
   afterEach(() => {
     wrapper.unmount();
     jest.clearAllMocks();
-  })
+  });
 
   it("should maintain the correct unresolved and resolved elements after click", () => {
     act(() => {
@@ -121,71 +167,4 @@ describe("handleCheckbox", () => {
   });
 
   // TODO: write tests for dealing with error response from backend (e.g. 404 code).
-});
-
-describe("fetch alerts", () => {
-  // Fake alert JSON data.
-  const fakeAlerts = [{
-    anomalies: [
-      { dataPoints: {"2019-11-24": {value: 79}, }, 
-        dimensionName: "Ramen", metricName: "Interest Over Time",
-        timestampDate: {date: {year: 2019, month: 12, day: 29}}
-      },
-      { dataPoints: {"2019-10-27": {value: 53}, }, 
-        dimensionName: "Ramen", metricName: "Interest Over Time",
-        timestampDate: {date: {year: 2019, month: 12, day: 1}}
-      },
-    ],
-    id: {
-      isPresent: true,
-      value: 1234567890123456,
-    },
-    status: "UNRESOLVED",
-    timestampDate: {date: {year: 2019, month: 12, day: 8}},
-  }, 
-  {
-    anomalies: [
-      { dataPoints: {"2019-10-24": {value: 46}, }, 
-        dimensionName: "Ramen", metricName: "Interest Over Time",
-        timestampDate: {date: {year: 2019, month: 11, day: 27}}
-      },
-    ],
-    id: {
-      isPresent: true,
-      value: 1987654321098765,
-    },
-    status: "RESOLVED",
-    timestampDate: {date: {year: 2019, month: 12, day: 27}},
-  }];
-
-  // Expected allAlerts, unchecked, and checked.
-  const expectedAlerts = new Map();
-  expectedAlerts.set(1234567890123456, {
-    timestamp: "Sun Dec 08 2019",
-    anomalies: 2,
-  });
-  expectedAlerts.set(1987654321098765, {
-    timestamp: "Fri Dec 27 2019",
-    anomalies: 1,
-  });
-  const expectedUnchecked = [1234567890123456];
-  const expectedChecked = [1987654321098765]
-
-  beforeEach(() => {
-    fetch.resetMocks();
-  });
-
-  it("correctly sets alert information in state based on alert data", async () => {
-    fetch.mockResponseOnce(JSON.stringify(fakeAlerts)); 
-
-    let component;
-    await act(async () => {
-      component = shallow(<AlertsContent classes={styles} />);
-    });
-    
-    component.update()
-    expect(component.state('allAlerts')).toEqual(expectedAlerts);
-    expect(component.state('unchecked')).toEqual(expectedUnchecked);
-    expect(component.state('checked')).toEqual(expectedChecked);
-  });
 });
