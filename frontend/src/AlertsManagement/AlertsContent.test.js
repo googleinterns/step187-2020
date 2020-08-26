@@ -168,3 +168,19 @@ describe("handleCheckbox", () => {
 
   // TODO: write tests for dealing with error response from backend (e.g. 404 code).
 });
+
+describe("handleAlertsLimitChange", () => {
+  
+  const EXPECTED_LIMIT = 2;
+
+  it("sets alertsLimit state from input value", () => {
+    const wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
+
+    act(() => {
+      const limitInput = wrapper.find('WithStyles(ForwardRef(TextField))');
+      limitInput.simulate('change', { target: { value: EXPECTED_LIMIT } })
+    });
+
+    expect(wrapper.state('alertsLimit')).toEqual(EXPECTED_LIMIT);
+  });
+});

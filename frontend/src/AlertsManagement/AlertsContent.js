@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
+import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import AllInboxIcon from '@material-ui/icons/AllInbox';
 import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import AlertsList from './AlertsList';
 import { getAlertsData } from './management_helpers';
-import { tabLabels, UNRESOLVED_STATUS, RESOLVED_STATUS } from './management_constants';
+import { tabLabels, UNRESOLVED_STATUS, RESOLVED_STATUS, DEFAULT_ALERTS_LIMIT } from './management_constants';
 
 const styles = ({
   root: {
@@ -66,6 +68,7 @@ class AlertsContent extends Component {
       allAlerts: null,
       unchecked: [], 
       checked: [],
+      alertsLimit: DEFAULT_ALERTS_LIMIT,
     }
   }
 
@@ -77,7 +80,7 @@ class AlertsContent extends Component {
   }
 
   async componentDidMount() {
-    var results = await getAlertsData();
+    var results = await getAlertsData(this.state.alertsLimit);
     if (results.length !== 3) {
       throw new Error("getAlertsData() did not return the correct alerts data.")
     }
@@ -86,6 +89,12 @@ class AlertsContent extends Component {
       unchecked: results[1].slice(),
       checked: results[2].slice(),
     });
+  }
+
+  async componentDidUpdate(_prevProps, prevState) {
+    if (this.state.alertsLimit !== prevState.alertsLimit) {
+      await this.componentDidMount();
+    }
   }
 
   handleTabs = (event, newTab) => {
@@ -128,11 +137,27 @@ class AlertsContent extends Component {
     });
   };
 
+  handleAlertsLimitChange = (event) => {
+    this.setState({ alertsLimit: event.target.value });
+  }
+
   render() {
     const { tab, allAlerts, unchecked, checked } = this.state;
     const { classes } = this.props;
     return (
       <div className={classes.root}>
+        <form align="center">
+          <InputLabel>View # of</InputLabel>
+          <TextField
+            id="alert-limit"
+            type="number"
+            label="alerts:"
+            size="small"
+            InputProps={{ inputProps: { min: 0, max: 10 } }}
+            value={this.state.alertsLimit}
+            onChange={this.handleAlertsLimitChange}
+          />
+        </form>
         <Paper>
           <Tabs 
             value={tab} 

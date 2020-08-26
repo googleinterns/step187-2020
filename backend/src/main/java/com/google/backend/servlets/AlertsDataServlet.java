@@ -18,6 +18,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -26,8 +27,10 @@ import com.google.models.Alert;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,12 +38,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * Servlet that handles Alert data. Gets Alert data from the Datastore and returns JSON, 
- * and changes Alert status in the Datastore given user input. 
+ * Servlet that handles Alert data. 
+ * Gets specified amount of most recent Alert data from the Datastore and returns JSON.
+ * Given user input, changes Alert status in the Datastore. 
  */
 @WebServlet("/api/v1/alerts-data")
 public class AlertsDataServlet extends HttpServlet {
 
+  private static final int MAX_LIMIT = 1000;
   private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
   private static final Logger log = Logger.getLogger(AlertsDataServlet.class.getName());
   
@@ -49,11 +54,16 @@ public class AlertsDataServlet extends HttpServlet {
     // TODO: only get alerts that the user is subscribed to.
     Query query = new Query(Alert.ALERT_ENTITY_KIND);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-    List<Alert> alertList = new ArrayList<>();
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(MAX_LIMIT));    
+    List<Alert> alertList = results.stream()
+      .map(Alert::createAlertFromEntity).collect(Collectors.toList());
+    Collections.sort(alertList, Collections.reverseOrder());
 
-    for (Entity entity : results.asIterable()) {
-      alertList.add(Alert.createAlertFromEntity(entity));
+    int limit = Integer.parseInt(request.getParameter("limit"));
+    try {
+      alertList = alertList.subList(0, limit);
+    } catch (IndexOutOfBoundsException e) {
+      alertList = alertList.subList(0, alertList.size());
     }
     
     response.setContentType("application/json;");

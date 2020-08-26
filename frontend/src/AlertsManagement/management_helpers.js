@@ -2,16 +2,17 @@ import { convertTimestampToDate } from '../time_utils';
 import { UNRESOLVED_STATUS } from './management_constants';
 
 /**
- * Fetch alerts data from Datastore and organize into data structures.
+ * Fetch specified amount of alerts from Datastore and organize into data structures.
  * Returns an array with a map of alert IDs to Object containing alert info, 
  * an array of ids of unresolved alerts, and an array of ids of resolved alerts.
  */
-export async function getAlertsData() {
+export async function getAlertsData(alertsLimit) {
   let allAlerts = new Map();
   let unresolvedAlerts = [];
   let resolvedAlerts = [];
 
-  const alertsResponse = await fetch('/api/v1/alerts-data').then(response => response.json());
+  const alertsResponse = await fetch('/api/v1/alerts-data?limit=' + alertsLimit)
+    .then(response => response.json());
   alertsResponse.forEach((alert) => {
     const alertId = alert.id.value;
     
