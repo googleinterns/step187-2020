@@ -20,6 +20,7 @@ public final class TimestampTest {
   private static final int MONTH_CONST = 1;
   private static final int YEAR_CONST = 2000;
   private static final Timestamp TIMESTAMP = new Timestamp(DAY_CONST, MONTH_CONST, YEAR_CONST);
+  private static final long EXPECTED_EPOCH_DAY = 10957;
 
   @Test
   public void constructor_convertStringToDate() {
@@ -60,6 +61,16 @@ public final class TimestampTest {
           String.format("%02d", DAY_CONST),
       TIMESTAMP.toString()
     );
+  }
+
+  @Test
+  public void toEpochDay_correctConversionFromDateToLong() {
+    assertEquals(EXPECTED_EPOCH_DAY, TIMESTAMP.toEpochDay());
+  }
+
+  @Test
+  public void ofEpochDay_correctConversionFromLongToDate() {
+    assertEquals(TIMESTAMP, Timestamp.of(EXPECTED_EPOCH_DAY));
   }
 
   @Test
