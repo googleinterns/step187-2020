@@ -51,6 +51,7 @@ export default function NavBar() {
           <Typography variant="h6" className={classes.title} component={CustomLink} to="/">
             GreySwan
           </Typography>
+          {/* TODO: uncomment the commented out code when deploying. */}
           {/* {isLoggedIn ?  */}
             <Fragment>
               <Button color="inherit" id="alerts-button"
