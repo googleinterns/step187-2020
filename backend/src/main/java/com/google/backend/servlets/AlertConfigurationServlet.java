@@ -19,6 +19,9 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.DatastoreFailureException;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -29,6 +32,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 
 /** Servlet that stores and fetches conifigurations in Datastore */
@@ -41,16 +46,25 @@ public class AlertConfigurationServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     String[] parameters = processRequestBody(request);
+    UserService userService = UserServiceFactory.getUserService();
+
     String data = parameters[0];
     String relatedData = parameters[1];
-    String user = parameters[2];
+    String email = new String();
+    if (userService.isUserLoggedIn()) {
+      email = userService.getCurrentUser().getEmail();
+    } else {
+      email = parameters[2];
+    }
+    email = email.split("@")[0];
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     try {
       Entity configurationEntity = new Entity("Configuration");
       configurationEntity.setProperty("data", data);
       configurationEntity.setProperty("relatedData", relatedData);
-      configurationEntity.setProperty("user", user);
+      configurationEntity.setProperty("user", email);
       datastore.put(configurationEntity);
     } catch (DatastoreFailureException e) {
       throw new ServletException(e);
