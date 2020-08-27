@@ -97,7 +97,7 @@ public final class Alert {
 
   public Entity toEntity() {
     Entity alertEntity = new Entity(ALERT_ENTITY_KIND);
-    alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, timestampDate.toString());
+    alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, timestampDate.toEpochDay());
     alertEntity.setProperty(STATUS_PROPERTY, status.name());
 
     List<EmbeddedEntity> list = anomalies.stream()
@@ -129,9 +129,7 @@ public final class Alert {
         .collect(ImmutableList.toImmutableList());
 
     return new Alert(
-      new Timestamp(
-        (String) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)
-      ), 
+      Timestamp.of((long) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
       listAnomaly, 
       StatusType.valueOf((String) alertEntity.getProperty(STATUS_PROPERTY)),
       OptionalLong.of(alertEntity.getKey().getId())
