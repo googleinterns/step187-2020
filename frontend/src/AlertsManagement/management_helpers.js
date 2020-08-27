@@ -47,17 +47,30 @@ export async function getAlertsData() {
  * Returns an Object with processed alert data.
  */
 export async function getSpecificAlertData(alertId) {
-  const alert = await fetch('/api/v1/alert-visualization?id=' + alertId)
-    .then(response => response.json());
+  const alertResponse = await fetch('/api/v1/alert-visualization?id=' + alertId)
+  if (!alertResponse.ok) throw new Error('Error getting alert data for id ' + alertId + ':' + alertResponse.status);
+  const alert = await alertResponse.json();
+  
   let editedAnomalies = alert.anomalies.slice();
-  for (let key in alert.anomalies) {
-    editedAnomalies[key].timestampDate = convertTimestampToDate(alert.anomalies[key].timestampDate);
+  alert.anomalies.forEach((anomaly, index) => {
+    editedAnomalies[index].timestampDate = convertTimestampToDate(anomaly.timestampDate);
+    
     let editedData = new Map();
-    for (const date in alert.anomalies[key].dataPoints) {
-      editedData.set(date, alert.anomalies[key].dataPoints[date].value);
+    for (const date in anomaly.dataPoints) {
+      editedData.set(date, anomaly.dataPoints[date].value);
     }
-    editedAnomalies[key].dataPoints = editedData;
-  }
+    editedAnomalies[index].dataPoints = editedData;
+    
+    let editedRelatedDataList = anomaly.relatedDataList.slice();
+    anomaly.relatedDataList.forEach((relatedData, index) => {
+      let editedData = new Map();
+      for (const date in relatedData.dataPoints) {
+        editedData.set(date, relatedData.dataPoints[date].value);
+      }
+      editedRelatedDataList[index].dataPoints = editedData;
+    });
+    editedAnomalies[index].relatedDataList = editedRelatedDataList;
+  });    
 
   return({ 
     id: alert.id.value,
