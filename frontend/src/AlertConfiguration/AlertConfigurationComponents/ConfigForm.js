@@ -32,7 +32,9 @@ export default function ConfigForm({ addConfig }) {
 
   const DEFAULT_ID = 10;
 
-  {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
+  /**
+   * TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options.
+   */
   const POSSIBLE_DIMENSIONS = ["noodle", "spice", "egg", "soup", "instant noodle"];
   const dimensions = POSSIBLE_DIMENSIONS;
   const relatedDimensions = POSSIBLE_DIMENSIONS;
@@ -53,8 +55,8 @@ export default function ConfigForm({ addConfig }) {
     }
   }
 
-  { /* TODO: create IDs */ }
-  return(
+  // TODO: Create IDs.
+  return (
     <div>
       <Tooltip title="If an anomaly is detected regarding the data, the related data will automatically accompany the generated alert.">
         <Typography variant="h5" align="center">

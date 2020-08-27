@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,13 +35,10 @@ public class LoginServlet extends HttpServlet {
   
   private static final String REDIRECT_URL = "/";
   private static final String ENTITY_KIND = "User";
-  private static final String LOGGEDIN_STATUS = "logged in";
-  private static final String LOGGEDOUT_STATUS = "stranger";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // TODO: change to JSON format for better structure.
-    response.setContentType("text/html;");
+    response.setContentType("application/json;");
     UserService userService = UserServiceFactory.getUserService();
 
     if (userService.isUserLoggedIn()) {
@@ -58,14 +57,17 @@ public class LoginServlet extends HttpServlet {
         newUser.setProperty("email", email);
         datastore.put(newUser);
       }
-
-      String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
-      response.getWriter().println(LOGGEDIN_STATUS);
-      response.getWriter().println(logoutUrl);
-    } else {
-      String loginUrl = userService.createLoginURL(REDIRECT_URL);    
-      response.getWriter().println(LOGGEDOUT_STATUS);
-      response.getWriter().println(loginUrl);
     }
+    
+    sendJsonResponse(userService.isUserLoggedIn(), response);
+  }
+
+  private void sendJsonResponse(boolean isLoggedIn, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+    JsonObject newJsonObject = new JsonObject();
+    String url = (isLoggedIn) ? userService.createLogoutURL(REDIRECT_URL) : userService.createLoginURL(REDIRECT_URL);
+    newJsonObject.addProperty("isLoggedIn", isLoggedIn);
+    newJsonObject.addProperty("logURL", url);
+    response.getWriter().println(newJsonObject);
   }
 }

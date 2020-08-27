@@ -11,8 +11,10 @@ export async function getAlertsData() {
   let unresolvedAlerts = [];
   let resolvedAlerts = [];
 
-  const alertsResponse = await fetch('/api/v1/alerts-data').then(response => response.json());
-  alertsResponse.forEach((alert) => {
+  const alertsResponse = await fetch('/api/v1/alerts-data')
+  if (!alertsResponse.ok) throw new Error('Error getting alerts data: ' + alertsResponse.status);
+  const data = await alertsResponse.json();
+  data.forEach((alert) => {
     const alertId = alert.id.value;
     
     let editedAnomalies = [];

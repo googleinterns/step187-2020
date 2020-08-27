@@ -3,8 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-
 
 const useStyles = (theme) => makeStyles({
   card: {
@@ -19,8 +17,8 @@ const useStyles = (theme) => makeStyles({
 
 /** 
  * ConfigCard is a card that visually represents information about a single configuration.
- * It takes as input card (an object that stores data for a single configuration).
-*/
+ * It takes as input, card (an object that stores data for a single configuration).
+ */
 export default function ConfigCard(card) {
   const classes = useStyles();
 
@@ -35,7 +33,7 @@ export default function ConfigCard(card) {
           Alert Configuration for "{ card.data }"
         </Typography>
         <Typography>
-          When sent an alert regarding "{ card.data }", you will also be sent data for "{ card.rData }".
+          When sent an alert regarding "{ card.data }", you will also be sent data for "{ card.relatedData }".
          </Typography>
       </CardContent>
     </Card>
