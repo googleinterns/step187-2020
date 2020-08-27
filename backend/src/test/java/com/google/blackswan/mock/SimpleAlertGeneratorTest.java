@@ -41,6 +41,7 @@ public class SimpleAlertGeneratorTest {
   private static final int EXPECTED_ALERT_SIZE = 2;
   private static final AlertGenerator ALERT_GENERATOR = new SimpleAlertGenerator(
     SimpleAnomalyGenerator.createGeneratorWithString(
+      DataInfo.of(METRIC_NAME, DIMENSION_NAME),
       MockTestHelper.inputForAnomalyGenerator(SAMPLE_DATA), 
       SET_THRESHOLD_LOW, SET_DATAPOINTS
     )

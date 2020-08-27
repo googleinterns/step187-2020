@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const FLAG_LOCAL = 1;
+const LOCAL = FLAG_LOCAL === 1 ? 'http://localhost:8889/' : '';
+
 /** Fetch data from '/data' to use as innerHTML. */
 const runJob = async () => {
   const response = await fetch('/blackswan/test');
@@ -19,17 +22,17 @@ const runJob = async () => {
 }
 
 const loadData1 = async () => {
-  const response = await fetch('/python/get-data?time=1');
+  const response = await fetch(LOCAL + '/python/get-data?time=1');
   console.log("load data 1");
 }
 
 const loadData2 = async () => {
-  const response = await fetch('/python/get-data?time=2');
+  const response = await fetch(LOCAL + '/python/get-data?time=2');
   console.log("load data 2");
 }
 
 const loadData3 = async () => {
-  const response = await fetch('/python/get-data?time=3');
+  const response = await fetch(LOCAL + '/python/get-data?time=3');
   console.log("load data 3");
 }
 

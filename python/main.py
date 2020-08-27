@@ -12,9 +12,11 @@ app = Flask(__name__)
 
 """ TODO: Make not hard-coded. """
 LIST = ["Ramen", "Udon", "Pho"]
-TIME_FRAME = ['2019-07-01 2019-08-01', '2019-08-01 2019-09-01', '2019-09-01 2019-10-01']
+REGION = ['US'] # , 'GB', 'JP']
+TYPE = [''] # 'images', 'youtube']
+TIME_FRAME = ['2019-07-01 2019-10-01', '2019-11-01 2020-02-01', '2020-03-01 2020-05-01']
 
-def upload_blob(upload_string):
+def upload_blob(upload_string, type, region, category):
     APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
     key_path = os.path.join(APP_ROOT, "keys/key.json")
     credentials = service_account.Credentials.from_service_account_file(
@@ -23,8 +25,7 @@ def upload_blob(upload_string):
 
     """Uploads a file to the bucket."""
     bucket_name = "greyswan.appspot.com"
-    source_file_name = "search_trends.csv"
-    destination_blob_name = "new-test-file"
+    destination_blob_name = type.lower() + "-" + region.lower() + "-" + category.lower() + "-data.csv"
 
     storage_client = storage.Client(project="greyswan", credentials=credentials)
     bucket = storage_client.bucket(bucket_name)
@@ -33,8 +34,8 @@ def upload_blob(upload_string):
     blob.upload_from_string(upload_string, content_type='text/csv')
 
     print(
-        "File {} uploaded to {}.".format(
-            source_file_name, destination_blob_name
+        "File {} uploaded to cloud storage.".format(
+            destination_blob_name
         )
     )
 
@@ -44,22 +45,25 @@ def hello():
     time = int(request.args.get('time'))
     print(time)
     period = TIME_FRAME[time - 1]
-    """Return a friendly HTTP greeting."""
     pytrend = TrendReq()
-    pytrend.build_payload(
-        kw_list=["Ramen"],
-        cat=0,
-        timeframe=period,
-        geo='US')
-    dataset = []
-    df = pytrend.interest_over_time()
-    data = df.drop(labels=['isPartial'],axis='columns')
-    dataset.append(data)
-    result = pd.concat(dataset, axis=1)
-    s = io.StringIO()
-    result.to_csv(s)
-    print(s.getvalue())
-    upload_blob(s.getvalue())
+    for food in LIST:
+        for region in REGION:
+            for category in TYPE:
+                pytrend.build_payload(
+                    kw_list=[food],
+                    cat=0,
+                    timeframe=period,
+                    geo=region,
+                    gprop=category)
+                dataset = []
+                df = pytrend.interest_over_time()
+                data = df.drop(labels=['isPartial'],axis='columns')
+                dataset.append(data)
+                result = pd.concat(dataset, axis=1)
+                s = io.StringIO()
+                result.to_csv(s)
+                print(s.getvalue())
+                upload_blob(s.getvalue(), food, region, category)
     return 'hi'
 
 
@@ -68,4 +72,4 @@ if __name__ == '__main__':
     # Used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
     # can be configured by adding an `entrypoint` to app.yaml.
-    app.run(host='localhost', port=8888, debug=True)
+    app.run(host='localhost', port=8889, debug=True)
