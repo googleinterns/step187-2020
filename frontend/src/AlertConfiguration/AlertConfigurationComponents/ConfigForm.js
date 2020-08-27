@@ -28,32 +28,45 @@ export default function ConfigForm({ addConfig }) {
 
   const [config, setConfig] = useState({
     user: DEFAULT_USER,
-    data: '',
-    relatedData: '',
+    dimension: '',
+    metric: '',
+    relatedDimension: '',
+    relatedMetric: '',
   });
 
   {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
-  const POSSIBLE_DIMENSIONS = ["noodle", "spice", "egg", "soup", "instant noodle"];
+  const POSSIBLE_DIMENSIONS = ["Ramen", "Pizza", "Udon", "Rice", "Japan"];
+  const POSSIBLE_METRICS = ["Interest Over Time - US", "Interest Over Time - UK", "Interest Over Time - JP", "Interest Over Time - Web Search", "Interest Over Time - Images", "Interest Over Time - YouTube"];
   const dimensions = POSSIBLE_DIMENSIONS;
   const relatedDimensions = POSSIBLE_DIMENSIONS;
+  const metrics =  POSSIBLE_METRICS;
+  const relatedMetrics =  POSSIBLE_METRICS;
 
-  function handleDataChange(event) {
-    setConfig({ ...config, data: event.target.value });
+  function handleDimensionChange(event) {
+    setConfig({ ...config, dimension: event.target.value });
   }
 
-  function handleRelatedDataChange(event) {
-    setConfig({ ...config, relatedData: event.target.value });
+  function handleMetricChange(event) {
+    setConfig({ ...config, metric: event.target.value });
+  }
+
+  function handleRelatedDimensionChange(event) {
+    setConfig({ ...config, relatedDimension: event.target.value });
+  }
+
+  function handleRelatedMetricChange(event) {
+    setConfig({ ...config, relatedMetric: event.target.value });
   }
   
   function handleSubmit(event) {
     event.preventDefault();
-    if (config.data.trim() && config.relatedData.trim()) {
+    if (config.dimension.trim() && config.metric.trim() && config.relatedDimension.trim() && config.relatedMetric.trim()) {
       fetch("/api/v1/configurations", {
         method: 'POST',
-        body: config.data + ":" + config.relatedData + ":" + config.user,
+        body: config.user + "%" + config.metric + "%" + config.dimension + "%" + config.relatedMetric + "%" + config.relatedDimension,
       });
       addConfig({ ...config });
-      setConfig({ ...config, data: "", relatedData: "" });
+      setConfig({ ...config, metric: "", dimension: "", relatedMetric: "", relatedDimension: ""});
     }
   }
 
@@ -68,13 +81,13 @@ export default function ConfigForm({ addConfig }) {
       <form align="center">
         <FormControl className={classes.formControl}>
           <InputLabel shrink id="id">
-            Data
+            Dimension
           </InputLabel>
           <Select
             labelId="id"
             id="id"
-            value={config.data}
-            onChange={handleDataChange}
+            value={config.dimension}
+            onChange={handleDimensionChange}
             displayEmpty
           >
             <MenuItem value="">
@@ -87,13 +100,32 @@ export default function ConfigForm({ addConfig }) {
         <br />
         <FormControl className={classes.formControl}>
           <InputLabel shrink id="id">
-            Related Data
+            Metric
           </InputLabel>
           <Select
             labelId="id"
             id="id"
-            value={config.relatedData}
-            onChange={handleRelatedDataChange}
+            value={config.metric}
+            onChange={handleMetricChange}
+            displayEmpty
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            { metrics.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>) }
+          </Select>
+          <FormHelperText>Select a metric or dimension.</FormHelperText>
+        </FormControl>
+        <br />
+        <FormControl className={classes.formControl}>
+          <InputLabel shrink id="id">
+            Related Dimension
+          </InputLabel>
+          <Select
+            labelId="id"
+            id="id"
+            value={config.relatedDimension}
+            onChange={handleRelatedDimensionChange}
             displayEmpty
           >
             <MenuItem value="">
@@ -102,6 +134,25 @@ export default function ConfigForm({ addConfig }) {
             { relatedDimensions.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>) }
           </Select>
           <FormHelperText>Select a correlated metric or dimension.</FormHelperText>
+        </FormControl>
+        <br />
+        <FormControl className={classes.formControl}>
+          <InputLabel shrink id="id">
+            Related Metric
+          </InputLabel>
+          <Select
+            labelId="id"
+            id="id"
+            value={config.relatedMetric}
+            onChange={handleRelatedMetricChange}
+            displayEmpty
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            { relatedMetrics.map((rd) => <MenuItem value={rd}>{rd}</MenuItem>) }
+          </Select>
+          <FormHelperText>Select a metric or dimension.</FormHelperText>
         </FormControl>
         <br />
         <Button onClick={handleSubmit} variant="contained" color="primary">Submit</Button>

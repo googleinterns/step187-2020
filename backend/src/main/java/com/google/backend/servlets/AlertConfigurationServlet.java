@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
 
 
 /** Servlet that stores and fetches conifigurations in Datastore */
@@ -44,27 +45,43 @@ public class AlertConfigurationServlet extends HttpServlet {
   private static final String WRONG_ALERT_DATA = "Incorrect alert data sent in HTTP request.";
 
   @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    List<String> results = new ArrayList<String>();
+
+    Query query = new Query("Configuration");
+    PreparedQuery entities = datastore.prepare(query);
+
+    response.setContentType("application/json;");
+    response.getWriter().println(new Gson().toJson(results));
+  }
+
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     String[] parameters = processRequestBody(request);
     UserService userService = UserServiceFactory.getUserService();
 
-    String data = parameters[0];
-    String relatedData = parameters[1];
     String email = new String();
     if (userService.isUserLoggedIn()) {
       email = userService.getCurrentUser().getEmail();
     } else {
-      email = parameters[2];
+      email = parameters[0];
     }
     email = email.split("@")[0];
+    String metric = parameters[1];
+    String dimension = parameters[2];
+    String relatedMetric = parameters[3];
+    String relatedDimension = parameters[4];
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     try {
       Entity configurationEntity = new Entity("Configuration");
-      configurationEntity.setProperty("data", data);
-      configurationEntity.setProperty("relatedData", relatedData);
       configurationEntity.setProperty("user", email);
+      configurationEntity.setProperty("metric", metric);
+      configurationEntity.setProperty("dimension", dimension);
+      configurationEntity.setProperty("relatedMetric", relatedMetric);
+      configurationEntity.setProperty("relatedDimension", relatedDimension);
       datastore.put(configurationEntity);
     } catch (DatastoreFailureException e) {
       throw new ServletException(e);
@@ -77,9 +94,9 @@ public class AlertConfigurationServlet extends HttpServlet {
     if (body == null) {
       throw new ServletException(EMPTY_BODY_ERROR);
     }
-    String[] parameters = body.split(":"); 
+    String[] parameters = body.split("%"); 
 
-    if (parameters.length != 3) {
+    if (parameters.length != 5) {
       throw new ServletException(WRONG_ALERT_DATA);
     }
 
