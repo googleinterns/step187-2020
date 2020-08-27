@@ -48,7 +48,7 @@ export async function getAlertsData(alertsLimit) {
  */
 export async function getSpecificAlertData(alertId) {
   const alertResponse = await fetch('/api/v1/alert-visualization?id=' + alertId)
-  if (!alertResponse.ok) throw new Error('Error getting alert data for ' + requestId);
+  if (!alertResponse.ok) throw new Error('Error getting alert data for ' + alertId);
   const alert = await alertResponse.json();
   let editedAnomalies = alert.anomalies.slice();
   for (let key in alert.anomalies) {

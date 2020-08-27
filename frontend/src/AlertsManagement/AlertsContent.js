@@ -142,7 +142,7 @@ class AlertsContent extends Component {
   }
 
   render() {
-    const { tab, allAlerts, unchecked, checked } = this.state;
+    const { tab, allAlerts, unchecked, checked, alertsLimit } = this.state;
     const { classes } = this.props;
     return (
       <div className={classes.root}>
@@ -154,7 +154,7 @@ class AlertsContent extends Component {
             label="alerts:"
             size="small"
             InputProps={{ inputProps: { min: 0, max: 10 } }}
-            value={this.state.alertsLimit}
+            value={alertsLimit}
             onChange={this.handleAlertsLimitChange}
           />
         </form>
