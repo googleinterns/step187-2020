@@ -41,13 +41,15 @@ def upload_blob(upload_string):
 
 @app.route('/python/get-data', methods=['GET'])
 def hello():
-    print(request.args.get('time'))
+    time = int(request.args.get('time'))
+    print(time)
+    period = TIME_FRAME[time - 1]
     """Return a friendly HTTP greeting."""
     pytrend = TrendReq()
     pytrend.build_payload(
         kw_list=["Ramen"],
         cat=0,
-        timeframe='2019-07-21 2020-07-19',
+        timeframe=period,
         geo='US')
     dataset = []
     df = pytrend.interest_over_time()
