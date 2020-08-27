@@ -12,6 +12,7 @@ mvn appengine:run
 // From python directory
 python3.7 main.py
 ```
+Note: All three services need to be running at the same time.
 
 ## Testing
 ```
@@ -49,6 +50,7 @@ Once `key.json` file is obtained:
 3) **Make sure there is a `.gitignore` file within `/resources` that git ignores the `/keys` directory.** (`.gitignore` should already be present)
 
 Note 1: **Do not attempt to push the `/keys` directory on to Github or any other public locations.**
+Note 2: If running `python` service, see below for where to store the key. 
 
 
 ## Deploy cron jobs
@@ -78,3 +80,15 @@ To run server locally (make sure you're in `python` directory):
 ```
 python3.7 main.py
 ```
+
+## Demo-ing Cron Job with simple interface
+1) Once you have all three services running, visit `localhost:8888/blackswan/index.html`. 
+2) Make sure you have the `console` open up to check log messages. 
+3) Before you click `Run job` button, you have to first click `Load updated data 1` button to load data through python service onto Cloud Storage.
+4) Once you see an error message show up (The error will disappear once deployed), you know that the data is done being loaded.
+5) Now you can click `Run job` button. When you see the message `job ran` the cron job has finished loading. Alerts should now be stored in the datastore and can be loaded to the frontend. 
+6) To load more data, click `Load updated data 2`, wait for error message to show up to signify the job done. 
+7) Click `Run job` again to run the cron job to detect anomalies in new data. Once the `job ran` message shows up in the console, the alerts should be in the datastore. 
+8) Perform the same process to load the third set of data. 
+
+**Note:** If you click load the same data set twice, the ID of the alerts will change in the datastore. So, do not do that unless you want the IDs to change. 
