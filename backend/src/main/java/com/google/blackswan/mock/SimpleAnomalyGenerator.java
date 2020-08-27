@@ -17,7 +17,6 @@ package com.google.blackswan.mock;
 import static java.util.stream.Collectors.toMap;
 
 import com.google.models.*;
-import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -34,20 +33,49 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.io.ByteArrayInputStream;
 import com.google.common.collect.ImmutableList;
+import com.google.blackswan.mock.filesystem.*;
 
 /** Generate list of anomalies based on data in the csv file using average and threshold. */
 public class SimpleAnomalyGenerator implements AnomalyGenerator {
   private static final String DATA_FILE_LOCATION = "/sample-ramen-data.csv";
-  private static final String EXCEPTION_MESSAGE = "Invalid row format.";
-  private static final String COMMA_DELIMITER = ",";
   private static final int THRESHOLD = 13;
   private static final int NUM_POINTS = 5;
+  private static final String DEFAULT_METRIC = "interest";
+  private static final String DEFAULT_DIMENSION = "ramen";
 
   private final ImmutableList<Anomaly> anomalies;
+
+  /** 
+   * TODO: Let generators take in parameters of dimension/metric names. 
+   *       Can also take in THRESHOLD and NUM_POINTS as parameters.
+   */
+  public static SimpleAnomalyGenerator createGenerator() {
+    return new SimpleAnomalyGenerator(
+      // For [push] to git, always use LocalFileSystem, as CloudFileSystem will fail 
+      // unit test without access to key.json. 
+      LocalFileSystem.createSystem().getDataAsStream(DEFAULT_METRIC, DEFAULT_DIMENSION),
+      THRESHOLD,
+      NUM_POINTS
+    );
+  }
+
+  /** Use mainly in testing to have custom input as csv data. */
+  public static SimpleAnomalyGenerator createGeneratorWithString(String input, 
+      int threshold, int numDataPoints) {
+    return new SimpleAnomalyGenerator(
+      new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)),
+      threshold,
+      numDataPoints
+    );
+  }
 
   private SimpleAnomalyGenerator(InputStream source, int threshold, 
       int numDataPoints) {
     anomalies = generateAnomalies(CSVParser.parseCSV(source), threshold, numDataPoints);
+  }
+
+  public List<Anomaly> getAnomalies() {
+    return anomalies;
   }
 
   private static ImmutableList<Anomaly> generateAnomalies
@@ -111,28 +139,4 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
     return new Anomaly(time, metricName, dimensionName, dataPoints, relatedDataList);
   }
 
-  /** TODO: Specify which metric and dimension data to look at for this generator. */
-  public static SimpleAnomalyGenerator createGenerator() {
-    return new SimpleAnomalyGenerator(
-      SimpleAnomalyGenerator.class.getResourceAsStream(DATA_FILE_LOCATION),
-      THRESHOLD,
-      NUM_POINTS
-    );
-  }
-
-  /** Use mainly in testing to have custom input as csv data. */
-  public static SimpleAnomalyGenerator createGeneratorWithString(String input, 
-      int threshold, int numDataPoints) {
-    return new SimpleAnomalyGenerator(
-      new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)),
-      threshold,
-      numDataPoints
-    );
-  }
-
-  /** TODO: Add more creation methods if needed with different parameters. */
-
-  public List<Anomaly> getAnomalies() {
-    return anomalies;
-  }
 }
