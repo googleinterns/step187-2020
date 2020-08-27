@@ -10,6 +10,10 @@ from google.oauth2 import service_account
 # called `app` in `main.py`.
 app = Flask(__name__)
 
+""" TODO: Make not hard-coded. """
+LIST = ["Ramen", "Udon", "Pho"]
+TIME_FRAME = ['2019-07-01 2019-08-01', '2019-08-01 2019-09-01', '2019-09-01 2019-10-01']
+
 def upload_blob(upload_string):
     APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
     key_path = os.path.join(APP_ROOT, "keys/key.json")
@@ -37,7 +41,7 @@ def upload_blob(upload_string):
 
 @app.route('/python/get-data', methods=['GET'])
 def hello():
-    print(request.args.get('user'))
+    print(request.args.get('time'))
     """Return a friendly HTTP greeting."""
     pytrend = TrendReq()
     pytrend.build_payload(
