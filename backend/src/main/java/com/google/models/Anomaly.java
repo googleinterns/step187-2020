@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.time.format.DateTimeParseException;
+import java.util.Collections;
 
 /** 
  * Store anomaly-related data. 
@@ -161,11 +162,10 @@ public final class Anomaly {
 
     List<EmbeddedEntity> relatedDataEE = (List<EmbeddedEntity>) anomalyEmbeddedEntity.getProperty(RELATED_DATA_LIST_PROPERTY);
 
+    // Datastore stores empty list as null, and relatedData could be empty. 
     if (relatedDataEE == null) {
-      throw new AssertionError("Cannot get property of related data.");
+      relatedDataEE = Collections.emptyList();
     }
-
-    // TODO: take care of case when related data list is empty. 
 
     List<RelatedData> listRelatedData = relatedDataEE.stream()
         .map(RelatedData::createFromEmbeddedEntity)

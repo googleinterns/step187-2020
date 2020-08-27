@@ -11,9 +11,10 @@ export async function getAlertsData(alertsLimit) {
   let unresolvedAlerts = [];
   let resolvedAlerts = [];
 
-  const alertsResponse = await fetch('/api/v1/alerts-data?limit=' + alertsLimit)
-    .then(response => response.json());
-  alertsResponse.forEach((alert) => {
+  const alertsResponse = await fetch('/api/v1/alerts-data?limit=' + alertsLimit);
+  if (!alertsResponse.ok) throw new Error('Error getting alerts data with limit ' + alertsLimit + ': ' + alertsResponse.status);
+  const data = await alertsResponse.json();
+  data.forEach((alert) => {
     const alertId = alert.id.value;
     
     let editedAnomalies = [];
@@ -45,8 +46,8 @@ export async function getAlertsData(alertsLimit) {
  * Fetch specific alert data from the Datastore given alert ID.
  * Returns an Object with processed alert data.
  */
-export async function getAlertVisData(requestId) {
-  const alertResponse = await fetch('/api/v1/alert-visualization?id=' + requestId);
+export async function getSpecificAlertData(alertId) {
+  const alertResponse = await fetch('/api/v1/alert-visualization?id=' + alertId)
   if (!alertResponse.ok) throw new Error('Error getting alert data for ' + requestId);
   const alert = await alertResponse.json();
   let editedAnomalies = alert.anomalies.slice();

@@ -1,10 +1,9 @@
-import { getAlertsData, getAlertVisData } from "./management_helpers";
+import { getAlertsData, getSpecificAlertData } from "./management_helpers";
 import { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks();
 import { DEFAULT_COMMENT_LIMIT } from './management_constants';
 
 describe("getAlertsData", () => {
-  // Fake alert JSON data. 
   const fakeAlerts = [{
     anomalies: [
       { dataPoints: {"2019-11-24": {value: 79}, }, 
@@ -38,7 +37,6 @@ describe("getAlertsData", () => {
     timestampDate: {date: {year: 2019, month: 12, day: 27}},
   }];
 
-  // Expected allAlerts, unchecked, and checked.
   const expectedAlerts = new Map();
   expectedAlerts.set(1234567890123456, {
     timestampDate: "Sun Dec 08 2019",
@@ -76,8 +74,7 @@ describe("getAlertsData", () => {
   });
 });
 
-describe("getAlertVisData", () => {
-  // Fake alert JSON data. 
+describe("getSpecificAlertData", () => {
   const fakeAlert = {
     anomalies: [
       { dataPoints: {"2019-10-24": {value: 46}, }, 
@@ -93,7 +90,6 @@ describe("getAlertVisData", () => {
     timestampDate: {date: {year: 2019, month: 12, day: 27}},
   };
 
-  // Expected result alert.
   const expectedAlert = {
     id: 1987654321098765, 
     timestampDate: "Fri Dec 27 2019",
@@ -114,7 +110,7 @@ describe("getAlertVisData", () => {
   it("returns the requested alert information", async () => {
     fetch.mockResponseOnce(JSON.stringify(fakeAlert)); 
 
-    const result = await getAlertVisData(REQUEST_ID);
+    const result = await getSpecificAlertData(REQUEST_ID);
 
     expect(result).toMatchObject(expectedAlert);
   });

@@ -26,7 +26,7 @@ describe("componentDidMount", () => {
   const REQUEST_ID = 1987654321098765;
 
   it("should set state correctly with fetched alert", async () => {
-    const mock = jest.spyOn(helpers, "getAlertVisData").mockReturnValue(expectedAlert);
+    const mock = jest.spyOn(helpers, "getSpecificAlertData").mockReturnValue(expectedAlert);
     const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
     wrapper.setProps({
       match: {
@@ -43,20 +43,20 @@ describe("componentDidMount", () => {
   });
 
   it("should throw an error when no data is received", async () => {
-    const mock = jest.spyOn(helpers, "getAlertVisData").mockReturnValue(null);
+    const mock = jest.spyOn(helpers, "getSpecificAlertData").mockReturnValue(null);
     const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
     wrapper.setProps({
       match: {
         params: {
-          alertId: 0,
+          alertId: REQUEST_ID,
         }
       }
     });
     const instance = wrapper.instance();
 
     expect(mock).toHaveBeenCalled();
-    await expect(instance.componentDidMount()
-    ).rejects.toEqual(new Error("Could not find alert."));
+    await expect(instance.componentDidMount()).rejects.toEqual(
+      new Error("Could not find alert with id " + REQUEST_ID));
   });
 })
 
