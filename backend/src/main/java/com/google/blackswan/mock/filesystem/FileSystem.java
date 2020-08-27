@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.blackswan.mock;
+package com.google.blackswan.mock.filesystem;
 
-import com.google.models.*;
-import com.google.common.collect.ImmutableList;
+import java.io.InputStream;
 
-/** 
- * Related Data Generator that generates related data based on time range,
- * metric/dimension and config in Datastore. 
- */
-public interface RelatedDataGenerator {  
-  ImmutableList<RelatedData> getRelatedData(DataInfo dataInfo,
-      Timestamp startTimeInclusive, Timestamp endTimeInclusive);
+/** Interface for different file systems, ex. local vs cloud storage. */
+public interface FileSystem {
+  public static final String DELIMITER = "-";
+  public static final String FILE_TYPE = ".csv";
+  
+  public InputStream getDataAsStream(String metric, String dimension);
 }

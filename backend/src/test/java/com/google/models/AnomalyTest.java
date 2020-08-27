@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Map;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import java.util.List;
 
 /** Contain tests for methods in {@link Anomaly} class. */
 @RunWith(JUnit4.class)
@@ -76,7 +77,7 @@ public final class AnomalyTest {
 
   @Test
   public void getRelatedDataList_workingGetter() {
-    assertEquals(ANOMALY.getRelatedDataList(), RELATED_DATA_LIST);
+    assertEquals(RELATED_DATA_LIST, ANOMALY.getRelatedDataList());
   }
 
   @Test
@@ -120,12 +121,19 @@ public final class AnomalyTest {
     assertEquals(expectedStr.toString(), ANOMALY.toString());
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void toEntity_correctAnomalyToEntityConversion() {
     Entity anomalyEntity = ANOMALY.toEntity();
     EmbeddedEntity dataPointsEE = 
         (EmbeddedEntity) anomalyEntity.getProperty(Anomaly.DATA_POINTS_PROPERTY);
-    
+    List<EmbeddedEntity> relatedDataEEList = 
+        (List<EmbeddedEntity>) anomalyEntity.getProperty(Anomaly.RELATED_DATA_LIST_PROPERTY);
+    List<RelatedData> relatedDataList = relatedDataEEList.stream()
+        .map(RelatedData::createFromEmbeddedEntity)
+        .collect(ImmutableList.toImmutableList());
+
+    assertFalse(relatedDataEEList.equals(null));
     assertFalse(dataPointsEE.equals(null));
     assertTrue(embeddedEntityDataPoints_equal(ANOMALY.getDataPoints(), 
         dataPointsEE));
@@ -135,13 +143,20 @@ public final class AnomalyTest {
         anomalyEntity.getProperty(Anomaly.METRIC_NAME_PROPERTY));
     assertEquals(ANOMALY.getDimensionName(), 
         anomalyEntity.getProperty(Anomaly.DIMENSION_NAME_PROPERTY));
+    assertEquals(ANOMALY.getRelatedDataList(), relatedDataList);
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void toEmbeddedEntity_correctAnomalyToEmbeddedEntityConversion() {
     EmbeddedEntity anomalyEmbeddedEntity = ANOMALY.toEmbeddedEntity();
     EmbeddedEntity dataPointsEE = 
         (EmbeddedEntity) anomalyEmbeddedEntity.getProperty(Anomaly.DATA_POINTS_PROPERTY);
+    List<EmbeddedEntity> relatedDataEEList = 
+        (List<EmbeddedEntity>) anomalyEmbeddedEntity.getProperty(Anomaly.RELATED_DATA_LIST_PROPERTY);
+    List<RelatedData> relatedDataList = relatedDataEEList.stream()
+        .map(RelatedData::createFromEmbeddedEntity)
+        .collect(ImmutableList.toImmutableList());
     
     assertNotNull(dataPointsEE);
     assertTrue(embeddedEntityDataPoints_equal(ANOMALY.getDataPoints(), dataPointsEE));
@@ -151,6 +166,7 @@ public final class AnomalyTest {
         anomalyEmbeddedEntity.getProperty(Anomaly.METRIC_NAME_PROPERTY));
     assertEquals(ANOMALY.getDimensionName(), 
         anomalyEmbeddedEntity.getProperty(Anomaly.DIMENSION_NAME_PROPERTY));
+    assertEquals(ANOMALY.getRelatedDataList(), relatedDataList);
   }
 
   @Test
