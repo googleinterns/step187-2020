@@ -29,6 +29,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.common.collect.ImmutableList;
+import com.google.models.DataInfo;
 
 /**
 * Servlet to run cron job that generates Alerts to store in the datastore.
@@ -36,6 +38,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 @WebServlet("/blackswan/test")
 public class CronServlet extends HttpServlet {
   private static final Logger log = Logger.getLogger(CronServlet.class.getName());
+  private static final ImmutableList<DataInfo> ANOMALY_TYPES 
+      = ImmutableList.of(DataInfo.of(Const.INTEREST_US, Const.RAMEN));
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -64,7 +68,7 @@ public class CronServlet extends HttpServlet {
 
   /** Store alerts from simpleGenerator into the datastore. */
   private void storeAlertsInDatastoreSimple() {
-    AlertGenerator simpleGenerator = new SimpleAlertGenerator(SimpleAnomalyGenerator.createGenerator());
+    AlertGenerator simpleGenerator = new AdvanceAlertGenerator(ANOMALY_TYPES);
     simpleGenerator.getAlerts().forEach(alert -> {
       DatastoreServiceFactory.getDatastoreService().put(alert.toEntity());
     });

@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
+import com.google.models.DataInfo;
 
 
 /** Contain tests for methods in {@link CloudFileSystem} class. */
@@ -28,8 +29,8 @@ public class CloudFileSystemTest {
   @Mock Blob MOCK_BLOB;
 
   private static final String EXPECTED_BUCKET_NAME = "greyswan.appspot.com";
-  private static final String METRIC = "interest";
-  private static final String DIMENSION = "ramen";
+  private static final String METRIC = "Interest Over Time - US";
+  private static final String DIMENSION = "Ramen";
   private static final String EXPECTED_OBJECT_NAME = "interest-ramen.csv";
 
   @Before
@@ -51,7 +52,7 @@ public class CloudFileSystemTest {
     // Try finally block is necessary or else test will exit before reaching verify
     // statement. 
     try {
-      system.getDataAsStream(METRIC, DIMENSION);
+      system.getDataAsStream(DataInfo.of(METRIC, DIMENSION));
     } finally {
       verify(MOCK_STORAGE).get(BlobId.of(EXPECTED_BUCKET_NAME, EXPECTED_OBJECT_NAME));
     }

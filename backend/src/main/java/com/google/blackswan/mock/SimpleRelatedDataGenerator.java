@@ -23,17 +23,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.blackswan.mock.filesystem.*;
 
 /** Singleton class to generate related data for a given anomaly. */
 public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
-  private static final String TARGET_DIMENSION = "Ramen";
-  private static final String INTEREST_METRIC = "Interest Over Time";
   private static final String CONFIG_USERNAME = "catyu@";
-  // TODO: Replace FILE_LOCATIONS with a shared class that has map of metric to file names.
-  private static final ImmutableMap<DataInfo, String> FILE_LOCATIONS = ImmutableMap.of(
-                                                        DataInfo.of(INTEREST_METRIC, "Udon"), "/udon-data.csv",
-                                                        DataInfo.of(INTEREST_METRIC, "Pho"), "/pho-data.csv"
-                                                      );
 
   private static final SimpleRelatedDataGenerator INSTANCE = new SimpleRelatedDataGenerator();
 
@@ -81,17 +75,17 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private void prefillRelatedData() {
     // TODO: Replace with call for querying configs from datastore.
     // TODO: Deal with capitalizations when querying config from datastore.
-    relatedDataMap.put(DataInfo.of(INTEREST_METRIC, "Ramen"), 
-        DataInfoUser.of(INTEREST_METRIC, "Udon", CONFIG_USERNAME));
-    relatedDataMap.put(DataInfo.of(INTEREST_METRIC, "Ramen"), 
-        DataInfoUser.of(INTEREST_METRIC, "Pho", CONFIG_USERNAME));
+    relatedDataMap.put(DataInfo.of(Const.INTEREST_US, Const.RAMEN), 
+        DataInfoUser.of(Const.INTEREST_US, Const.UDON, CONFIG_USERNAME));
+    relatedDataMap.put(DataInfo.of(Const.INTEREST_US, Const.RAMEN), 
+        DataInfoUser.of(Const.INTEREST_US, Const.PHO, CONFIG_USERNAME));
     // Multimap looks like this right now: 
     // {{Interest Level, Ramen},{{Interest Level, Udon}, {Interest Level, Pho}}}, ...}.
   }
 
   private ImmutableMap<Timestamp, Integer> getTopicDataPoints(DataInfo topic) {
     return ImmutableMap.copyOf(csvDataCache.computeIfAbsent(topic, key -> CSVParser.parseCSV(
-        SimpleRelatedDataGenerator.class.getResourceAsStream(FILE_LOCATIONS.get(key))
+        LocalFileSystem.createSystem().getDataAsStream(topic)
       )));
   }
 

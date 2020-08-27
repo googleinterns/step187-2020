@@ -58,6 +58,7 @@ public class SimpleAnomalyGeneratorTest {
   @Test
   public void getAnomalies_returnsListOfAnomaliesWithSizeOne() {
     anomalyGenerator = SimpleAnomalyGenerator.createGeneratorWithString(
+      DataInfo.of(METRIC_NAME, DIMENSION_NAME),
       MockTestHelper.inputForAnomalyGenerator(SAMPLE_DATA), 
       SET_THRESHOLD_HIGH, SET_DATAPOINTS
     );
@@ -82,6 +83,7 @@ public class SimpleAnomalyGeneratorTest {
   @Test
   public void getAnomalies_returnsListOfAnomaliesWithSizeTwo() {
     anomalyGenerator = SimpleAnomalyGenerator.createGeneratorWithString(
+      DataInfo.of(METRIC_NAME, DIMENSION_NAME),
       MockTestHelper.inputForAnomalyGenerator(SAMPLE_DATA), 
       SET_THRESHOLD_LOW, SET_DATAPOINTS
     );
