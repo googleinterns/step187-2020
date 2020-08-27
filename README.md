@@ -9,6 +9,8 @@ Run `yarn` in `./frontend` to install dependencies.
 yarn local
 // From backend directory
 mvn appengine:run
+// From python directory
+python3.7 main.py
 ```
 
 ## Testing
@@ -68,9 +70,10 @@ gcloud app deploy cron.yaml
 ## Running Python code
 To install dependencies:
 ```
-
+sudo apt-get install python3-pip // installs pip3
 pip3 install -r requirements.txt
 ```
+TO run locally, make a directory within `python/` directory named `keys/` and copy the `key.json` into `python/keys/` directory. 
 To run server locally (make sure you're in `python` directory):
 ```
 python3.7 main.py
