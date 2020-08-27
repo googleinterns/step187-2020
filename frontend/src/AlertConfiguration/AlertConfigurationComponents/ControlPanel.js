@@ -30,7 +30,7 @@ export default function ControlPanel({ addConfig }) {
     setDisplayConfigForm(!displayConfigForm);
   };
 
-  return(
+  return (
     <div className={classes.controlPanel}>
       <Container>
         <Typography
@@ -52,7 +52,7 @@ export default function ControlPanel({ addConfig }) {
         </Typography>        
         <Grid container spacing={2} justify="center">
           <Grid item>
-            <Button variant="contained" color="primary" onClick={handleConfigForm}>
+            <Button variant="contained" color="primary" onClick={handleDisplayConfigForm}>
               Create
             </Button>
           </Grid>
@@ -63,7 +63,7 @@ export default function ControlPanel({ addConfig }) {
           </Grid>
         </Grid>
       </Container>
-        { displayConfigForm ? <Container className={classes.configForm}><ConfigForm addConfig={addConfig} /></Container> : null }
+      { displayConfigForm ? <Container className={classes.configForm}><ConfigForm addConfig={addConfig} /></Container> : null }
     </div>
   );
 }

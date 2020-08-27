@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import { getLoginStatus } from './login_helper';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,9 +30,20 @@ const CustomLink = React.forwardRef((props, ref) => (
   />
 ));
 
-export default function NavBar(props) {
+export default function NavBar() {
   const classes = useStyles();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [logURL, setLogURL] = useState("");
 
+  useEffect(() => {
+    async function fetchLogin() {
+      const result = await getLoginStatus();
+      setIsLoggedIn(result.isLoggedIn);
+      setLogURL(result.logURL);
+    }
+    fetchLogin();
+  }, []);
+  
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -39,10 +51,23 @@ export default function NavBar(props) {
           <Typography variant="h6" className={classes.title} component={CustomLink} to="/">
             GreySwan
           </Typography>
-          <Button color="inherit" component={CustomLink} to="/alerts">Alerts</Button>
-          <Button color="inherit" component={CustomLink} to="/configs">Configs</Button>
-          <Button color="inherit" href={props.logURL}>
-            {props.isLoggedIn ? "Logout" :  "Login"}
+          {/* TODO: uncomment the commented out code when deploying. */}
+          {/* {isLoggedIn ?  */}
+            <Fragment>
+              <Button color="inherit" id="alerts-button"
+                component={CustomLink} to="/alerts"
+              >
+                Alerts
+              </Button>
+              <Button color="inherit" id="configs-button" 
+                component={CustomLink} to="/configs"
+              >
+                Configs
+              </Button>
+            </Fragment>
+            {/* : null} */}
+          <Button color="inherit" href={logURL} id="login-button">
+            {isLoggedIn ? "Logout" :  "Login"}
           </Button>
         </Toolbar>
       </AppBar>
