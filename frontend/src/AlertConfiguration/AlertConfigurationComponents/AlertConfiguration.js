@@ -2,11 +2,10 @@ import React, { useState, Fragment } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import ControlPanel from './ControlPanel';
 import Footer from './Footer';
 import ConfigList from './ConfigList';
+import NavBar from '../../NavBar';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -32,7 +31,7 @@ export default function AlertConfiguration() {
   return (
     <Fragment>
       <CssBaseline />
-      {/** TODO: Add Catherine's NavBar during integration*/}
+      <NavBar />
       <main className={classes.main}>
         <ControlPanel addConfig={addConfig}/>
         <ConfigList configs={configs}/>

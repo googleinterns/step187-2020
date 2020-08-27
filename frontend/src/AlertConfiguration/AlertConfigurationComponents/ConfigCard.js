@@ -35,7 +35,7 @@ export default function ConfigCard(card) {
           Alert Configuration for "{ card.data }"
         </Typography>
         <Typography>
-          When sent an alert regarding "{ card.data }", you will also be sent data for "{ card.rData }".
+          When sent an alert regarding "{ card.data }", you will also be sent data for "{ card.relatedData }".
          </Typography>
       </CardContent>
     </Card>

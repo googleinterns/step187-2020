@@ -24,13 +24,13 @@ const useStyles = makeStyles({
 export default function ConfigForm({ addConfig }) {
   const classes = useStyles();
 
+  const DEFAULT_USER = "example@gmail.com";
+
   const [config, setConfig] = useState({
-    id: '',
+    user: DEFAULT_USER,
     data: '',
     relatedData: '',
   });
-
-  const DEFAULT_ID = 10;
 
   {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
   const POSSIBLE_DIMENSIONS = ["noodle", "spice", "egg", "soup", "instant noodle"];
@@ -44,27 +44,19 @@ export default function ConfigForm({ addConfig }) {
   function handleRelatedDataChange(event) {
     setConfig({ ...config, relatedData: event.target.value });
   }
-
-  /**
+  
   function handleSubmit(event) {
     event.preventDefault();
     if (config.data.trim() && config.relatedData.trim()) {
-      addConfig({ ...config, id: DEFAULT_ID });
-      setConfig({ ...config, data: "", relatedData: ""});
+      fetch("/api/v1/configurations", {
+        method: 'POST',
+        body: config.data + ":" + config.relatedData + ":" + config.user,
+      });
+      addConfig({ ...config });
+      setConfig({ ...config, data: "", relatedData: "" });
     }
   }
-  */
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    fetch("/api/v1/configurations", {
-      method: 'POST',
-      headers: {'Content-type': 'application/json'},
-      body: JSON.stringify(config),
-    });
-  }
-
-  { /* TODO: create IDs */ }
   return(
     <div>
       <Tooltip title="If an anomaly is detected regarding the data, the related data will automatically accompany the generated alert.">
