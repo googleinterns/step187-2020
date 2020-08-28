@@ -30,6 +30,8 @@ public class AdvanceAlertGenerator implements AlertGenerator {
   }
 
   private static ImmutableList<Alert> groupAnomaliesToAlerts(List<DataInfo> topics) {
+    // TODO: Move this elsewhere.
+    SimpleRelatedDataGenerator.createGenerator().fillUpdatedRelatedData();
     List<Anomaly> anomaliesList = topics.stream()
         .flatMap(topic -> SimpleAnomalyGenerator.createGenerator(topic).getAnomalies().stream())
         .collect(ImmutableList.toImmutableList());

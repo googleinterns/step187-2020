@@ -22,8 +22,16 @@ import java.util.HashMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.blackswan.mock.filesystem.*;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 
 /** Singleton class to generate related data for a given anomaly. */
 public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
@@ -35,9 +43,8 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private Map<DataInfo, Map<Timestamp, Integer>> csvDataCache;
 
   private SimpleRelatedDataGenerator() {
-    relatedDataMap = ArrayListMultimap.create();
+    relatedDataMap = HashMultimap.create();
     csvDataCache = new HashMap<>();
-    prefillRelatedData(); // TODO: Remove when connected to datastore.
   }
 
   public static SimpleRelatedDataGenerator createGenerator() {
@@ -47,9 +54,9 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   public ImmutableList<RelatedData> getRelatedData(DataInfo dataInfo, 
       Timestamp startTime, Timestamp endTime) {
     List<RelatedData> relatedDataList = new ArrayList<RelatedData>();
-    
     if (relatedDataMap.containsKey(dataInfo)) {
       for (DataInfoUser relatedTopic : relatedDataMap.get(dataInfo)) {
+        System.out.println(relatedDataMap.get(dataInfo).size());
         Map<Timestamp, MetricValue> dataPointsPlot = 
             getDataPointsInRange(relatedTopic.getDataInfo(), startTime, endTime);
         
@@ -66,6 +73,17 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     // When dataInfo is not found in relatedDataMap, empty list
     // is returned. 
     return ImmutableList.copyOf(relatedDataList);
+  }
+
+  /** TODO: Find good place to call this. */
+  public void fillUpdatedRelatedData() {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query(Const.CONFIG_ENTITY_KIND);
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      relatedDataMap.put(toDataInfo(entity), toDataInfoUser(entity));
+    }
   }
 
   /** 
@@ -119,6 +137,21 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     }
 
     return ImmutableMap.copyOf(dataPoints);
+  }
+
+  private DataInfo toDataInfo(Entity entity) {
+    return DataInfo.of(
+      (String) entity.getProperty(Const.CONFIG_METRIC_PROPERTY),
+      (String) entity.getProperty(Const.CONFIG_DIMENSION_PROPERTY)
+    );
+  }
+
+  private DataInfoUser toDataInfoUser(Entity entity) {
+    return DataInfoUser.of(
+      (String) entity.getProperty(Const.CONFIG_RMETRIC_PROPERTY),
+      (String) entity.getProperty(Const.CONFIG_RDIMENSION_PROPERTY),
+      (String) entity.getProperty(Const.CONFIG_USER_PROPERTY)
+    );
   }
 
 }

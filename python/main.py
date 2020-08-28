@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 """ TODO: Make not hard-coded. """
 LIST = ["Ramen", "Udon", "Pho"]
-REGION = ['US'] # , 'GB', 'JP']
+REGION = ['US' , 'GB', 'JP']
 TYPE = [''] # 'images', 'youtube']
 TIME_FRAME = ['2019-07-01 2019-10-01', '2019-11-01 2020-02-01', '2020-03-01 2020-05-01']
 

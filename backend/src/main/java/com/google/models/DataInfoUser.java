@@ -59,4 +59,27 @@ public final class DataInfoUser {
         .toString();
   }
 
+    @Override
+  public int hashCode() {
+    return toString().hashCode();
+  }
+
+  @Override
+   public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof DataInfoUser)) {
+      return false;
+    }
+
+    DataInfoUser target = (DataInfoUser) o;
+
+    return target.dataInfo.equals(dataInfo) &&
+        target.username.equals(username);
+  }
+
+
+
 }

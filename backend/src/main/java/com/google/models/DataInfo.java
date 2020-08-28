@@ -66,8 +66,8 @@ public final class DataInfo {
 
     DataInfo target = (DataInfo) o;
 
-    return target.metricName == metricName &&
-        target.dimensionName == dimensionName;
+    return target.metricName.equals(metricName) &&
+        target.dimensionName.equals(dimensionName);
   }
 
 }
