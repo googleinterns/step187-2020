@@ -23,9 +23,7 @@ export default function AlertConfiguration() {
 
   const [configs, setConfigs] = useState([]);
 
-  fetch("/api/v1/configurations").then(response => {
-    console.log(response);
-  });
+  fetch("/api/v1/configurations").then(response => response.json()).then(res => setConfigs(res));
 
   function addConfig(config) {
     setConfigs([config, ...configs]);

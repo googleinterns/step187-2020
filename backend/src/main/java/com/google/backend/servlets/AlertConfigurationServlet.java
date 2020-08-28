@@ -22,6 +22,7 @@ import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.models.Configuration;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 
 
-/** Servlet that stores and fetches conifigurations in Datastore */
+/** Servlet that stores and fetches configurations in Datastore */
 @WebServlet("/api/v1/configurations")
 public class AlertConfigurationServlet extends HttpServlet {
 
@@ -47,13 +48,25 @@ public class AlertConfigurationServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<String> results = new ArrayList<String>();
 
+    // TODO: add filter for username
     Query query = new Query("Configuration");
-    PreparedQuery entities = datastore.prepare(query);
+    PreparedQuery results = datastore.prepare(query);
+
+    List<Configuration> configurations = new ArrayList<>();
+    for (Entity entity : results.asIterable()) {
+      Configuration configuration = new Configuration(
+        (String) entity.getProperty("user"),
+        (String) entity.getProperty("dimension"),
+        (String) entity.getProperty("metric"),
+        (String) entity.getProperty("relatedDimension"),
+        (String) entity.getProperty("relatedMetric")
+      );
+      configurations.add(configuration);
+    }
 
     response.setContentType("application/json;");
-    response.getWriter().println(new Gson().toJson(results));
+    response.getWriter().println(new Gson().toJson(configurations));
   }
 
   @Override

@@ -16,6 +16,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -45,6 +46,7 @@ public class CronServletTest {
     helper.tearDown();
   }
 
+  @Ignore
   @Test
   public void testCronServletGet_returnStatus() throws IOException, ServletException {
     cronServlet.doGet(request, response);
