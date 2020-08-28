@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -147,13 +146,13 @@ class AlertsContent extends Component {
     return (
       <div className={classes.root}>
         <form align="center">
-          <InputLabel>View # of</InputLabel>
           <TextField
             id="alert-limit"
             type="number"
-            label="alerts:"
-            size="small"
-            InputProps={{ inputProps: { min: 0, max: 10 } }}
+            label="# of alerts:"
+            variant="outlined"
+            style={{ marginBottom: '25px' }}
+            InputProps={{ inputProps: { min: 1, max: 15 } }}
             value={alertsLimit}
             onChange={this.handleAlertsLimitChange}
           />

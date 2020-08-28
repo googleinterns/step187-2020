@@ -35,7 +35,7 @@ export default function ControlPanel({ addConfig }) {
       <Container>
         <Typography
           component="h1"
-          variant="h2"
+          variant="h3"
           align="center"
           color="textPrimary"
           gutterBottom

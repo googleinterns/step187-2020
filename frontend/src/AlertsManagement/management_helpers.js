@@ -1,8 +1,9 @@
 import { convertTimestampToDate } from '../time_utils';
-import { UNRESOLVED_STATUS } from './management_constants';
+import { UNRESOLVED_STATUS, MAX_ALERTS_LIMIT } from './management_constants';
 
 /**
  * Fetch specified amount of alerts from Datastore and organize into data structures.
+ * If no alerts limit is given, pass the maximum limit of returned objects as parameter.
  * Returns an array with a map of alert IDs to Object containing alert info, 
  * an array of ids of unresolved alerts, and an array of ids of resolved alerts.
  */
@@ -10,6 +11,8 @@ export async function getAlertsData(alertsLimit) {
   let allAlerts = new Map();
   let unresolvedAlerts = [];
   let resolvedAlerts = [];
+
+  if (!alertsLimit) alertsLimit = MAX_ALERTS_LIMIT;
 
   const alertsResponse = await fetch('/api/v1/alerts-data?limit=' + alertsLimit);
   if (!alertsResponse.ok) {
