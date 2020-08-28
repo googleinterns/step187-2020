@@ -11,6 +11,8 @@ export async function getAlertsData(alertsLimit) {
   let unresolvedAlerts = [];
   let resolvedAlerts = [];
 
+  if (!alertsLimit) alertsLimit = 0;
+
   const alertsResponse = await fetch('/api/v1/alerts-data?limit=' + alertsLimit);
   if (!alertsResponse.ok) throw new Error('Error getting alerts data with limit ' + alertsLimit + ': ' + alertsResponse.status);
   const data = await alertsResponse.json();

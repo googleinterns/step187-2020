@@ -59,6 +59,11 @@ export default function NavBar() {
               >
                 Alerts
               </Button>
+              <Button color="inherit" id="history-button" 
+                component={CustomLink} to="/history"
+              >
+                History
+              </Button>
               <Button color="inherit" id="configs-button" 
                 component={CustomLink} to="/configs"
               >

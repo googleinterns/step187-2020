@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/v1/alerts-data")
 public class AlertsDataServlet extends HttpServlet {
 
+  private static final int MAX_LIMIT = 1000;
   private static final int DEFAULT_ALERTS_LIMIT = 5;
   private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
   private static final String WRONG_ALERT_DATA = "Incorrect alert data sent in HTTP request.";
@@ -63,6 +64,8 @@ public class AlertsDataServlet extends HttpServlet {
       log.warning("Received " + request.getParameter("limit") + " instead of an integer.");
       limit = DEFAULT_ALERTS_LIMIT;
     }
+
+    if (limit == 0) limit = MAX_LIMIT;
     
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
     List<Alert> alertList = results.stream().map(Alert::createAlertFromEntity).collect(Collectors.toList());
