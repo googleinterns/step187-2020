@@ -30,10 +30,11 @@ export default function ConfigCard(card) {
           variant="h5"
           component="h2"
         >
-          Alert Configuration for "{ card.metric }"
+          Alert Configuration for "{ card.metric }" and "{ card.dimension }"
         </Typography>
         <Typography>
-          When sent an alert regarding "{ card.metric }", you will also be sent data for "{ card.relatedMetric }".
+          When sent an alert regarding "{ card.metric }" and "{ card.dimension }", 
+          you will also be sent data for "{ card.relatedMetric }" and "{ card.relatedDimension }".
          </Typography>
       </CardContent>
     </Card>

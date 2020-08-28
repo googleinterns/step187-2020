@@ -34,7 +34,7 @@ export default function ConfigForm({ addConfig }) {
     relatedMetric: '',
   });
 
-  {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
+  /**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/
   const POSSIBLE_DIMENSIONS = ["Ramen", "Pho", "Udon"];
   const POSSIBLE_METRICS = ["Interest Over Time - US", "Interest Over Time - UK", "Interest Over Time - JP"]; //, "Interest Over Time - Web Search", "Interest Over Time - Images", "Interest Over Time - YouTube"];
   const dimensions = POSSIBLE_DIMENSIONS;

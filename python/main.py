@@ -62,7 +62,7 @@ def hello():
                 result = pd.concat(dataset, axis=1)
                 s = io.StringIO()
                 result.to_csv(s)
-                print(s.getvalue())
+                # print(s.getvalue())
                 upload_blob(s.getvalue(), food, region, category)
     return 'hi'
 
