@@ -19,7 +19,7 @@ afterEach(() => {
   container = null;
 });
 
-describe("when the user is logged in", () => {
+describe.only("when the user is logged in", () => {
   beforeEach(async () => {
     // Fake logged in status.
     const fakeStatus = {
@@ -66,7 +66,7 @@ describe("when the user is logged out", () => {
     global.fetch.mockRestore();
   });
 
-  it("displays Login option with URL", () => {
+  it.only("displays Login option with URL", () => {
     expect(container.querySelector("#login-button").textContent).toBe("Login");
     expect(container.querySelector("#login-button").href).toBe("http://localhost/login");
   });

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Link } from 'react-router-dom';
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -85,10 +85,12 @@ class AlertInfo extends Component {
     anomaly.relatedDataList.forEach((relatedData, index) => 
       relatedDataCharts.push(
         <Fragment key={index}>
-          <Typography variant="body2" style={{ margin: '10px' }}>
-            {`Related data from ${relatedData.metricName} for ${relatedData.dimensionName} requested by ${relatedData.username}`}
-          </Typography>
           {this.createLineChart(relatedData, index)}
+          <Typography variant="body2" align="center" style={{ margin: '10px', paddingBottom: '10px' }}>
+            {`Related data from ${relatedData.metricName} for ${relatedData.dimensionName} (${relatedData.username})`}
+          </Typography>
+          {index === (anomaly.relatedDataList.length - 1) ? null :
+            <Divider style={{ marginBottom: '20px'}}/> }
         </Fragment>
       )
     );
@@ -110,20 +112,21 @@ class AlertInfo extends Component {
     return (
       <div className="alert-info">
         <Divider variant="middle"/>
-        <Link to="/alerts">
-          <IconButton size="small" id="back-button">
-            <ArrowBackIcon />
-          </IconButton>
-        </Link>
-        <Typography variant="h5" align="center">
+        <IconButton size="small" id="back-button" onClick={this.props.history.goBack}>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h4" align="center">
           Alert on {alert.timestampDate}
         </Typography>
         <Typography variant="h6" align="center">
             Status: {alert.status}
         </Typography>
+        <Typography variant="h6" align="center">
+            Number of anomalies: {alert.anomalies.length}
+        </Typography>
         <center>
           <Button id="status-button" variant="contained" color="primary" component="span" 
-            onClick={this.handleStatusChange}
+            onClick={this.handleStatusChange} style={{ marginTop: '10px', marginBottom: '10px'}}
           >
             {alert.status === UNRESOLVED_STATUS ? "Resolve?" : "Unresolve?"}
           </Button>
@@ -133,18 +136,23 @@ class AlertInfo extends Component {
             return (
               <Fragment key={index}>
                 <ListItem key={index} dense>
-                  <Grid container>
+                  <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <ListItemText id={index} 
                         disableTypography
                         primary={
-                          <Typography variant="body1" style={{ marginTop: '10px' }}>
-                            {`Anomaly in ${anomaly.metricName} for ${anomaly.dimensionName} on ${anomaly.timestampDate}\n`}
+                          <Typography variant="body1" style={{ marginTop: '10px' }}> Anomaly in 
+                            <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
+                              {` ${anomaly.metricName} for ${anomaly.dimensionName}`}
+                            </Box> on
+                            <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
+                              {`${anomaly.timestampDate}`}
+                            </Box>
                           </Typography>
                         }
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={anomaly.relatedDataList.length !== 0 ? 6 : 12}>
                       {this.createLineChart(anomaly, index)}
                     </Grid>
                     <Grid item xs={6}>
@@ -152,7 +160,7 @@ class AlertInfo extends Component {
                     </Grid>
                   </Grid>
                 </ListItem>
-                <Divider style={style} variant="inset" component="li"/>
+                <Divider style={style} component="li"/>
               </Fragment>
             );
           })}
