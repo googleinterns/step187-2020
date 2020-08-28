@@ -48,12 +48,12 @@ public class AlertConfigurationServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query = new Query("Configuration");
-
     PreparedQuery results = datastore.prepare(query);
 
     List<Configuration> configurations = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
       Configuration configuration = new Configuration(
+        (String) entity.getProperty("user"),
         (String) entity.getProperty("dimension"),
         (String) entity.getProperty("metric"),
         (String) entity.getProperty("relatedDimension"),
@@ -114,16 +114,23 @@ public class AlertConfigurationServlet extends HttpServlet {
   }
 
   public final class Configuration {
+    private final String user;
     private final String dimension;
     private final String metric;
     private final String relatedDimension;
     private final String relatedMetric;
 
-    private Configuration(String dimension, String metric, String relatedDimension, String relatedMetric) {
+    private Configuration(String user, String dimension, String metric, String relatedDimension, String relatedMetric) {
+      this.user = user;
       this.dimension = dimension;
       this.metric = metric;
       this.relatedDimension = relatedDimension;
       this.relatedMetric = relatedMetric;
+    }
+
+    @Override
+    public String toString() {
+      return dimension + " " + metric + " " + relatedDimension + " " + relatedMetric;
     }
   }
 }
