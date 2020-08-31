@@ -76,7 +76,7 @@ public class AlertConfigurationServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     try {
-      const Entity configurationEntity = new Entity("Configuration");
+      static Entity configurationEntity = new Entity("Configuration");
       configurationEntity.setProperty("user", email);
       configurationEntity.setProperty("metric", metric);
       configurationEntity.setProperty("dimension", dimension);
@@ -89,7 +89,7 @@ public class AlertConfigurationServlet extends HttpServlet {
   }
 
   private String[] processRequestBody(HttpServletRequest request) throws IOException, ServletException {
-    const DELIMITER = "%"
+    static DELIMITER = "%";
     BufferedReader reader = request.getReader();
     String body = reader.readLine();
     if (body == null) {
@@ -97,7 +97,7 @@ public class AlertConfigurationServlet extends HttpServlet {
     }
     String[] parameters = body.split(DELIMITER); 
 
-    const PARAMETER_LENGTH = 5;
+    static PARAMETER_LENGTH = 5;
     if (parameters.length != PARAMETER_LENGTH) {
       throw new ServletException(WRONG_ALERT_DATA);
     }
