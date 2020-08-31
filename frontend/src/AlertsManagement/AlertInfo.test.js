@@ -28,20 +28,28 @@ const expectedAlert = {
   status: "RESOLVED",
 };
 
+const REQUEST_ID = 1987654321098765;
+
+let wrapper;
+
+beforeEach(() => {
+  wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
+  wrapper.setProps({
+    match: {
+      params: {
+        alertId: REQUEST_ID,
+      }
+    },
+    history: {}
+  });
+});
+
 describe("componentDidMount", () => {
   
   const REQUEST_ID = 1987654321098765;
 
   it("should set state correctly with fetched alert", async () => {
     const mock = jest.spyOn(helpers, "getSpecificAlertData").mockReturnValue(expectedAlert);
-    const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
-    wrapper.setProps({
-      match: {
-        params: {
-          alertId: REQUEST_ID,
-        }
-      }
-    });
 
     await wrapper.instance().componentDidMount();
 
@@ -51,14 +59,6 @@ describe("componentDidMount", () => {
 
   it("should throw an error when no data is received", async () => {
     const mock = jest.spyOn(helpers, "getSpecificAlertData").mockReturnValue(null);
-    const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
-    wrapper.setProps({
-      match: {
-        params: {
-          alertId: REQUEST_ID,
-        }
-      }
-    });
     const instance = wrapper.instance();
 
     expect(mock).toHaveBeenCalled();
@@ -82,7 +82,6 @@ describe("handleStatusChange", () => {
 
   it("sends a POST request with the correct data to change alert status", () => {
     jest.spyOn(global, 'fetch');
-    const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
     wrapper.setState({ alert: expectedAlert });
 
     act(() => {
