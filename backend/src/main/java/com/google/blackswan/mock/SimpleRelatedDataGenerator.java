@@ -28,7 +28,8 @@ import com.google.blackswan.mock.filesystem.*;
 /** Singleton class to generate related data for a given anomaly. */
 public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private static final String CONFIG_USERNAME = "catyu@";
-
+  /** Ideally should be injected. Currently, putting as class variable. */
+  private static final FileSystem FILE_SYSTEM = LocalFileSystem.createSystem();
   private static final SimpleRelatedDataGenerator INSTANCE = new SimpleRelatedDataGenerator();
 
   private Multimap<DataInfo, DataInfoUser> relatedDataMap;
@@ -85,7 +86,7 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
 
   private ImmutableMap<Timestamp, Integer> getTopicDataPoints(DataInfo topic) {
     return ImmutableMap.copyOf(csvDataCache.computeIfAbsent(topic, key -> CSVParser.parseCSV(
-        LocalFileSystem.createSystem().getDataAsStream(topic)
+        FILE_SYSTEM.getDataAsStream(topic)
       )));
   }
 
