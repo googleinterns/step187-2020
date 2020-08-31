@@ -25,6 +25,7 @@ export default function ConfigForm({ addConfig }) {
   const classes = useStyles();
 
   const DEFAULT_USER = "example@gmail.com";
+  const DEFAULT_ID = 0;
 
   const [config, setConfig] = useState({
     user: DEFAULT_USER,
@@ -32,9 +33,9 @@ export default function ConfigForm({ addConfig }) {
     metric: '',
     relatedDimension: '',
     relatedMetric: '',
+    id: DEFAULT_ID,
   });
 
-  {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
   const POSSIBLE_DIMENSIONS = ["Ramen", "Pizza", "Udon", "Rice", "Japan"];
   const POSSIBLE_METRICS = ["Interest Over Time - US", "Interest Over Time - UK", "Interest Over Time - JP", "Interest Over Time - Web Search", "Interest Over Time - Images", "Interest Over Time - YouTube"];
   const dimensions = POSSIBLE_DIMENSIONS;
@@ -63,7 +64,7 @@ export default function ConfigForm({ addConfig }) {
     if (config.dimension.trim() && config.metric.trim() && config.relatedDimension.trim() && config.relatedMetric.trim()) {
       fetch("/api/v1/configurations", {
         method: 'POST',
-        body: config.user + "%" + config.metric + "%" + config.dimension + "%" + config.relatedMetric + "%" + config.relatedDimension,
+        body: config.user + "%" + config.metric + "%" + config.dimension + "%" + config.relatedMetric + "%" + config.relatedDimension + "%" + config.id,
       });
       addConfig({ ...config });
       setConfig({ ...config, metric: "", dimension: "", relatedMetric: "", relatedDimension: ""});
