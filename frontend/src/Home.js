@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import './Home.css';
 import { getLoginStatus } from './login_helper';
+import { authOn } from './flags';
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    async function fetchLogin() {
-      const result = await getLoginStatus();
-      setIsLoggedIn(result.isLoggedIn);
+    if (authOn) {
+      async function fetchLogin() {
+        const result = await getLoginStatus();
+        setIsLoggedIn(result.isLoggedIn);
+      }
+      fetchLogin();
     }
-    fetchLogin();
   }, []);
 
   return (

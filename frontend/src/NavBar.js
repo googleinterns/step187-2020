@@ -6,6 +6,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { getLoginStatus } from './login_helper';
+import { authOn } from './flags';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,18 +31,37 @@ const CustomLink = React.forwardRef((props, ref) => (
   />
 ));
 
+function OtherTabs() {
+  return (
+    <Fragment>
+      <Button color="inherit" id="alerts-button"
+        component={CustomLink} to="/alerts"
+      >
+        Alerts
+      </Button>
+      <Button color="inherit" id="configs-button" 
+        component={CustomLink} to="/configs"
+      >
+        Configs
+      </Button>
+    </Fragment>
+  );
+}
+
 export default function NavBar() {
   const classes = useStyles();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logURL, setLogURL] = useState("");
 
   useEffect(() => {
-    async function fetchLogin() {
-      const result = await getLoginStatus();
-      setIsLoggedIn(result.isLoggedIn);
-      setLogURL(result.logURL);
+    if (authOn) {
+      async function fetchLogin() {
+        const result = await getLoginStatus();
+        setIsLoggedIn(result.isLoggedIn);
+        setLogURL(result.logURL);
+      }
+      fetchLogin();
     }
-    fetchLogin();
   }, []);
   
   return (
@@ -51,21 +71,7 @@ export default function NavBar() {
           <Typography variant="h6" className={classes.title} component={CustomLink} to="/">
             GreySwan
           </Typography>
-          {/* TODO: uncomment the commented out code when deploying. */}
-          {/* {isLoggedIn ?  */}
-            <Fragment>
-              <Button color="inherit" id="alerts-button"
-                component={CustomLink} to="/alerts"
-              >
-                Alerts
-              </Button>
-              <Button color="inherit" id="configs-button" 
-                component={CustomLink} to="/configs"
-              >
-                Configs
-              </Button>
-            </Fragment>
-            {/* : null} */}
+          {authOn ? (isLoggedIn ? OtherTabs() : null) : OtherTabs()}
           <Button color="inherit" href={logURL} id="login-button">
             {isLoggedIn ? "Logout" :  "Login"}
           </Button>
