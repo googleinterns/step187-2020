@@ -64,8 +64,10 @@ public class AlertsDataServlet extends HttpServlet {
       limit = DEFAULT_ALERTS_LIMIT;
     }
     
-    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
-    List<Alert> alertList = results.stream().map(Alert::createAlertFromEntity).collect(Collectors.toList());
+    List<Entity> results = datastore.prepare(query)
+      .asList(FetchOptions.Builder.withLimit(limit));
+    List<Alert> alertList = results.stream().map(Alert::createAlertFromEntity)
+      .collect(Collectors.toList());
     
     response.setContentType("application/json;");
     response.getWriter().println(new Gson().toJson(alertList));

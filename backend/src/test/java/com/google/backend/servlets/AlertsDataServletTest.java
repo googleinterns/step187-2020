@@ -29,6 +29,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,8 +61,9 @@ public class AlertsDataServletTest {
   private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
   private static final String LIMIT_PARAM = "limit";
   private static final String FAKE_LIMIT = "2";
-
+  
   private static final AlertsDataServlet alertsDataServlet = new AlertsDataServlet();
+  private static final Logger log = Logger.getLogger(AlertsDataServletTest.class.getName());
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
     new LocalDatastoreServiceTestConfig());
   private StringWriter stringWriter = new StringWriter();
@@ -122,7 +124,7 @@ public class AlertsDataServletTest {
       expectedAlerts.add(Alert.createAlertFromEntity(alertThree));
       expectedAlerts.add(Alert.createAlertFromEntity(alertTwo));
     } catch (EntityNotFoundException e) {
-      throw new ServletException(e);
+      log.warning("Test entities were not put into Datastore.");
     }
 
     alertsDataServlet.doGet(request, response);
