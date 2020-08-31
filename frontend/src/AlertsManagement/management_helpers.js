@@ -12,7 +12,10 @@ export async function getAlertsData(alertsLimit) {
   let resolvedAlerts = [];
 
   const alertsResponse = await fetch('/api/v1/alerts-data?limit=' + alertsLimit);
-  if (!alertsResponse.ok) throw new Error('Error getting alerts data with limit ' + alertsLimit + ': ' + alertsResponse.status);
+  if (!alertsResponse.ok) {
+    throw new Error('Error getting alerts data with limit ' 
+      + alertsLimit + ': ' + alertsResponse.status);
+  }
   const data = await alertsResponse.json();
   data.forEach((alert) => {
     const alertId = alert.id.value;
