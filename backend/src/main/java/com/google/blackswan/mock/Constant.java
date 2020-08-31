@@ -17,7 +17,8 @@ package com.google.blackswan.mock;
 import com.google.models.DataInfo;
 import com.google.common.collect.ImmutableMap;
 
-public final class Const {
+/** Constants used throughout the blackswan mock classes. */
+public final class Constant {
   public static final String INTEREST_US = "Interest Over Time - US";
   public static final String UDON = "Udon";
   public static final String PHO = "Pho";
@@ -35,4 +36,7 @@ public final class Const {
   public static final String KEY_LOCATION = "keys/key.json";
   public static final String PROJECT_ID = "greyswan";
   public static final String BUCKET_NAME = "greyswan.appspot.com";
+
+  /** No instances. */
+  private Constant() {}
 }

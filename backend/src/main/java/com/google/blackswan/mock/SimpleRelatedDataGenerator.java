@@ -75,10 +75,10 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private void prefillRelatedData() {
     // TODO: Replace with call for querying configs from datastore.
     // TODO: Deal with capitalizations when querying config from datastore.
-    relatedDataMap.put(DataInfo.of(Const.INTEREST_US, Const.RAMEN), 
-        DataInfoUser.of(Const.INTEREST_US, Const.UDON, CONFIG_USERNAME));
-    relatedDataMap.put(DataInfo.of(Const.INTEREST_US, Const.RAMEN), 
-        DataInfoUser.of(Const.INTEREST_US, Const.PHO, CONFIG_USERNAME));
+    relatedDataMap.put(DataInfo.of(Constant.INTEREST_US, Constant.RAMEN), 
+        DataInfoUser.of(Constant.INTEREST_US, Constant.UDON, CONFIG_USERNAME));
+    relatedDataMap.put(DataInfo.of(Constant.INTEREST_US, Constant.RAMEN), 
+        DataInfoUser.of(Constant.INTEREST_US, Constant.PHO, CONFIG_USERNAME));
     // Multimap looks like this right now: 
     // {{Interest Level, Ramen},{{Interest Level, Udon}, {Interest Level, Pho}}}, ...}.
   }

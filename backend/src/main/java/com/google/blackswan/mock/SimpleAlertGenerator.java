@@ -14,7 +14,9 @@
 
 package com.google.blackswan.mock;
 
-import com.google.models.*;
+import com.google.models.Anomaly;
+import com.google.models.Alert;
+import com.google.models.Timestamp;
 import java.util.List;
 import java.util.Collections;
 import com.google.common.collect.ImmutableList;

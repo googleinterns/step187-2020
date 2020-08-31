@@ -14,18 +14,24 @@
 
 package com.google.blackswan.mock;
 
-import com.google.models.*;
+import com.google.models.DataInfo;
+import com.google.models.Anomaly;
+import com.google.models.Alert;
+import com.google.models.Timestamp;
 import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 
-/** Generate list of alerts of topics requested by grouping anomalies by their month. */
-public class AdvanceAlertGenerator implements AlertGenerator {
+/** 
+* Generate list of alerts of multiple topics requested by grouping 
+* anomalies by their month. 
+*/
+public class MultiInputAlertGenerator implements AlertGenerator {
 
   private final ImmutableList<Alert> alerts;
 
-  public AdvanceAlertGenerator(List<DataInfo> topics) {
+  public MultiInputAlertGenerator(List<DataInfo> topics) {
     this.alerts = groupAnomaliesToAlerts(topics);
   }
 
@@ -43,8 +49,8 @@ public class AdvanceAlertGenerator implements AlertGenerator {
     }
 
     return anomalyGroups.keySet().stream()
-        .map(key -> Alert.createAlertWithoutId(key, anomalyGroups.get(key), Alert.StatusType.UNRESOLVED))
-        .collect(ImmutableList.toImmutableList());
+        .map(key -> Alert.createAlertWithoutId(key, anomalyGroups.get(key), 
+            Alert.StatusType.UNRESOLVED)).collect(ImmutableList.toImmutableList());
   }
 
   public List<Alert> getAlerts() {

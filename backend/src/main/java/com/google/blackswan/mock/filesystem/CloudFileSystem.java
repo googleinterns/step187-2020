@@ -21,7 +21,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.ReadChannel;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
-import com.google.models.*;
+import com.google.models.DataInfo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import com.google.cloud.storage.BlobId;
 import java.nio.channels.Channels;
 import java.io.InputStream;
 import java.util.logging.Logger;
-import com.google.blackswan.mock.Const;
+import com.google.blackswan.mock.Constant;
 
 /** Wrapper for Cloud Storage file system to access files in greyswan bucket. */
 public class CloudFileSystem implements FileSystem {
@@ -46,13 +46,13 @@ public class CloudFileSystem implements FileSystem {
     Storage cloudStorage;
     try {
       cloudStorage = StorageOptions.newBuilder()
-        .setProjectId(Const.PROJECT_ID)
+        .setProjectId(Constant.PROJECT_ID)
         .setCredentials(getCredentialsWithKey()).build()
         .getDefaultInstance().getService();
     } catch (IOException e) {
       log.warning(EXCEPTION_MESSAGE);
       cloudStorage = StorageOptions.newBuilder()
-        .setProjectId(Const.PROJECT_ID).build()
+        .setProjectId(Constant.PROJECT_ID).build()
         .getDefaultInstance().getService();
     }
     return new CloudFileSystem(cloudStorage);
@@ -67,15 +67,15 @@ public class CloudFileSystem implements FileSystem {
   }
 
   public InputStream getDataAsStream(DataInfo requestedData) {
-    Blob requestedFileBlob = storage.get(BlobId.of(Const.BUCKET_NAME, 
-        Const.FILE_LOCATIONS.get(requestedData)));
+    Blob requestedFileBlob = storage.get(BlobId.of(Constant.BUCKET_NAME, 
+        Constant.FILE_LOCATIONS.get(requestedData)));
 
     return Channels.newInputStream(requestedFileBlob.reader());
   }
 
   private static GoogleCredentials getCredentialsWithKey() throws IOException {
     File credentialsPath = new File(CloudFileSystem.class
-        .getClassLoader().getResource(Const.KEY_LOCATION).getFile());
+        .getClassLoader().getResource(Constant.KEY_LOCATION).getFile());
     if (!credentialsPath.exists()) {
       throw new IOException(EXCEPTION_MESSAGE);
     }

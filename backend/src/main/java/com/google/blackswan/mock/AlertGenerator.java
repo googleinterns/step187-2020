@@ -14,7 +14,7 @@
 
 package com.google.blackswan.mock;
 
-import com.google.models.*;
+import com.google.models.Alert;
 import java.util.List;
 
 /** Alert Generator that takes in an AnomalyGenerator and outputs lists of alerts. */
