@@ -1,5 +1,4 @@
 import React, { useState, Fragment } from 'react';
-import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
 import ControlPanel from './ControlPanel';
@@ -24,9 +23,7 @@ export default function AlertConfiguration() {
 
   const [configs, setConfigs] = useState([]);
 
-  fetch("/api/v1/configurations").then(response => {
-    console.log(response);
-  });
+  fetch("/api/v1/configurations").then(response => response.json()).then(res => setConfigs(res));
 
   function addConfig(config) {
     setConfigs([config, ...configs]);

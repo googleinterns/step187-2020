@@ -3,8 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-
 
 const useStyles = (theme) => makeStyles({
   card: {
@@ -32,10 +30,10 @@ export default function ConfigCard(card) {
           variant="h5"
           component="h2"
         >
-          Alert Configuration for "{ card.metric }"
+          Alert Configuration for "{ card.dimension }"
         </Typography>
         <Typography>
-          When sent an alert regarding "{ card.metric }", you will also be sent data for "{ card.relatedMetric }".
+          When sent an alert regarding "{ card.metric }" for "{ card.dimension }", you will also be sent "{ card.relatedMetric }" for "{ card.relatedDimension }".
          </Typography>
       </CardContent>
     </Card>
