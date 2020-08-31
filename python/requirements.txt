@@ -1,0 +1,5 @@
+Flask==1.1.1
+Flask-API
+pytrends
+google-cloud-storage
+google-api-python-client
