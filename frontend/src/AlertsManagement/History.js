@@ -12,8 +12,6 @@ class History extends Component {
     super(props);
     this.state = {
       allAlerts: null,
-      unchecked: [], 
-      checked: [],
     }
   }
 
@@ -24,8 +22,6 @@ class History extends Component {
     }
     this.setState({
       allAlerts: new Map(results[0]),
-      unchecked: results[1].slice(),
-      checked: results[2].slice(),
     });
   }
 
@@ -65,7 +61,7 @@ class History extends Component {
         margin: 'auto',
       },
     });
-    const { allAlerts, unchecked, checked } = this.state;
+    const { allAlerts } = this.state;
     
     if (allAlerts === null) {
       return <div />;

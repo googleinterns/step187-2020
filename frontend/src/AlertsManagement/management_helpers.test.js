@@ -39,22 +39,22 @@ describe("getAlertsData", () => {
 
   const expectedAlerts = new Map();
   expectedAlerts.set(1234567890123456, {
-    timestampDate: "Sun Dec 08 2019",
+    timestampDate: "Dec 08 2019",
     anomalies: [{
       dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Sun Dec 29 2019"
+      timestampDate: "Dec 29 2019"
     },
     { 
       dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Sun Dec 01 2019",
+      timestampDate: "Dec 01 2019",
     }],
     status: "UNRESOLVED",
   });
   expectedAlerts.set(1987654321098765, {
-    timestampDate: "Fri Dec 27 2019",
+    timestampDate: "Dec 27 2019",
     anomalies: [{ 
       dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Wed Nov 27 2019"
+      timestampDate: "Nov 27 2019"
     }],
     status: "RESOLVED",
   });
@@ -92,11 +92,17 @@ describe("getSpecificAlertData", () => {
 
   const expectedAlert = {
     id: 1987654321098765, 
-    timestampDate: "Fri Dec 27 2019",
+    timestampDate: "Dec 27 2019",
     anomalies: [{ 
       dataPoints: new Map([ ["2019-10-24", 46] ]), 
       dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Wed Nov 27 2019"
+      timestampDate: "Nov 27 2019",
+      relatedDataList: [{
+        dataPoints: new Map([ ["2019-10-24", 78] ]),
+        dimensionName: "Udon", metricName: "Interest Over Time",
+        username: "bob@",
+        },
+      ]
     }],
     status: "RESOLVED",
   };
