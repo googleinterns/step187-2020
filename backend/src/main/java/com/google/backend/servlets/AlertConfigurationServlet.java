@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.servlets;
+package com.google.backend.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -37,7 +37,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 
 
-/** Servlet that stores and fetches conifigurations in Datastore */
+/** Servlet that stores and fetches configurations in Datastore. */
 @WebServlet("/api/v1/configurations")
 public class AlertConfigurationServlet extends HttpServlet {
 
@@ -61,7 +61,7 @@ public class AlertConfigurationServlet extends HttpServlet {
     String[] parameters = processRequestBody(request);
     UserService userService = UserServiceFactory.getUserService();
 
-    String email = new String();
+    String email;
     if (userService.isUserLoggedIn()) {
       email = userService.getCurrentUser().getEmail();
     } else {
@@ -76,7 +76,7 @@ public class AlertConfigurationServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     try {
-      Entity configurationEntity = new Entity("Configuration");
+      const Entity configurationEntity = new Entity("Configuration");
       configurationEntity.setProperty("user", email);
       configurationEntity.setProperty("metric", metric);
       configurationEntity.setProperty("dimension", dimension);
@@ -89,14 +89,16 @@ public class AlertConfigurationServlet extends HttpServlet {
   }
 
   private String[] processRequestBody(HttpServletRequest request) throws IOException, ServletException {
+    const DELIMITER = "%"
     BufferedReader reader = request.getReader();
     String body = reader.readLine();
     if (body == null) {
       throw new ServletException(EMPTY_BODY_ERROR);
     }
-    String[] parameters = body.split("%"); 
+    String[] parameters = body.split(DELIMITER); 
 
-    if (parameters.length != 5) {
+    const PARAMETER_LENGTH = 5;
+    if (parameters.length != PARAMETER_LENGTH) {
       throw new ServletException(WRONG_ALERT_DATA);
     }
 

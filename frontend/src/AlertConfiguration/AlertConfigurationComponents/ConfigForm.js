@@ -34,7 +34,6 @@ export default function ConfigForm({ addConfig }) {
     relatedMetric: '',
   });
 
-  {/**TODO: Replace drop-down menu and hard-coded data options with text-input that recommends data options*/}
   const POSSIBLE_DIMENSIONS = ["Ramen", "Pizza", "Udon", "Rice", "Japan"];
   const POSSIBLE_METRICS = ["Interest Over Time - US", "Interest Over Time - UK", "Interest Over Time - JP", "Interest Over Time - Web Search", "Interest Over Time - Images", "Interest Over Time - YouTube"];
   const dimensions = POSSIBLE_DIMENSIONS;
@@ -59,11 +58,12 @@ export default function ConfigForm({ addConfig }) {
   }
   
   function handleSubmit(event) {
+    const DELIMITER = "%"
     event.preventDefault();
     if (config.dimension.trim() && config.metric.trim() && config.relatedDimension.trim() && config.relatedMetric.trim()) {
       fetch("/api/v1/configurations", {
         method: 'POST',
-        body: config.user + "%" + config.metric + "%" + config.dimension + "%" + config.relatedMetric + "%" + config.relatedDimension,
+        body: config.user + DELIMITER + config.metric + DELIMITER + config.dimension + DELIMITER + config.relatedMetric + DELIMITER + config.relatedDimension,
       });
       addConfig({ ...config });
       setConfig({ ...config, metric: "", dimension: "", relatedMetric: "", relatedDimension: ""});
