@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getSpecificAlertData } from './management_helpers';
@@ -86,7 +87,8 @@ class AlertInfo extends Component {
         <Fragment key={index}>
           {this.createLineChart(relatedData, index)}
           <Typography variant="body2" align="center" style={{ margin: '10px', paddingBottom: '10px' }}>
-            {`Related data from ${relatedData.metricName} for ${relatedData.dimensionName} (${relatedData.username})`}
+            {`Related data from ${relatedData.metricName} for 
+              ${relatedData.dimensionName} (${relatedData.username})`}
           </Typography>
           {index === (anomaly.relatedDataList.length - 1) ? null :
             <Divider style={{ marginBottom: '20px'}}/> }
@@ -104,9 +106,7 @@ class AlertInfo extends Component {
 
     const { alert } = this.state;
 
-    if (!alert) {
-      return <div />;
-    }
+    if (!alert) return <div />;
 
     return (
       <div className="alert-info">
@@ -132,33 +132,6 @@ class AlertInfo extends Component {
         </center>
         <List className="anomalies-list">
           {alert.anomalies.map((anomaly, index) => {
-            const chartData = {
-              labels: [ ...anomaly.dataPoints.keys() ],
-              datasets: [
-                {
-                  label: anomaly.metricName + ' for ' + anomaly.dimensionName,
-                  fill: false,
-                  lineTension: 0.1,
-                  backgroundColor: 'rgba(75,192,192,0.4)',
-                  borderColor: 'rgba(243, 0, 87, 1)',
-                  borderCapStyle: 'butt',
-                  borderDash: [],
-                  borderDashOffset: 0.0,
-                  borderJoinStyle: 'miter',
-                  pointBorderColor: 'rgba(243, 0, 87, 1)',
-                  pointBackgroundColor: '#fff',
-                  pointBorderWidth: 1,
-                  pointHoverRadius: 5,
-                  pointHoverBackgroundColor: 'rgba(243, 0, 87, 1)',
-                  pointHoverBorderColor: 'rgba(220,220,220,1)',
-                  pointHoverBorderWidth: 2,
-                  pointRadius: 1,
-                  pointHitRadius: 10,
-                  data: [ ...anomaly.dataPoints.values() ]
-                }
-              ]
-            };
-
             return (
               <Fragment key={index}>
                 <ListItem key={index} dense>
