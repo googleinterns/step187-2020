@@ -17,7 +17,7 @@ const FLAG_LOCAL = 1;
  * When testing locally, need to append host that python service 
  * runs on to requests.
  */
-const LOCAL = FLAG_LOCAL === 1 ? 'http://localhost:8889/' : '';
+const LOCAL = FLAG_LOCAL === 1 ? 'http://localhost:8889' : '';
 
 /** Send GET request to trigger cron job to run. */
 const runJob = async () => {
