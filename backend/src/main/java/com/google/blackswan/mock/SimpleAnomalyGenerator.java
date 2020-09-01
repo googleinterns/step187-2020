@@ -82,7 +82,7 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
 
   private ImmutableList<Anomaly> generateAnomalies(int threshold, int numDataPoints) {
     int avg = data.values().stream().reduce(0, Integer::sum) / data.size();
-
+    
     // Find instances where exceed threshold.
     Map<Timestamp, Integer> anomalyPoints = data.entrySet().stream()
         .filter(entry -> entry.getValue() - avg > threshold)

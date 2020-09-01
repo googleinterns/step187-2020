@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import com.google.blackswan.mock.Constant;
 import com.google.blackswan.mock.AlertGenerator;
 import com.google.blackswan.mock.MultiInputAlertGenerator;
+import com.google.blackswan.mock.SimpleRelatedDataGenerator;
 import com.google.models.Alert;
 import com.google.models.DataInfo;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -33,6 +34,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.common.collect.ImmutableList;
+import com.google.models.DataInfo;
 
 /**
 * Servlet to run cron job that generates Alerts to store in the datastore.
@@ -45,12 +47,9 @@ public class CronServlet extends HttpServlet {
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // TODO: Update or clean up log message. 
     log.info("Cron job ran.");
 
-    // Simple logic for cron job, since we only have one set of alerts for now. 
-    clearCurrentAlertsInDatastore(); // Need to clear alerts as we only have one set of alerts now. 
-    storeAlertsInDatastoreSimple();
+    storeAlertsInDatastore();
     response.setStatus(HttpServletResponse.SC_ACCEPTED); 
   }
 
@@ -65,11 +64,13 @@ public class CronServlet extends HttpServlet {
       Key alertEntityKey = KeyFactory.createKey(Alert.ALERT_ENTITY_KIND, id);
       datastore.delete(alertEntityKey);
     }
-
   }
 
-  /** Store alerts from simpleGenerator into the datastore. */
-  private void storeAlertsInDatastoreSimple() {
+  /** Store alerts based on ANOMALY_TYPES into the datastore. */
+  private void storeAlertsInDatastore() {
+    // Need to run before every cron job batch operation to get updated related
+    // data requests and clear cache of previous cron job. 
+    SimpleRelatedDataGenerator.createGenerator().clearCacheAndFillRelatedData();
     AlertGenerator simpleGenerator = new MultiInputAlertGenerator(ANOMALY_TYPES);
     simpleGenerator.getAlerts().forEach(alert -> {
       DatastoreServiceFactory.getDatastoreService().put(alert.toEntity());

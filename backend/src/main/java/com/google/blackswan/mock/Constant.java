@@ -19,23 +19,40 @@ import com.google.common.collect.ImmutableMap;
 
 /** Constants used throughout the blackswan mock classes. */
 public final class Constant {
+  // TODO: Create based on external config file (in the future).
   public static final String INTEREST_US = "Interest Over Time - US";
+  public static final String INTEREST_JP = "Interest Over Time - JP";
+  public static final String INTEREST_UK = "Interest Over Time - UK";
   public static final String UDON = "Udon";
   public static final String PHO = "Pho";
   public static final String RAMEN = "Ramen";
-  // TODO: Add more const for other metrics.
 
+  // TODO: Build with builder or for-loop.
   public static final ImmutableMap<DataInfo, String> FILE_LOCATIONS 
-      = ImmutableMap.of(
-          DataInfo.of(INTEREST_US, UDON), "udon-data.csv",
-          DataInfo.of(INTEREST_US, PHO), "pho-data.csv",
-          DataInfo.of(INTEREST_US, RAMEN), "interest-ramen.csv"
-        );
+      = ImmutableMap.<DataInfo, String>builder()
+          .put(DataInfo.of(INTEREST_US, UDON), "udon-us--data.csv")
+          .put(DataInfo.of(INTEREST_US, PHO), "pho-us--data.csv")
+          .put(DataInfo.of(INTEREST_US, RAMEN), "ramen-us--data.csv")
+          .put(DataInfo.of(INTEREST_JP, RAMEN), "ramen-jp--data.csv")
+          .put(DataInfo.of(INTEREST_JP, PHO), "pho-jp--data.csv")
+          .put(DataInfo.of(INTEREST_JP, UDON), "udon-jp--data.csv")
+          .put(DataInfo.of(INTEREST_UK, RAMEN), "ramen-gb--data.csv")
+          .put(DataInfo.of(INTEREST_UK, PHO), "pho-gb--data.csv")
+          .put(DataInfo.of(INTEREST_UK, UDON), "udon-gb--data.csv")
+          .build();
 
   // Cloud storage related constants.
   public static final String KEY_LOCATION = "keys/key.json";
   public static final String PROJECT_ID = "greyswan";
   public static final String BUCKET_NAME = "greyswan.appspot.com";
+
+  // Configuration Entity related constants.
+  public static final String CONFIG_ENTITY_KIND = "Configuration";
+  public static final String CONFIG_METRIC_PROPERTY = "metric";
+  public static final String CONFIG_DIMENSION_PROPERTY = "dimension";
+  public static final String CONFIG_RMETRIC_PROPERTY = "relatedMetric";
+  public static final String CONFIG_RDIMENSION_PROPERTY = "relatedDimension";
+  public static final String CONFIG_USER_PROPERTY = "user";
 
   /** No instances. */
   private Constant() {}

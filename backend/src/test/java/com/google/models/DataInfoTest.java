@@ -11,6 +11,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.blackswan.mock.Constant;
+import com.google.appengine.api.datastore.Entity;
 
 /** Contain tests for methods in {@link DataInfo} and {@link DataInfoUser} class. */
 @RunWith(JUnit4.class)
@@ -22,6 +28,18 @@ public final class DataInfoTest {
       = DataInfo.of(METRIC_NAME, DIMENSION_NAME);
   private static final DataInfoUser DATA_INFO_USER 
       = DataInfoUser.of(METRIC_NAME, DIMENSION_NAME, USER_NAME);
+  private static final LocalServiceTestHelper helper =
+      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+
+  @Before
+  public void setUp() throws Exception {
+    helper.setUp();
+  }
+
+  @After
+  public void tearDown() {
+    helper.tearDown();
+  }
 
   @Test
   public void getMetricName_workingGetter() {
@@ -51,6 +69,15 @@ public final class DataInfoTest {
     assertFalse(DATA_INFO.equals(null));
   }
 
+  @Test
+  public void createFromEntityToDataInfo_correctConversion() {
+    Entity entity = new Entity(Constant.CONFIG_ENTITY_KIND);
+    entity.setProperty(Constant.CONFIG_METRIC_PROPERTY, METRIC_NAME);
+    entity.setProperty(Constant.CONFIG_DIMENSION_PROPERTY, DIMENSION_NAME);
+
+    assertEquals(DATA_INFO, DataInfo.createFrom(entity));
+  }
+
   /** Tests for DataInfoUser class below. */
 
   @Test
@@ -63,4 +90,13 @@ public final class DataInfoTest {
     assertEquals(DATA_INFO, DATA_INFO_USER.getDataInfo());
   }
 
+  @Test
+  public void createFromEntityToDataInfoUser_correctConversion() {
+    Entity entity = new Entity(Constant.CONFIG_ENTITY_KIND);
+    entity.setProperty(Constant.CONFIG_METRIC_PROPERTY, METRIC_NAME);
+    entity.setProperty(Constant.CONFIG_DIMENSION_PROPERTY, DIMENSION_NAME);
+    entity.setProperty(Constant.CONFIG_USER_PROPERTY, USER_NAME);
+
+    assertEquals(DATA_INFO_USER, DataInfoUser.createFrom(entity));
+  }
 }

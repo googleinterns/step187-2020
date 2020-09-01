@@ -22,8 +22,16 @@ import java.util.HashMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.blackswan.mock.filesystem.*;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 
 /** Singleton class to generate related data for a given anomaly. */
 public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
@@ -36,9 +44,8 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private Map<DataInfo, Map<Timestamp, Integer>> csvDataCache;
 
   private SimpleRelatedDataGenerator() {
-    relatedDataMap = ArrayListMultimap.create();
+    relatedDataMap = HashMultimap.create();
     csvDataCache = new HashMap<>();
-    prefillRelatedData(); // TODO: Remove when connected to datastore.
   }
 
   public static SimpleRelatedDataGenerator createGenerator() {
@@ -48,7 +55,6 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   public ImmutableList<RelatedData> getRelatedData(DataInfo dataInfo, 
       Timestamp startTime, Timestamp endTime) {
     List<RelatedData> relatedDataList = new ArrayList<RelatedData>();
-    
     if (relatedDataMap.containsKey(dataInfo)) {
       for (DataInfoUser relatedTopic : relatedDataMap.get(dataInfo)) {
         Map<Timestamp, MetricValue> dataPointsPlot = 
@@ -70,12 +76,27 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   }
 
   /** 
-   * Simulates action of querying configs from datastore and adding to 
-   * relatedDataMap. Currently, manually adds these relationships.
+   * Call before every new cron job execution to fetch most up to date related
+   * data requests and clear cache and old requests.
+   */
+  public void clearCacheAndFillRelatedData() {
+    relatedDataMap.clear();
+    csvDataCache.clear();
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query(Constant.CONFIG_ENTITY_KIND);
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      relatedDataMap.put(DataInfo.createFrom(entity), DataInfoUser.createFrom(entity));
+    }
+  }
+
+  /** 
+   * DEPRECATED, used for filling up dummy related data requests when not connected
+   * to datastore.
    */
   private void prefillRelatedData() {
-    // TODO: Replace with call for querying configs from datastore.
-    // TODO: Deal with capitalizations when querying config from datastore.
     relatedDataMap.put(DataInfo.of(Constant.INTEREST_US, Constant.RAMEN), 
         DataInfoUser.of(Constant.INTEREST_US, Constant.UDON, CONFIG_USERNAME));
     relatedDataMap.put(DataInfo.of(Constant.INTEREST_US, Constant.RAMEN), 
