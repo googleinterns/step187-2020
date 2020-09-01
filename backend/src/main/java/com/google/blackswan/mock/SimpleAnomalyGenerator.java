@@ -33,53 +33,54 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.io.ByteArrayInputStream;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.blackswan.mock.filesystem.*;
 
 /** Generate list of anomalies based on data in the csv file using average and threshold. */
 public class SimpleAnomalyGenerator implements AnomalyGenerator {
-  private static final String DATA_FILE_LOCATION = "/sample-ramen-data.csv";
   private static final int THRESHOLD = 13;
   private static final int NUM_POINTS = 5;
-  private static final String DEFAULT_METRIC = "interest";
-  private static final String DEFAULT_DIMENSION = "ramen";
+  /** Ideally the FileSystem should be injected. */
+  private static final FileSystem FILE_SYSTEM = LocalFileSystem.createSystem();
 
   private final ImmutableList<Anomaly> anomalies;
+  private final DataInfo topic;
+  private final ImmutableMap<Timestamp, Integer> data;
 
-  /** 
-   * TODO: Let generators take in parameters of dimension/metric names. 
-   *       Can also take in THRESHOLD and NUM_POINTS as parameters.
-   */
-  public static SimpleAnomalyGenerator createGenerator() {
+  public static SimpleAnomalyGenerator createGenerator(DataInfo topic) {
     return new SimpleAnomalyGenerator(
+      topic,
       // For [push] to git, always use LocalFileSystem, as CloudFileSystem will fail 
       // unit test without access to key.json. 
-      LocalFileSystem.createSystem().getDataAsStream(DEFAULT_METRIC, DEFAULT_DIMENSION),
+      FILE_SYSTEM.getDataAsStream(topic),
       THRESHOLD,
       NUM_POINTS
     );
   }
 
   /** Use mainly in testing to have custom input as csv data. */
-  public static SimpleAnomalyGenerator createGeneratorWithString(String input, 
-      int threshold, int numDataPoints) {
+  public static SimpleAnomalyGenerator createGeneratorWithString(DataInfo topic,
+      String input, int threshold, int numDataPoints) {
     return new SimpleAnomalyGenerator(
+      topic,
       new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)),
       threshold,
       numDataPoints
     );
   }
 
-  private SimpleAnomalyGenerator(InputStream source, int threshold, 
+  private SimpleAnomalyGenerator(DataInfo topic, InputStream source, int threshold, 
       int numDataPoints) {
-    anomalies = generateAnomalies(CSVParser.parseCSV(source), threshold, numDataPoints);
+    this.topic = topic;
+    this.data = ImmutableMap.copyOf(CSVParser.parseCSV(source));
+    this.anomalies = generateAnomalies(threshold, numDataPoints);
   }
 
   public List<Anomaly> getAnomalies() {
     return anomalies;
   }
 
-  private static ImmutableList<Anomaly> generateAnomalies
-      (Map<Timestamp, Integer> data, int threshold, int numDataPoints) {
+  private ImmutableList<Anomaly> generateAnomalies(int threshold, int numDataPoints) {
     int avg = data.values().stream().reduce(0, Integer::sum) / data.size();
 
     // Find instances where exceed threshold.
@@ -96,7 +97,7 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
 
     // Create anomaly objects from those instances.
     return anomalyPoints.keySet().stream()
-        .map(key -> createAnomalyFromDataPoint(key, data, numDataPoints))
+        .map(key -> createAnomalyFromDataPoint(key, numDataPoints))
         .collect(ImmutableList.toImmutableList());
   }
 
@@ -104,11 +105,7 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
    * TODO: Depending on size of future data, alter algorithm of finding 
    * associated data points. 
    */
-  private static Anomaly createAnomalyFromDataPoint
-      (Timestamp time, Map<Timestamp, Integer> data, int numDataPoints) {
-    // TODO: Make const or obtain metric/dimension name from csv file.
-    String metricName = "Interest Over Time";
-    String dimensionName = "Ramen";
+  private Anomaly createAnomalyFromDataPoint(Timestamp time, int numDataPoints) {
 
     // Convert keys into ArrayList.
     List<Timestamp> listKeys = new ArrayList<Timestamp>(data.keySet());
@@ -132,11 +129,11 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
     }
 
     List<RelatedData> relatedDataList = SimpleRelatedDataGenerator.createGenerator()
-        .getRelatedData(DataInfo.of(metricName, dimensionName), 
+        .getRelatedData(topic, 
                         listKeys.get(firstDataPointIndex),
                         listKeys.get(lastDataPointIndex));
 
-    return new Anomaly(time, metricName, dimensionName, dataPoints, relatedDataList);
+    return new Anomaly(time, topic.getMetricName(), topic.getDimensionName(), dataPoints, relatedDataList);
   }
 
 }

@@ -20,8 +20,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Logger;
-import com.google.blackswan.mock.*;
+import com.google.blackswan.mock.Constant;
+import com.google.blackswan.mock.AlertGenerator;
+import com.google.blackswan.mock.MultiInputAlertGenerator;
 import com.google.models.Alert;
+import com.google.models.DataInfo;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -29,6 +32,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.common.collect.ImmutableList;
 
 /**
 * Servlet to run cron job that generates Alerts to store in the datastore.
@@ -36,6 +40,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 @WebServlet("/blackswan/test")
 public class CronServlet extends HttpServlet {
   private static final Logger log = Logger.getLogger(CronServlet.class.getName());
+  private static final ImmutableList<DataInfo> ANOMALY_TYPES 
+      = ImmutableList.of(DataInfo.of(Constant.INTEREST_US, Constant.RAMEN));
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -64,7 +70,7 @@ public class CronServlet extends HttpServlet {
 
   /** Store alerts from simpleGenerator into the datastore. */
   private void storeAlertsInDatastoreSimple() {
-    AlertGenerator simpleGenerator = new SimpleAlertGenerator(SimpleAnomalyGenerator.createGenerator());
+    AlertGenerator simpleGenerator = new MultiInputAlertGenerator(ANOMALY_TYPES);
     simpleGenerator.getAlerts().forEach(alert -> {
       DatastoreServiceFactory.getDatastoreService().put(alert.toEntity());
     });

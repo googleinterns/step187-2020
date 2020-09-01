@@ -15,11 +15,9 @@
 package com.google.blackswan.mock.filesystem;
 
 import java.io.InputStream;
+import com.google.models.DataInfo;
 
 /** Interface for different file systems, ex. local vs cloud storage. */
 public interface FileSystem {
-  public static final String DELIMITER = "-";
-  public static final String FILE_TYPE = ".csv";
-  
-  public InputStream getDataAsStream(String metric, String dimension);
+  public InputStream getDataAsStream(DataInfo requestedData);
 }
