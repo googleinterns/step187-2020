@@ -31,8 +31,8 @@ app = Flask(__name__)
 
 # TODO: Make not hard-coded and part of external config file.
 TOPIC = ["Ramen", "Udon", "Pho"]
-REGION = ['US'] #, 'GB', 'JP']
-TYPE = [''] #, 'images', 'youtube']
+REGION = ['US', 'GB', 'JP']
+TYPE = ['', 'images', 'youtube']
 TIME_FRAME = ['2019-07-01 2019-10-01', '2019-11-01 2020-02-01', '2020-03-01 2020-05-01']
 
 KEY_LOCATION = os.path.join(os.path.dirname(os.path.abspath(__file__)), "keys/key.json")
