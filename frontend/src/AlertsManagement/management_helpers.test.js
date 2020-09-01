@@ -145,4 +145,3 @@ describe("getSpecificAlertData", () => {
     expect(result).toMatchObject(expectedAlert);
   });
 });
- p
