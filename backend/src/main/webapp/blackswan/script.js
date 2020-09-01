@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const FLAG_LOCAL = 1;
+const FLAG_LOCAL = true;
+/** TODO: Get port number from shared cnofig with python service. */
+const PORT_NUMBER = 8889;
 /** 
  * When testing locally, need to append host that python service 
  * runs on to requests.
  */
-const LOCAL = FLAG_LOCAL === 1 ? 'http://localhost:8889' : '';
+const HOST_PREFIX = FLAG_LOCAL ? 'http://localhost:' + PORT_NUMBER : '';
 
 /** Send GET request to trigger cron job to run. */
 const runJob = async () => {
@@ -28,7 +30,7 @@ const runJob = async () => {
 
 /** Send GET request to load updated data into Cloud Storage. */
 const loadData = async (time) => {
-  const response = await fetch(LOCAL + '/python/get-data?time=' + time);
+  const response = await fetch(HOST_PREFIX + '/python/get-data?time=' + time);
   const message = await response.text();
   console.log("loaded data " + time + ": " + message);
 }
