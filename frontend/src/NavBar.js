@@ -31,7 +31,7 @@ const CustomLink = React.forwardRef((props, ref) => (
   />
 ));
 
-function OtherTabs() {
+function LoggedInTabs() {
   return (
     <Fragment>
       <Button color="inherit" id="alerts-button"
@@ -71,7 +71,7 @@ export default function NavBar() {
           <Typography variant="h6" className={classes.title} component={CustomLink} to="/">
             GreySwan
           </Typography>
-          {authOn ? (isLoggedIn ? OtherTabs() : null) : OtherTabs()}
+          {authOn ? (isLoggedIn ? LoggedInTabs() : null) : LoggedInTabs()}
           <Button color="inherit" href={logURL} id="login-button">
             {isLoggedIn ? "Logout" :  "Login"}
           </Button>

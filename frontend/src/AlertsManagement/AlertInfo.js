@@ -80,17 +80,21 @@ class AlertInfo extends Component {
     return <Line key={index} data={chartData} />;
   }
 
+  relatedDataContainer = (relatedData, index) => {
+    return (
+      <Fragment key={index}>
+        <Typography variant="body2" style={{ margin: '10px' }}>
+          {`Related data from ${relatedData.metricName} for ${relatedData.dimensionName} requested by ${relatedData.username}`}
+        </Typography>
+        {this.createLineChart(relatedData, index)}
+      </Fragment>
+    )
+  }
+
   visualizeRelatedData = (anomaly) => {
     let relatedDataCharts = [];
     anomaly.relatedDataList.forEach((relatedData, index) => 
-      relatedDataCharts.push(
-        <Fragment key={index}>
-          <Typography variant="body2" style={{ margin: '10px' }}>
-            {`Related data from ${relatedData.metricName} for ${relatedData.dimensionName} requested by ${relatedData.username}`}
-          </Typography>
-          {this.createLineChart(relatedData, index)}
-        </Fragment>
-      )
+      relatedDataCharts.push(this.relatedDataContainer(relatedData, index))
     );
     return relatedDataCharts;
   }
