@@ -8,8 +8,8 @@ export function convertTimestampToDate(timestampDate) {
     .toDateString().slice(4);
 }
 
-/** Format JavaScript date in the form MM-DD-YYYY. */
-export function formatDate(date) {
+/** Format JavaScript date in the form MM-DD-YYYY if mFirst is true, otherwise YYYY-MM-DD. */
+export function formatDate(date, mFirst) {
   var d = new Date(date),
       month = '' + (d.getMonth() + 1),
       day = '' + d.getDate(),
@@ -20,5 +20,5 @@ export function formatDate(date) {
   if (day.length < 2) 
       day = '0' + day;
 
-  return [month, day, year].join('/');
+  return mFirst? [month, day, year].join('/') : [year, month, day].join('/');
 }

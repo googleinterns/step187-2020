@@ -51,7 +51,7 @@ export default function NavBar() {
           <Typography variant="h6" className={classes.title} component={CustomLink} to="/">
             GreySwan
           </Typography>
-          {isLoggedIn ? 
+          {/* {isLoggedIn ?  */}
             <Fragment>
               <Button color="inherit" id="alerts-button"
                 component={CustomLink} to="/alerts"
@@ -69,7 +69,7 @@ export default function NavBar() {
                 Configs
               </Button>
             </Fragment>
-            : null}
+            {/* : null} */}
           <Button color="inherit" href={logURL} id="login-button">
             {isLoggedIn ? "Logout" :  "Login"}
           </Button>

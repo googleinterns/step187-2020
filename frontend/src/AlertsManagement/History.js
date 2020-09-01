@@ -1,11 +1,33 @@
 import React, { Component } from 'react';
-import Box from '@material-ui/core/Box';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import MaterialTable from 'material-table';
+import Chip from '@material-ui/core/Chip';
 import Typography from '@material-ui/core/Typography';
+import LinkIcon from '@material-ui/icons/Link';
+import { DATA_DELIMITER } from './management_constants';
 import { getAlertsData } from './management_helpers';
+import { tableIcons } from './table_icons';
 import { formatDate } from '../time_utils';
+
+const createData = (id, timestampDate, numAnomalies, status, priority, metrics, dimensions) => {
+  return { id, timestampDate, numAnomalies, status, priority, metrics, dimensions };
+}
+
+const rows = (allAlerts) => { 
+  let rowItems = [];
+  allAlerts.forEach((alert, alertId) => {
+    let metrics = new Set(alert.anomalies.map((anomaly) => anomaly.metricName));
+    let dimensions = new Set(alert.anomalies.map((anomaly) => anomaly.dimensionName));
+
+    rowItems.push(
+      createData(alertId, formatDate(alert.timestampDate, false), 
+        alert.anomalies.length, alert.status, 1,
+        [...metrics].reduce((accumulator, value) => accumulator + DATA_DELIMITER + value), 
+        [...dimensions].reduce((accumulator, value) => accumulator + DATA_DELIMITER + value)
+      )
+    );
+  });
+  return rowItems; 
+}
 
 class History extends Component {
   constructor(props) {
@@ -25,54 +47,68 @@ class History extends Component {
     });
   }
 
-  createListItems = (allAlerts) => {
-    let alertItems = [];
-    allAlerts.forEach((alert, alertId) => {
-      alertItems.push(
-        <ListItem key={alertId} role={undefined} divider 
-          onClick={() => this.props.history.push(`alerts/${alertId}`)}
-        >
-          <ListItemText id={alertId}
-            disableTypography
-            primary={<Typography variant="body1" >Alert on 
-              <Box fontWeight='fontWeightBold' display='inline' m={1} style={{ color: '#0FA3B1'}}>
-                {` ${alert.timestampDate} (${formatDate(alert.timestampDate)})`}
-              </Box> has
-              <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
-                {` ${alert.anomalies.length} anomalies`}
-              </Box> with status
-              <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
-                {` ${alert.status}`}
-              </Box>
-              </Typography>
-            }
-          />
-        </ListItem>
-      );
-    });
-    return alertItems;
-  }
-
   render() {
     const styles = ({
       root: {
         flexGrow: 1,
-        maxWidth: 900,
+        maxWidth: '90%',
         margin: 'auto',
       },
+      header: {
+        marginTop: '50px',
+        marginBottom: '30px'
+      },
+      chip: {
+        margin: '5px',
+      }
     });
+
     const { allAlerts } = this.state;
     
-    if (allAlerts === null) {
-      return <div />;
-    }
+    if (allAlerts === null) return <div />;
 
     return (
       <div style={styles.root}>
-        <Typography variant="h4" gutterBottom style={{ marginTop: '50px'}}>Alerts Archive</Typography>
-        <List className="all-alerts-list">
-          {this.createListItems(allAlerts)}
-        </List>
+        <Typography variant="h4" gutterBottom style={styles.header}>Alerts Archive</Typography>
+        
+        <MaterialTable icons={tableIcons}
+          actions={[
+            {
+              icon: () => <LinkIcon />,
+              tooltip: 'See More',
+              onClick: (_event, rowData) => this.props.history.push(`alerts/${rowData.id}`),
+            }
+          ]}
+          columns={[
+            { title: 'Timestamp', field: 'timestampDate', filtering: false },
+            { title: '# of Anomalies', field: 'numAnomalies' },
+            { title: 'Status', field: 'status', sorting: false },
+            { title: 'Priority', field: 'priority', type: 'numeric', align: 'left' },
+            { 
+              title: 'Metrics', field: 'metrics', sorting: false,
+              render: rowData => rowData.metrics.split(DATA_DELIMITER).map((metric) => 
+                <Chip label={metric} color="secondary" variant="outlined" 
+                  size="small" style={styles.chip}
+                />)
+            },
+            { 
+              title: 'Dimensions', field: 'dimensions', sorting: false,
+              render: rowData => rowData.dimensions.split(DATA_DELIMITER).map((dimension) => 
+                <Chip label={dimension} color="primary" variant="outlined" 
+                  size="small" style={styles.chip}
+                />)
+            }
+          ]}
+          data={rows(this.state.allAlerts)} 
+          options={{
+            exportButton: true,
+            search: true,
+            pageSize: 10,
+            filtering: true
+          }}
+          title=""
+          exportFileName="BlackSwan Alerts"
+        />
       </div>
     );
   }
