@@ -82,7 +82,7 @@ public final class DataInfoUser {
         target.username.equals(username);
   }
 
-  public static DataInfoUser createFrom(Entity entity) {
+  public static DataInfoUser createFromEntity(Entity entity) {
     return DataInfoUser.of(
       (String) entity.getProperty(Constant.CONFIG_METRIC_PROPERTY),
       (String) entity.getProperty(Constant.CONFIG_DIMENSION_PROPERTY),

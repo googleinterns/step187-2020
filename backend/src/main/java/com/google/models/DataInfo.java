@@ -72,7 +72,7 @@ public final class DataInfo {
         target.dimensionName.equals(dimensionName);
   }
 
-  public static DataInfo createFrom(Entity entity) {
+  public static DataInfo createFromEntity(Entity entity) {
     return DataInfo.of(
       (String) entity.getProperty(Constant.CONFIG_METRIC_PROPERTY),
       (String) entity.getProperty(Constant.CONFIG_DIMENSION_PROPERTY)

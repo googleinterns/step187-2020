@@ -24,7 +24,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.HashMultimap;
 import com.google.blackswan.mock.filesystem.*;
-
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -88,7 +87,8 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
     PreparedQuery results = datastore.prepare(query);
 
     for (Entity entity : results.asIterable()) {
-      relatedDataMap.put(DataInfo.createFrom(entity), DataInfoUser.createFrom(entity));
+      relatedDataMap.put(DataInfo.createFromEntity(entity), 
+          DataInfoUser.createFromEntity(entity));
     }
   }
 
