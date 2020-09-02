@@ -1,8 +1,9 @@
 import { convertTimestampToDate } from '../time_utils';
-import { UNRESOLVED_STATUS } from './management_constants';
+import { UNRESOLVED_STATUS, MAX_ALERTS_LIMIT } from './management_constants';
 
 /**
  * Fetch specified amount of alerts from Datastore and organize into data structures.
+ * If no alerts limit is given, pass the maximum limit of returned objects as parameter.
  * Returns an array with a map of alert IDs to Object containing alert info, 
  * an array of ids of unresolved alerts, and an array of ids of resolved alerts.
  */
@@ -11,10 +12,13 @@ export async function getAlertsData(alertsLimit) {
   let unresolvedAlerts = [];
   let resolvedAlerts = [];
 
-  if (!alertsLimit) alertsLimit = 0;
+  if (!alertsLimit) alertsLimit = MAX_ALERTS_LIMIT;
 
   const alertsResponse = await fetch('/api/v1/alerts-data?limit=' + alertsLimit);
-  if (!alertsResponse.ok) throw new Error('Error getting alerts data with limit ' + alertsLimit + ': ' + alertsResponse.status);
+  if (!alertsResponse.ok) {
+    throw new Error('Error getting alerts data with limit ' 
+      + alertsLimit + ': ' + alertsResponse.status);
+  }
   const data = await alertsResponse.json();
   data.forEach((alert) => {
     const alertId = alert.id.value;
@@ -50,7 +54,8 @@ export async function getAlertsData(alertsLimit) {
  */
 export async function getSpecificAlertData(alertId) {
   const alertResponse = await fetch('/api/v1/alert-visualization?id=' + alertId)
-  if (!alertResponse.ok) throw new Error('Error getting alert data for id ' + alertId + ':' + alertResponse.status);
+  if (!alertResponse.ok) throw new Error('Error getting alert data for id ' 
+    + alertId + ':' + alertResponse.status);
   const alert = await alertResponse.json();
   
   let editedAnomalies = alert.anomalies.slice();
@@ -72,7 +77,7 @@ export async function getSpecificAlertData(alertId) {
       editedRelatedDataList[index].dataPoints = editedData;
     });
     editedAnomalies[index].relatedDataList = editedRelatedDataList;
-  });    
+  });
 
   return({ 
     id: alert.id.value,

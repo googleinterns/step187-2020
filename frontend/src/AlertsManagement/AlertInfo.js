@@ -13,6 +13,30 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getSpecificAlertData } from './management_helpers';
 import { UNRESOLVED_STATUS, RESOLVED_STATUS } from './management_constants';
 
+const styles = {
+  divider: {
+    marginTop: '20px',
+    marginBottom: '20px',
+  },
+  resolveButton: {
+    marginTop: '10px',
+    marginBottom: '30px',
+  },
+  relatedText: { 
+    marginTop: '10px', 
+    marginBottom: '5px' 
+  },
+  relatedDivider: { 
+    marginBottom: '20px',
+  },
+  anomalyText: {
+    marginTop: '10px'
+  },
+  infoText: {
+    color: '#0FA3B1'
+  }
+};
+
 /**
  * Requests alert data given specified alert ID from route and 
  * visualizes the historical metric data using a chart.js wrapper for React.
@@ -49,6 +73,7 @@ class AlertInfo extends Component {
   }
 
   createLineChart = (visData, index) => {
+    // If visualizing anomaly data (has related data) use pink, otherwise use blue.
     const color = visData.relatedDataList ? 'rgba(243, 0, 87, 1)' : 'rgba(63, 81, 181, 1)';
     const chartData = {
       labels: [ ...visData.dataPoints.keys() ],
@@ -85,12 +110,13 @@ class AlertInfo extends Component {
     anomaly.relatedDataList.forEach((relatedData, index) => 
       relatedDataCharts.push(
         <Fragment key={index}>
-          {this.createLineChart(relatedData, index)}
-          <Typography variant="body2" align="center" style={{ margin: '10px', paddingBottom: '10px' }}>
-            {`Related data from ${relatedData.metricName} for ${relatedData.dimensionName} (${relatedData.username})`}
+          <Typography variant="body2" style={styles.relatedText}>
+            {`Related data from ${relatedData.metricName} for 
+              ${relatedData.dimensionName} (${relatedData.username})`}
           </Typography>
+          {this.createLineChart(relatedData, index)}
           {index === (anomaly.relatedDataList.length - 1) ? null :
-            <Divider style={{ marginBottom: '20px'}}/> }
+            <Divider style={styles.divider}/> }
         </Fragment>
       )
     );
@@ -98,16 +124,9 @@ class AlertInfo extends Component {
   }
   
   render() {
-    const style = {
-      marginTop: '20px',
-      marginBottom: '20px',
-    };
-
     const { alert } = this.state;
 
-    if (!alert) {
-      return <div />;
-    }
+    if (!alert) return <div />;
 
     return (
       <div className="alert-info">
@@ -126,33 +145,39 @@ class AlertInfo extends Component {
         </Typography>
         <center>
           <Button id="status-button" variant="contained" color="primary" component="span" 
-            onClick={this.handleStatusChange} style={{ marginTop: '10px', marginBottom: '10px'}}
+            onClick={this.handleStatusChange} style={styles.resolveButton}
           >
             {alert.status === UNRESOLVED_STATUS ? "Resolve?" : "Unresolve?"}
           </Button>
         </center>
+        <Grid container >
+          <Grid item xs={6}>
+            <Typography variant="h6" align="center">Anomaly Graphs</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h6" align="center">Related Data Graphs</Typography>
+          </Grid>
+        </Grid>
         <List className="anomalies-list">
           {alert.anomalies.map((anomaly, index) => {
             return (
               <Fragment key={index}>
                 <ListItem key={index} dense>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12}>
+                  <Grid container spacing={4}>
+                    <Grid item xs={anomaly.relatedDataList.length !== 0 ? 6 : 12}>
                       <ListItemText id={index} 
                         disableTypography
                         primary={
-                          <Typography variant="body1" style={{ marginTop: '10px' }}> Anomaly in 
-                            <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
+                          <Typography variant="body2" style={styles.anomalyText}>
+                            <Box display='inline' fontWeight="fontWeightBold" m={0.25} style={styles.infoText}>
                               {` ${anomaly.metricName} for ${anomaly.dimensionName}`}
                             </Box> on
-                            <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
+                            <Box display='inline' fontWeight="fontWeightBold" m={0.5} style={styles.infoText}>
                               {`${anomaly.timestampDate}`}
                             </Box>
                           </Typography>
                         }
                       />
-                    </Grid>
-                    <Grid item xs={anomaly.relatedDataList.length !== 0 ? 6 : 12}>
                       {this.createLineChart(anomaly, index)}
                     </Grid>
                     <Grid item xs={6}>
@@ -160,7 +185,7 @@ class AlertInfo extends Component {
                     </Grid>
                   </Grid>
                 </ListItem>
-                <Divider style={style} component="li"/>
+                <Divider style={styles.divider} component="li"/>
               </Fragment>
             );
           })}
