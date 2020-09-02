@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -43,7 +43,7 @@ export default function AlertsList(props) {
 
     allAlerts.get(alertId).priority = numToEnum;
     // Set state in order to re-render the component, although the state is not used.
-    setPriority(newPriority); 
+    setPriority(priority); 
   }
 
   const sortPriority = (displayAlerts) => {
@@ -101,7 +101,7 @@ export default function AlertsList(props) {
                   primary={<Typography variant="body1" >Alert on 
                     <Box fontWeight='fontWeightBold' display='inline' m={1} style={{ color: '#0FA3B1'}}>
                       {` ${allAlerts.get(alertId).timestampDate} (
-                        ${formatDate(allAlerts.get(alertId).timestampDate, /** mFirst = */ true)})`}
+                        ${formatDate(allAlerts.get(alertId).timestampDate, /** mFirst = */ true)} )`}
                     </Box> has
                     <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
                       {` ${allAlerts.get(alertId).anomalies.length} anomalies`}

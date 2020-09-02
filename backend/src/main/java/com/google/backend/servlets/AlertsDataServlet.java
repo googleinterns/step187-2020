@@ -67,9 +67,6 @@ public class AlertsDataServlet extends HttpServlet {
 
     if (limit == 0) limit = MAX_LIMIT;
     
-    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
-    List<Alert> alertList = results.stream().map(Alert::createAlertFromEntity).collect(Collectors.toList());
-    
     List<Entity> results = datastore.prepare(query)
       .asList(FetchOptions.Builder.withLimit(limit));
     List<Alert> alertList = results.stream().map(Alert::createAlertFromEntity)

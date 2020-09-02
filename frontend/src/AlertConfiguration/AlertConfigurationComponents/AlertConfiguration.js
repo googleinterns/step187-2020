@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
 import ControlPanel from './ControlPanel';
-import Footer from './Footer';
+// import Footer from './Footer';
 import ConfigList from './ConfigList';
 
 const useStyles = makeStyles((theme) => ({

@@ -22,8 +22,16 @@ import java.util.HashMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.blackswan.mock.filesystem.*;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 
 /** Singleton class to generate related data for a given anomaly. */
 public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
@@ -102,7 +110,7 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
 
   private ImmutableMap<Timestamp, MetricValue> getDataPointsInRange
       (DataInfo topic, Timestamp startTime, Timestamp endTime) {
-    Map<Timestamp, Integer> topicDataPoints = getTopicDataPoints(topic, startTime, endTime);
+    Map<Timestamp, Integer> topicDataPoints = getTopicDataPoints(topic);
 
     List<Timestamp> listKeys = new ArrayList<Timestamp>(topicDataPoints.keySet());
     int indexOfStart = listKeys.indexOf(startTime);

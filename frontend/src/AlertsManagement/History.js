@@ -3,13 +3,13 @@ import MaterialTable from 'material-table';
 import Chip from '@material-ui/core/Chip';
 import Typography from '@material-ui/core/Typography';
 import LinkIcon from '@material-ui/icons/Link';
-import { DATA_DELIMITER } from './management_constants';
+import { DATA_DELIMITER, priorityLevels } from './management_constants';
 import { getAlertsData } from './management_helpers';
 import { tableIcons } from './table_icons';
 import { formatDate } from '../time_utils';
 
-const createData = (id, timestampDate, numAnomalies, status, priority, metrics, dimensions) => {
-  return { id, timestampDate, numAnomalies, status, priority, metrics, dimensions };
+const createData = (id, timestampDate, priority, numAnomalies, status, metrics, dimensions) => {
+  return { id, timestampDate, priority, numAnomalies, status, metrics, dimensions };
 }
 
 const rows = (allAlerts) => { 
@@ -18,10 +18,9 @@ const rows = (allAlerts) => {
     let metrics = new Set(alert.anomalies.map((anomaly) => anomaly.metricName));
     let dimensions = new Set(alert.anomalies.map((anomaly) => anomaly.dimensionName));
 
-    // TODO: replace 1 with alert.priority
     rowItems.push(
       createData(alertId, formatDate(alert.timestampDate, false), 
-        alert.anomalies.length, alert.status, 1,
+        priorityLevels[alert.priority], alert.anomalies.length, alert.status, 
         [...metrics].reduce((accumulator, value) => accumulator + DATA_DELIMITER + value), 
         [...dimensions].reduce((accumulator, value) => accumulator + DATA_DELIMITER + value)
       )
@@ -82,9 +81,9 @@ class History extends Component {
           ]}
           columns={[
             { title: 'Timestamp', field: 'timestampDate', filtering: false },
+            { title: 'Priority', field: 'priority', type: 'numeric', align: 'left', filtering: false },
             { title: '# of Anomalies', field: 'numAnomalies' },
             { title: 'Status', field: 'status', sorting: false },
-            { title: 'Priority', field: 'priority', type: 'numeric', align: 'left' },
             { 
               title: 'Metrics', field: 'metrics', sorting: false,
               render: rowData => rowData.metrics.split(DATA_DELIMITER).map((metric) => 

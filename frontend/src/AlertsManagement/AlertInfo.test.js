@@ -94,22 +94,9 @@ describe("handleStatusChange", () => {
 });
 
 describe("handlePriorityChange", () => {
-  // Mock alert.
-  const expectedAlert = {
-    id: 1987654321098765, 
-    timestampDate: "Fri Dec 27 2019",
-    anomalies: [{ 
-      dataPoints: new Map([ ["2019-10-24", 46] ]), 
-      dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Wed Nov 27 2019"
-    }],
-    priority: priorityLevels.P2,
-    status: "RESOLVED",
-  };
-
   const SERVLET_ROUTE = '/api/v1/alert-visualization';
   const POST_DATA = {"body": "1987654321098765 P1", "method": "POST",};
-
+  
   beforeEach(() => {
     fetch.resetMocks();
   });
@@ -120,7 +107,6 @@ describe("handlePriorityChange", () => {
 
   it("sends a POST request with the correct data to change alert priority", () => {
     jest.spyOn(global, 'fetch');
-    const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
     wrapper.setState({ alert: expectedAlert });
 
     act(() => {

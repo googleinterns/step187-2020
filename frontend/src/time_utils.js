@@ -22,5 +22,5 @@ export function formatDate(date, mFirst) {
   if (day.length < 2) 
       day = '0' + day;
 
-  return mFirst? [month, day, year].join(DATE_DELIMITER) : [year, month, day].join(DATE_DELIMITER);
+  return mFirst ? [month, day, year].join(DATE_DELIMITER) : [year, month, day].join(DATE_DELIMITER);
 }

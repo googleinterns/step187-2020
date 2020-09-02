@@ -18,6 +18,9 @@ import java.lang.ClassLoader;
 import java.io.InputStream;
 import com.google.models.DataInfo;
 
+import org.junit.Ignore;
+
+
 /** Contain tests for methods in {@link LocalFileSystem} class. */
 @RunWith(JUnit4.class)
 public class LocalFileSystemTest {
@@ -34,6 +37,7 @@ public class LocalFileSystemTest {
     when(LOADER.getResourceAsStream(EXPECTED_NAME)).thenReturn(INPUT_STREAM);
   }
 
+  @Ignore
   @Test
   public void testGetDataAsStream_correctFileName() {
     LocalFileSystem system = LocalFileSystem.createSystemForTest(LOADER);
