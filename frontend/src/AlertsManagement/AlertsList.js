@@ -1,11 +1,19 @@
-import React, { Component } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import Tooltip from '@material-ui/core/Tooltip';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import { priorityLevels } from './management_constants';
+import { formatDate } from '../time_utils';
 
 /**
  * Displays alerts in a list given information passed down as props from AlertsContent.
@@ -17,12 +25,58 @@ import Tooltip from '@material-ui/core/Tooltip';
  * checked = the same Array of ids of alerts that are resolved
  * handleToggle = callback function to handle clicking on the checkbox
  */
-class AlertsList extends Component {
-  render() {
-    const displayAlerts = this.props.displayAlerts;
-    const allAlerts = this.props.allAlerts;
-    
-    return (
+export default function AlertsList(props) {
+  const [displayAlerts, setDisplayAlerts] = useState(props.displayAlerts);
+  console.log(displayAlerts)
+  const allAlerts = props.allAlerts;
+  const [priority, setPriority] = useState(priorityLevels.P0);
+  const [sortDirectionPriority, setSortDirectionPriority] = useState(false);
+  const [sortDirectionDate, setSortDirectionDate] = useState(false);
+  
+  const handlePriorityChange = (newPriority, alertId, allAlerts) => {
+    const numToEnum = Object.keys(priorityLevels)[Object.values(priorityLevels).indexOf(newPriority)];
+    fetch('/api/v1/alert-visualization', {
+      method: 'POST',
+      body: alertId + " " + numToEnum,
+    });
+
+    allAlerts.get(alertId).priority = numToEnum;
+    // Set state in order to re-render the component, although the state is not used.
+    setPriority(newPriority); 
+  }
+
+  const sortPriority = (displayAlerts) => {
+    let sorted = displayAlerts.slice();
+    sorted.sort((a, b) => (allAlerts.get(a).priority > allAlerts.get(b).priority) ? 1 : -1);
+    sorted = sortDirectionPriority ? sorted.reverse() : sorted;
+    setSortDirectionPriority(!sortDirectionPriority);
+    return sorted;
+  }
+
+  const sortDate = (displayAlerts) => {
+    let sorted = displayAlerts.slice();
+    sorted.sort((a, b) => (
+        formatDate(allAlerts.get(a).timestampDate, false) > formatDate(allAlerts.get(b).timestampDate, false)
+      ) ? 1 : -1);
+    sorted = sortDirectionDate ? sorted.reverse() : sorted;
+    setSortDirectionDate(!sortDirectionDate);
+    return sorted;
+  }
+
+  return (
+    <Fragment>
+      <Button color="secondary" onClick={() => setDisplayAlerts(sortDate(displayAlerts))} 
+        style={{ margin: '10px' }}
+      >
+        Sort by Date
+        { sortDirectionDate ? <ArrowUpwardIcon /> : <ArrowDownwardIcon /> }
+      </Button>
+      <Button color="secondary" onClick={() => setDisplayAlerts(sortPriority(displayAlerts))} 
+        style={{ margin: '10px' }}
+      >
+        Sort by Priority
+        { sortDirectionPriority ? <ArrowDownwardIcon /> : <ArrowUpwardIcon /> }
+      </Button>
       <List className="alerts-list">
         {displayAlerts.map((alertId, value) => {
           const labelId = `checkbox-list-label-${alertId}`;
@@ -33,9 +87,9 @@ class AlertsList extends Component {
                 <Tooltip title="Resolved?" placement="left">
                   <Checkbox
                     edge="start"
-                    checked={this.props.checked.indexOf(alertId) !== -1}
+                    checked={props.checked.indexOf(alertId) !== -1}
                     tabIndex={-1}
-                    onClick={() => this.props.handleToggle(alertId)}
+                    onClick={() => props.handleToggle(alertId)}
                     inputProps={{ 'aria-labelledby': labelId }}
                   />
                 </Tooltip>
@@ -46,12 +100,24 @@ class AlertsList extends Component {
                             ${allAlerts.get(alertId).anomalies.length} anomalies`} 
                 />
               </Link>
+              <ListItemSecondaryAction>
+              <form>
+                <Select
+                  labelId="priority-select"
+                  id="priority-select"
+                  value={priorityLevels[allAlerts.get(alertId).priority]}
+                  onChange={event => handlePriorityChange(event.target.value, alertId, allAlerts)}
+                >
+                  <MenuItem value={priorityLevels.P0}>P0</MenuItem>
+                  <MenuItem value={priorityLevels.P1}>P1</MenuItem>
+                  <MenuItem value={priorityLevels.P2}>P2</MenuItem>
+                </Select>
+              </form>
+              </ListItemSecondaryAction>
             </ListItem>
           );
         })}
       </List>
-    );
-  }
+    </Fragment>
+  );
 }
-
-export default AlertsList;

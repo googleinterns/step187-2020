@@ -7,10 +7,12 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getSpecificAlertData } from './management_helpers';
-import { UNRESOLVED_STATUS, RESOLVED_STATUS } from './management_constants';
+import { UNRESOLVED_STATUS, RESOLVED_STATUS, priorityLevels } from './management_constants';
 
 /**
  * Requests alert data given specified alert ID from route and 
@@ -21,6 +23,7 @@ class AlertInfo extends Component {
     super(props);
     this.state = {
       alert: null,
+      priority: null,
     }
   }
 
@@ -30,7 +33,7 @@ class AlertInfo extends Component {
     if (result === null) {
       throw new Error("Could not find alert with id " + this.props.match.params.alertId);
     }
-    this.setState({ alert: result });
+    this.setState({ alert: result, priority: priorityLevels[result.priority] });
   }
 
   handleStatusChange = () => {
@@ -46,6 +49,22 @@ class AlertInfo extends Component {
     newAlert.status = statusToChangeTo;
     this.setState({ alert: newAlert });
   }
+
+  handlePriorityChange = (newPriority) => {
+    const { alert } = this.state;
+
+    // We have to get the P0, P1, or P2 version to match with enum representation in backend.
+    const numToEnum = Object.keys(priorityLevels)[Object.values(priorityLevels).indexOf(newPriority)];
+    fetch('/api/v1/alert-visualization', {
+      method: 'POST',
+      body: alert.id + " " + numToEnum,
+    });
+
+    const newAlert = Object.assign({}, alert);
+    newAlert.priority = newPriority;
+
+    this.setState({ alert: newAlert, priority: newPriority});
+  }
   
   render() {
     const style = {
@@ -53,7 +72,7 @@ class AlertInfo extends Component {
       marginBottom: '20px',
     };
 
-    const { alert } = this.state;
+    const { alert, priority } = this.state;
 
     if (!alert) {
       return <div />;
@@ -71,7 +90,7 @@ class AlertInfo extends Component {
           Alert on {alert.timestampDate}
         </Typography>
         <Typography variant="h6" align="center">
-            Status: {alert.status}
+          Status: {alert.status}
         </Typography>
         <center>
           <Button id="status-button" variant="contained" color="primary" component="span" 
@@ -80,6 +99,25 @@ class AlertInfo extends Component {
             {alert.status === UNRESOLVED_STATUS ? "Resolve?" : "Unresolve?"}
           </Button>
         </center>
+
+        <Typography variant="h6" align="center">
+          Priority: P{priority}
+        </Typography>
+        <center>
+          <form>
+            <Select
+              labelId="priority-select"
+              id="priority-select"
+              value={priority}
+              onChange={event => this.handlePriorityChange(event.target.value)}
+            >
+              <MenuItem value={priorityLevels.P0}>P0</MenuItem>
+              <MenuItem value={priorityLevels.P1}>P1</MenuItem>
+              <MenuItem value={priorityLevels.P2}>P2</MenuItem>
+            </Select>
+          </form>
+        </center>
+
         <List className="anomalies-list">
           {alert.anomalies.map((anomaly, index) => {
             const chartData = {

@@ -84,7 +84,7 @@ public class AlertsDataServletTest {
   public void doGet_ReturnsAlertEntityAsJson() throws IOException, ServletException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
-        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2);
     datastore.put(newAlert.toEntity());
     // The new alert needs to be queried from the datastore in order to contain a valid id. 
     Query query = new Query(Alert.ALERT_ENTITY_KIND);
@@ -105,11 +105,11 @@ public class AlertsDataServletTest {
   public void doGet_ReturnsLimitedNumberOfSortedAlerts() throws IOException, ServletException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Alert newAlertOne = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
-        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2);
     Alert newAlertTwo = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(1), 
-        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2);
     Alert newAlertThree = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(2), 
-        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2);
     datastore.put(newAlertOne.toEntity());
     datastore.put(newAlertTwo.toEntity());
     datastore.put(newAlertThree.toEntity());
@@ -140,7 +140,7 @@ public class AlertsDataServletTest {
   public void doPost_ChangesAlertStatusInDatastore() throws IOException, ServletException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Alert newAlert = Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(0), 
-        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED);
+        Arrays.asList(Anomaly.getDummyAnomaly()), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2);
     Entity newAlertEntity = newAlert.toEntity();
     datastore.put(newAlertEntity);
     Long id = newAlertEntity.getKey().getId();

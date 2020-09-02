@@ -39,7 +39,8 @@ public final class AlertTest {
     alert = Alert.createAlertWithoutId(
       Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
       dummyAnomalyGenerator.getAnomalies(), 
-      Alert.StatusType.UNRESOLVED
+      Alert.StatusType.UNRESOLVED,
+      Alert.PriorityLevel.P2
     );
   }
 
@@ -66,6 +67,11 @@ public final class AlertTest {
   }
 
   @Test
+  public void getPriority_workingGetter() {
+    assertEquals(alert.getPriority(), Alert.PriorityLevel.P2);
+  }
+
+  @Test
   public void getAlertId_workingGetter() {
     assertEquals(alert.getAlertId(), DEFAULT_ID);
   }
@@ -82,17 +88,26 @@ public final class AlertTest {
     Alert sameAlert = Alert.createAlertWithoutId(
         Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
         dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.UNRESOLVED
+        Alert.StatusType.UNRESOLVED,
+        Alert.PriorityLevel.P2
       );
     Alert diffTimeAlert = Alert.createAlertWithoutId(
         Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT + 1), 
         dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.UNRESOLVED
+        Alert.StatusType.UNRESOLVED,
+        Alert.PriorityLevel.P2
       );
     Alert diffResolveAlert = Alert.createAlertWithoutId(
         Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
         dummyAnomalyGenerator.getAnomalies(), 
-        Alert.StatusType.RESOLVED
+        Alert.StatusType.RESOLVED,
+        Alert.PriorityLevel.P2
+      );
+    Alert diffPriorityAlert = Alert.createAlertWithoutId(
+        Timestamp.getDummyTimestamp(TIMESTAMP_CONSTANT), 
+        dummyAnomalyGenerator.getAnomalies(), 
+        Alert.StatusType.UNRESOLVED,
+        Alert.PriorityLevel.P0
       );
     // TODO: Test equals with Alert object that has different list of anomalies. 
     //       Currently, dummyAnomalyGenerator can only generate one list of 
@@ -102,6 +117,7 @@ public final class AlertTest {
     assertTrue(alert.equals(sameAlert));
     assertFalse(alert.equals(diffTimeAlert));
     assertFalse(alert.equals(diffResolveAlert));
+    assertFalse(alert.equals(diffPriorityAlert));
     assertFalse(alert.equals(null));
   }
 
@@ -125,6 +141,8 @@ public final class AlertTest {
         alert.getTimestamp().toEpochDay());
     assertEquals(alertEntity.getProperty(Alert.STATUS_PROPERTY), 
         alert.getStatus().name());
+    assertEquals(alertEntity.getProperty(Alert.PRIORITY_PROPERTY), 
+        alert.getPriority().name());
   }
 
   @Test
