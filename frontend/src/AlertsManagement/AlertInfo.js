@@ -20,11 +20,11 @@ const styles = {
   },
   resolveButton: {
     marginTop: '10px',
-    marginBottom: '10px',
+    marginBottom: '30px',
   },
   relatedText: { 
-    margin: '10px', 
-    paddingBottom: '10px' 
+    marginTop: '10px', 
+    marginBottom: '5px' 
   },
   relatedDivider: { 
     marginBottom: '20px',
@@ -110,13 +110,13 @@ class AlertInfo extends Component {
     anomaly.relatedDataList.forEach((relatedData, index) => 
       relatedDataCharts.push(
         <Fragment key={index}>
-          {this.createLineChart(relatedData, index)}
-          <Typography variant="body2" align="center" style={styles.relatedText}>
+          <Typography variant="body2" style={styles.relatedText}>
             {`Related data from ${relatedData.metricName} for 
               ${relatedData.dimensionName} (${relatedData.username})`}
           </Typography>
+          {this.createLineChart(relatedData, index)}
           {index === (anomaly.relatedDataList.length - 1) ? null :
-            <Divider style={styles.relatedDivider}/> }
+            <Divider style={styles.divider}/> }
         </Fragment>
       )
     );
@@ -150,28 +150,34 @@ class AlertInfo extends Component {
             {alert.status === UNRESOLVED_STATUS ? "Resolve?" : "Unresolve?"}
           </Button>
         </center>
+        <Grid container >
+          <Grid item xs={6}>
+            <Typography variant="h6" align="center">Anomaly Graphs</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h6" align="center">Related Data Graphs</Typography>
+          </Grid>
+        </Grid>
         <List className="anomalies-list">
           {alert.anomalies.map((anomaly, index) => {
             return (
               <Fragment key={index}>
                 <ListItem key={index} dense>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12}>
+                  <Grid container spacing={4}>
+                    <Grid item xs={anomaly.relatedDataList.length !== 0 ? 6 : 12}>
                       <ListItemText id={index} 
                         disableTypography
                         primary={
-                          <Typography variant="body1" style={styles.anomalyText}> Anomaly in 
-                            <Box display='inline' m={1} style={styles.infoText}>
+                          <Typography variant="body2" style={styles.anomalyText}>
+                            <Box display='inline' fontWeight="fontWeightBold" m={0.25} style={styles.infoText}>
                               {` ${anomaly.metricName} for ${anomaly.dimensionName}`}
                             </Box> on
-                            <Box display='inline' m={1} style={styles.infoText}>
+                            <Box display='inline' fontWeight="fontWeightBold" m={0.5} style={styles.infoText}>
                               {`${anomaly.timestampDate}`}
                             </Box>
                           </Typography>
                         }
                       />
-                    </Grid>
-                    <Grid item xs={anomaly.relatedDataList.length !== 0 ? 6 : 12}>
                       {this.createLineChart(anomaly, index)}
                     </Grid>
                     <Grid item xs={6}>
