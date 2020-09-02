@@ -14,8 +14,10 @@
 
 package com.google.blackswan.mock;
 
-import com.google.models.*;
-import java.util.*;
+import com.google.models.Alert;
+import com.google.models.Timestamp;
+import java.util.List;
+import java.util.ArrayList;
 
 /** Generate list of dummy alerts. Supposed to analyze list of anomalies and create different alerts. */
 public class DummyAlertGenerator implements AlertGenerator {
@@ -27,7 +29,7 @@ public class DummyAlertGenerator implements AlertGenerator {
     alerts = new ArrayList<Alert>();
     for (int k = 0; k < SET_ALERT_GROUP_SIZE; k++) {
       alerts.add(Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(k), 
-          anomalyGenerator.getAnomalies(), Alert.StatusType.UNRESOLVED));
+          anomalyGenerator.getAnomalies(), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2));
     }
   }
 

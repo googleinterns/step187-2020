@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,27 +14,32 @@
 
 package com.google.blackswan.mock;
 
+import com.google.models.DataInfo;
 import com.google.models.Anomaly;
 import com.google.models.Alert;
 import com.google.models.Timestamp;
 import java.util.List;
-import java.util.Collections;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 
-/** Generate list of alerts by grouping anomalies by their month. */
-public class SimpleAlertGenerator implements AlertGenerator {
+/** 
+* Generate list of alerts of multiple topics requested by grouping 
+* anomalies by their month. 
+*/
+public class MultiInputAlertGenerator implements AlertGenerator {
 
   private final ImmutableList<Alert> alerts;
 
-  public SimpleAlertGenerator(AnomalyGenerator anomalyGenerator) {
-    this.alerts = groupAnomaliesToAlerts(anomalyGenerator);
+  public MultiInputAlertGenerator(List<DataInfo> topics) {
+    this.alerts = groupAnomaliesToAlerts(topics);
   }
 
-  /** TODO: Make flexible so can not only group anomalies by month but other time span. */
-  private static ImmutableList<Alert> groupAnomaliesToAlerts(AnomalyGenerator anomalyGenerator) {
-    List<Anomaly> anomaliesList = anomalyGenerator.getAnomalies();
+  private static ImmutableList<Alert> groupAnomaliesToAlerts(List<DataInfo> topics) {
+    List<Anomaly> anomaliesList = topics.stream()
+        .flatMap(topic -> SimpleAnomalyGenerator.createGenerator(topic).getAnomalies().stream())
+        .collect(ImmutableList.toImmutableList());
+    
     ListMultimap<Timestamp, Anomaly> anomalyGroups = LinkedListMultimap.create();
 
     // Group anomalies by month.
@@ -44,8 +49,8 @@ public class SimpleAlertGenerator implements AlertGenerator {
     }
 
     return anomalyGroups.keySet().stream()
-        .map(key -> Alert.createAlertWithoutId(key, anomalyGroups.get(key), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2))
-        .collect(ImmutableList.toImmutableList());
+        .map(key -> Alert.createAlertWithoutId(key, anomalyGroups.get(key), 
+            Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2)).collect(ImmutableList.toImmutableList());
   }
 
   public List<Alert> getAlerts() {

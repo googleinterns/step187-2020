@@ -15,7 +15,7 @@
 package com.google.blackswan.mock.filesystem;
 
 import java.io.InputStream;
-import com.google.models.*;
+import com.google.models.DataInfo;
 
 /** Interface for different file systems, ex. local vs cloud storage. */
 public interface FileSystem {

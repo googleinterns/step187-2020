@@ -40,6 +40,8 @@ import com.google.blackswan.mock.filesystem.*;
 public class SimpleAnomalyGenerator implements AnomalyGenerator {
   private static final int THRESHOLD = 13;
   private static final int NUM_POINTS = 5;
+  /** Ideally the FileSystem should be injected. */
+  private static final FileSystem FILE_SYSTEM = LocalFileSystem.createSystem();
 
   private final ImmutableList<Anomaly> anomalies;
   private final DataInfo topic;
@@ -50,7 +52,7 @@ public class SimpleAnomalyGenerator implements AnomalyGenerator {
       topic,
       // For [push] to git, always use LocalFileSystem, as CloudFileSystem will fail 
       // unit test without access to key.json. 
-      CloudFileSystem.createSystem().getDataAsStream(topic),
+      FILE_SYSTEM.getDataAsStream(topic),
       THRESHOLD,
       NUM_POINTS
     );

@@ -16,7 +16,7 @@ package com.google.blackswan.mock;
 
 import static java.util.stream.Collectors.toMap;
 
-import com.google.models.*;
+import com.google.models.Timestamp;
 import java.util.Scanner;
 import java.util.Map;
 import java.util.LinkedHashMap;

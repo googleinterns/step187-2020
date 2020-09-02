@@ -22,21 +22,14 @@ import java.util.HashMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.blackswan.mock.filesystem.*;
-
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
 
 /** Singleton class to generate related data for a given anomaly. */
 public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private static final String CONFIG_USERNAME = "catyu@";
-
+  /** Ideally should be injected. Currently, putting as class variable. */
+  private static final FileSystem FILE_SYSTEM = LocalFileSystem.createSystem();
   private static final SimpleRelatedDataGenerator INSTANCE = new SimpleRelatedDataGenerator();
 
   private Multimap<DataInfo, DataInfoUser> relatedDataMap;
@@ -93,27 +86,18 @@ public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private void prefillRelatedData() {
     // TODO: Replace with call for querying configs from datastore.
     // TODO: Deal with capitalizations when querying config from datastore.
-    relatedDataMap.put(DataInfo.of(Const.INTEREST_US, Const.RAMEN), 
-        DataInfoUser.of(Const.INTEREST_US, Const.UDON, CONFIG_USERNAME));
-    relatedDataMap.put(DataInfo.of(Const.INTEREST_US, Const.RAMEN), 
-        DataInfoUser.of(Const.INTEREST_US, Const.PHO, CONFIG_USERNAME));
+    relatedDataMap.put(DataInfo.of(Constant.INTEREST_US, Constant.RAMEN), 
+        DataInfoUser.of(Constant.INTEREST_US, Constant.UDON, CONFIG_USERNAME));
+    relatedDataMap.put(DataInfo.of(Constant.INTEREST_US, Constant.RAMEN), 
+        DataInfoUser.of(Constant.INTEREST_US, Constant.PHO, CONFIG_USERNAME));
     // Multimap looks like this right now: 
     // {{Interest Level, Ramen},{{Interest Level, Udon}, {Interest Level, Pho}}}, ...}.
   }
 
-  private ImmutableMap<Timestamp, Integer> getTopicDataPoints(DataInfo topic, Timestamp startTime, Timestamp endTime) {
-    if (csvDataCache.containsKey(topic) && csvDataCache.get(topic).get(startTime) != null 
-        && csvDataCache.get(topic).get(endTime) != null) {
-      return ImmutableMap.copyOf(csvDataCache.get(topic));
-    }
-
-    csvDataCache.put(topic, CSVParser.parseCSV(
-        CloudFileSystem.createSystem().getDataAsStream(topic)
-      ));
-    return ImmutableMap.copyOf(csvDataCache.get(topic));
-    // return ImmutableMap.copyOf(csvDataCache.computeIfAbsent(topic, key -> CSVParser.parseCSV(
-    //     CloudFileSystem.createSystem().getDataAsStream(topic)
-    //   )));
+  private ImmutableMap<Timestamp, Integer> getTopicDataPoints(DataInfo topic) {
+    return ImmutableMap.copyOf(csvDataCache.computeIfAbsent(topic, key -> CSVParser.parseCSV(
+        FILE_SYSTEM.getDataAsStream(topic)
+      )));
   }
 
   private ImmutableMap<Timestamp, MetricValue> getDataPointsInRange

@@ -9,7 +9,14 @@ export const tabLabels = {
 };
 export const UNRESOLVED_STATUS = "UNRESOLVED";
 export const RESOLVED_STATUS = "RESOLVED";
+
 export const DEFAULT_ALERTS_LIMIT = 5;
 export const MAX_ALERTS_LIMIT = 1000;
 
 export const DATA_DELIMITER = "%";
+
+export const priorityLevels = {
+  P0: 0,
+  P1: 1,
+  P2: 2,
+};
