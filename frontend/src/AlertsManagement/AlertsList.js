@@ -47,7 +47,8 @@ export default function AlertsList(props) {
                 disableTypography
                 primary={<Typography variant="body1" >Alert on 
                   <Box fontWeight='fontWeightBold' display='inline' m={1} style={{ color: '#0FA3B1'}}>
-                    {` ${allAlerts.get(alertId).timestampDate} (${formatDate(allAlerts.get(alertId).timestampDate, true)})`}
+                    {` ${allAlerts.get(alertId).timestampDate} (
+                      ${formatDate(allAlerts.get(alertId).timestampDate, /** mFirst = */ true)})`}
                   </Box> has
                   <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
                     {` ${allAlerts.get(alertId).anomalies.length} anomalies`}

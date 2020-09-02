@@ -18,6 +18,7 @@ const rows = (allAlerts) => {
     let metrics = new Set(alert.anomalies.map((anomaly) => anomaly.metricName));
     let dimensions = new Set(alert.anomalies.map((anomaly) => anomaly.dimensionName));
 
+    // TODO: replace 1 with alert.priority
     rowItems.push(
       createData(alertId, formatDate(alert.timestampDate, false), 
         alert.anomalies.length, alert.status, 1,
@@ -99,7 +100,7 @@ class History extends Component {
                 />)
             }
           ]}
-          data={rows(this.state.allAlerts)} 
+          data={rows(allAlerts)} 
           options={{
             exportButton: true,
             search: true,
@@ -107,7 +108,7 @@ class History extends Component {
             filtering: true
           }}
           title=""
-          exportFileName="BlackSwan Alerts"
+          exportFileName="BlackSwan_Alerts"
         />
       </div>
     );
