@@ -9,12 +9,26 @@ Run `yarn` in `./frontend` to install dependencies.
 yarn local
 // From backend directory
 mvn appengine:run
+// From python directory
+python3.7 main.py
 ```
 
 ## Testing
 ```
 // From backend directory
 mvn test
+// From frontend directory
+yarn test
+```
+
+## Setting up and running Python code
+To install dependencies: (Only need to run once.)
+```
+pip3 install -r requirements.txt
+```
+To run server locally (make sure you're in `python` directory and `key.json` is present):
+```
+python3.7 main.py
 ```
 
 ## Deploy to gcloud
@@ -27,6 +41,7 @@ Run every time you want to deploy:
 ```
 yarn build // From frontend directory
 gcloud app deploy // From frontend directory
+gcloud app deploy // From python directory
 mvn package appengine:deploy // From backend directory
 ```
 
@@ -42,11 +57,12 @@ To obtain `key.json` file, you can either:
 2) [Recommended] Ask @melodychn to send you the key via safe and secure means. 
 
 Once `key.json` file is obtained:
-1) Create a directory in `/resources` called `/keys` 
+1) Create a directory in backend service `/resources` called `/keys`.
 2) Move your service account key (make sure to rename to `key.json`) in to `/resources/keys` directory.
-3) **Make sure there is a `.gitignore` file within `/resources` that git ignores the `/keys` directory.** (`.gitignore` should already be present)
+3) If you're running python service, create directory `/keys` in `/python` directory and copy `key.json` to `/keys`.
+4) **Make sure there is a `.gitignore` file within `/resources` and `/python` that git ignores the `/keys` directory.** (`.gitignore` should already be present)
 
-Note 1: **Do not attempt to push the `/keys` directory on to Github or any other public locations.**
+Note: **Do not attempt to push the `/keys` directory on to Github or any other public locations.**
 
 
 ## Deploy cron jobs
