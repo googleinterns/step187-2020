@@ -76,7 +76,7 @@ public final class DataInfoTest {
     entity.setProperty(Constant.CONFIG_METRIC_PROPERTY, METRIC_NAME);
     entity.setProperty(Constant.CONFIG_DIMENSION_PROPERTY, DIMENSION_NAME);
 
-    assertEquals(DATA_INFO, DataInfo.createFrom(entity));
+    assertEquals(DATA_INFO, DataInfo.createFromEntity(entity));
   }
 
   /** Tests for DataInfoUser class below. */
@@ -98,6 +98,6 @@ public final class DataInfoTest {
     entity.setProperty(Constant.CONFIG_DIMENSION_PROPERTY, DIMENSION_NAME);
     entity.setProperty(Constant.CONFIG_USER_PROPERTY, USER_NAME);
 
-    assertEquals(DATA_INFO_USER, DataInfoUser.createFrom(entity));
+    assertEquals(DATA_INFO_USER, DataInfoUser.createFromEntity(entity));
   }
 }
