@@ -13,7 +13,7 @@
 // limitations under the License.
 
 const FLAG_LOCAL = true;
-/** TODO: Get port number from shared cnofig with python service. */
+/** TODO: Get port number from shared config with python service. */
 const PORT_NUMBER = 8889;
 /** 
  * When testing locally, need to append host that python service 
