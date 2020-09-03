@@ -43,11 +43,12 @@ public class AlertConfigurationServlet extends HttpServlet {
 
   private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
   private static final String WRONG_ALERT_DATA = "Incorrect alert data sent in HTTP request.";
+  private static final String CONFIG_PROPERTY = "Configuration";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query("Configuration");
+    Query query = new Query(CONFIG_PROPERTY);
     PreparedQuery results = datastore.prepare(query);
 
     List<Configuration> configurations = new ArrayList<>();
