@@ -57,7 +57,7 @@ public class AlertConfigurationServlet extends HttpServlet {
         (String) entity.getProperty(Configuration.DIMENSION_PROPERTY),
         (String) entity.getProperty(Configuration.METRIC_PROPERTY),
         (String) entity.getProperty(Configuration.RELATED_DIMENSION_PROPERTY),
-        (String) entity.getProperty(Configuration.RELATED_METRIC_PROPERTY),
+        (String) entity.getProperty(Configuration.RELATED_METRIC_PROPERTY)
       );
     }
 
