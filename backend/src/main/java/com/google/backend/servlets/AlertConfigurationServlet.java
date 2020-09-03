@@ -52,13 +52,7 @@ public class AlertConfigurationServlet extends HttpServlet {
 
     List<Configuration> configurations = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
-      Configuration configuration = new Configuration(
-        (String) entity.getProperty("user"),
-        (String) entity.getProperty("dimension"),
-        (String) entity.getProperty("metric"),
-        (String) entity.getProperty("relatedDimension"),
-        (String) entity.getProperty("relatedMetric")
-      );
+      Configuration configuration = Configuration.createFromEntity(entity);
       configurations.add(configuration);
     }
 
