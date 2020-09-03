@@ -27,12 +27,15 @@ import { formatDate } from '../time_utils';
  */
 export default function AlertsList(props) {
   const [displayAlerts, setDisplayAlerts] = useState(props.displayAlerts);
-  console.log(displayAlerts)
   const allAlerts = props.allAlerts;
   const [priority, setPriority] = useState(priorityLevels.P0);
   const [sortDirectionPriority, setSortDirectionPriority] = useState(false);
   const [sortDirectionDate, setSortDirectionDate] = useState(false);
   
+  useEffect(() =>{
+    setDisplayAlerts(props.displayAlerts);
+  }, [props.displayAlerts]);
+
   const handlePriorityChange = (newPriority, alertId, allAlerts) => {
     const numToEnum = Object.keys(priorityLevels)[Object.values(priorityLevels).indexOf(newPriority)];
     fetch('/api/v1/alert-visualization', {
@@ -42,7 +45,7 @@ export default function AlertsList(props) {
 
     allAlerts.get(alertId).priority = numToEnum;
     // Set state in order to re-render the component, although the state is not used.
-    setPriority(newPriority); 
+    setPriority(priority); 
   }
 
   const sortPriority = (displayAlerts) => {
