@@ -33,6 +33,7 @@ export async function getAlertsData(alertsLimit) {
       timestampDate: convertTimestampToDate(alert.timestampDate), 
       anomalies: editedAnomalies,
       status: alert.status,
+      priority: alert.priority,
     });
     
     if (alert.status === UNRESOLVED_STATUS) {
@@ -68,5 +69,6 @@ export async function getSpecificAlertData(alertId) {
     timestampDate: convertTimestampToDate(alert.timestampDate), 
     anomalies: editedAnomalies,
     status: alert.status,
+    priority: alert.priority,
   });
 }

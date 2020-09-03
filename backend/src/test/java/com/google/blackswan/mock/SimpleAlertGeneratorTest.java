@@ -75,7 +75,8 @@ public class SimpleAlertGeneratorTest {
     Alert expectedAlertJuly = Alert.createAlertWithoutId(
       new Timestamp("2019-08-01"), 
       Arrays.asList(expectedAnomalyGroup1), 
-      Alert.StatusType.UNRESOLVED
+      Alert.StatusType.UNRESOLVED,
+      Alert.PriorityLevel.P2
     );
     // Create second expected alert which contains two anomalies that occurs in August. 
     ImmutableMap<Timestamp, MetricValue> expectedDataPoints2 = ImmutableMap.of(
@@ -102,7 +103,8 @@ public class SimpleAlertGeneratorTest {
     Alert expectedAlertAugust = Alert.createAlertWithoutId(
       new Timestamp("2019-09-01"), 
       Arrays.asList(expectedAnomalyGroup2_1, expectedAnomalyGroup2_2), 
-      Alert.StatusType.UNRESOLVED
+      Alert.StatusType.UNRESOLVED,
+      Alert.PriorityLevel.P2
     );
 
     List<Alert> generatedAlerts = ALERT_GENERATOR.getAlerts();

@@ -1,7 +1,7 @@
 import { getAlertsData, getSpecificAlertData } from "./management_helpers";
 import { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks();
-import { DEFAULT_COMMENT_LIMIT } from './management_constants';
+import { DEFAULT_COMMENT_LIMIT, priorityLevels } from './management_constants';
 
 describe("getAlertsData", () => {
   const fakeAlerts = [{
@@ -19,6 +19,7 @@ describe("getAlertsData", () => {
       isPresent: true,
       value: 1234567890123456,
     },
+    priority: priorityLevels.P2,
     status: "UNRESOLVED",
     timestampDate: {date: {year: 2019, month: 12, day: 8}},
   }, 
@@ -33,6 +34,7 @@ describe("getAlertsData", () => {
       isPresent: true,
       value: 1987654321098765,
     },
+    priority: priorityLevels.P1,
     status: "RESOLVED",
     timestampDate: {date: {year: 2019, month: 12, day: 27}},
   }];
@@ -48,6 +50,7 @@ describe("getAlertsData", () => {
       dimensionName: "Ramen", metricName: "Interest Over Time",
       timestampDate: "Sun Dec 01 2019",
     }],
+    priority: priorityLevels.P2,
     status: "UNRESOLVED",
   });
   expectedAlerts.set(1987654321098765, {
@@ -56,6 +59,7 @@ describe("getAlertsData", () => {
       dimensionName: "Ramen", metricName: "Interest Over Time",
       timestampDate: "Wed Nov 27 2019"
     }],
+    priority: priorityLevels.P1,
     status: "RESOLVED",
   });
   const expectedUnchecked = [1234567890123456];
@@ -86,6 +90,7 @@ describe("getSpecificAlertData", () => {
       isPresent: true,
       value: 1987654321098765,
     },
+    priority: priorityLevels.P2,
     status: "RESOLVED",
     timestampDate: {date: {year: 2019, month: 12, day: 27}},
   };
@@ -98,6 +103,7 @@ describe("getSpecificAlertData", () => {
       dimensionName: "Ramen", metricName: "Interest Over Time",
       timestampDate: "Wed Nov 27 2019"
     }],
+    priority: priorityLevels.P2,
     status: "RESOLVED",
   };
 

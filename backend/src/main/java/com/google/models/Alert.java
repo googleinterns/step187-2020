@@ -27,10 +27,16 @@ import java.util.OptionalLong;
 public final class Alert {
   public static final String ALERT_ENTITY_KIND = "alert";
   public static final String STATUS_PROPERTY = "status";
+  public static final String PRIORITY_PROPERTY = "priority";
   public static final String ANOMALIES_LIST_PROPERTY = "anomaliesList";
   public static enum StatusType {
     RESOLVED,
     UNRESOLVED
+  };
+  public static enum PriorityLevel {
+    P0,
+    P1,
+    P2
   };
 
   private static final long DEFAULT_ID = 0L;
@@ -39,11 +45,14 @@ public final class Alert {
   private final ImmutableList<Anomaly> anomalies;
   private final OptionalLong id;
   private StatusType status;
+  private PriorityLevel priority;
 
-  private Alert(Timestamp timestampDate, List<Anomaly> anomalies, StatusType status, OptionalLong id) {
+  private Alert(Timestamp timestampDate, List<Anomaly> anomalies, StatusType status, 
+      PriorityLevel priority, OptionalLong id) {
     this.timestampDate = timestampDate;
     this.anomalies = ImmutableList.copyOf(anomalies);
     this.status = status;
+    this.priority = priority;
     this.id = id;
   }
 
@@ -59,6 +68,10 @@ public final class Alert {
     return status;
   }
 
+  public PriorityLevel getPriority() {
+    return priority;
+  }
+
   public long getAlertId() {
     return id.orElse(DEFAULT_ID);
   }
@@ -72,6 +85,7 @@ public final class Alert {
     StringBuilder str = new StringBuilder()
         .append("Timestamp: ").append(timestampDate).append("\n")
         .append("Status: ").append(status.name()).append("\n")
+        .append("Priority: ").append(priority.name()).append("\n")
         .append("Anomalies: \n");
     anomalies.forEach(str::append);
     return str.toString();
@@ -91,6 +105,7 @@ public final class Alert {
 
     return target.timestampDate.equals(timestampDate) 
         && target.status.equals(status)
+        && target.priority.equals(priority)
         && target.anomalies.equals(anomalies)
         && target.getAlertId() == getAlertId();
   }
@@ -99,6 +114,7 @@ public final class Alert {
     Entity alertEntity = new Entity(ALERT_ENTITY_KIND);
     alertEntity.setProperty(Timestamp.TIMESTAMP_PROPERTY, timestampDate.toEpochDay());
     alertEntity.setProperty(STATUS_PROPERTY, status.name());
+    alertEntity.setProperty(PRIORITY_PROPERTY, priority.name());
 
     List<EmbeddedEntity> list = anomalies.stream()
         .map(Anomaly::toEmbeddedEntity)
@@ -111,8 +127,8 @@ public final class Alert {
 
   /** Used when an alert is first created and not converted from an entity. */
   public static Alert createAlertWithoutId(Timestamp timestampDate, 
-      List<Anomaly> anomalies, StatusType status) {
-    return new Alert(timestampDate, anomalies, status, OptionalLong.empty());
+      List<Anomaly> anomalies, StatusType status, PriorityLevel priority) {
+    return new Alert(timestampDate, anomalies, status, priority, OptionalLong.empty());
   }
 
   @SuppressWarnings("unchecked")
@@ -132,6 +148,7 @@ public final class Alert {
       Timestamp.of((long) alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY)), 
       listAnomaly, 
       StatusType.valueOf((String) alertEntity.getProperty(STATUS_PROPERTY)),
+      PriorityLevel.valueOf((String) alertEntity.getProperty(PRIORITY_PROPERTY)),
       OptionalLong.of(alertEntity.getKey().getId())
     );
   }
