@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -94,8 +93,8 @@ public final class DataInfoTest {
   @Test
   public void createFromEntityToDataInfoUser_correctConversion() {
     Entity entity = new Entity(Constant.CONFIG_ENTITY_KIND);
-    entity.setProperty(Constant.CONFIG_METRIC_PROPERTY, METRIC_NAME);
-    entity.setProperty(Constant.CONFIG_DIMENSION_PROPERTY, DIMENSION_NAME);
+    entity.setProperty(Constant.CONFIG_RMETRIC_PROPERTY, METRIC_NAME);
+    entity.setProperty(Constant.CONFIG_RDIMENSION_PROPERTY, DIMENSION_NAME);
     entity.setProperty(Constant.CONFIG_USER_PROPERTY, USER_NAME);
 
     assertEquals(DATA_INFO_USER, DataInfoUser.createFromEntity(entity));

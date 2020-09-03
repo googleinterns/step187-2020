@@ -84,8 +84,8 @@ public final class DataInfoUser {
 
   public static DataInfoUser createFromEntity(Entity entity) {
     return DataInfoUser.of(
-      (String) entity.getProperty(Constant.CONFIG_METRIC_PROPERTY),
-      (String) entity.getProperty(Constant.CONFIG_DIMENSION_PROPERTY),
+      (String) entity.getProperty(Constant.CONFIG_RMETRIC_PROPERTY),
+      (String) entity.getProperty(Constant.CONFIG_RDIMENSION_PROPERTY),
       (String) entity.getProperty(Constant.CONFIG_USER_PROPERTY)
     );
   }
