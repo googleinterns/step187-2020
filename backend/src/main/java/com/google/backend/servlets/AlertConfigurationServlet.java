@@ -120,7 +120,7 @@ public class AlertConfigurationServlet extends HttpServlet {
     public static final String RELATED_DIMENSION_PROPERTY = "relatedDimension";
     public static final String RELATED_METRIC_PROPERTY = "relatedMetric";
 
-    private Configuration(String user, String dimension, String metric, String relatedDimension, String relatedMetric) {
+    public Configuration(String user, String dimension, String metric, String relatedDimension, String relatedMetric) {
       
       this.user = user;
       this.dimension = dimension;
