@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getSpecificAlertData } from './management_helpers';
@@ -46,6 +47,57 @@ class AlertInfo extends Component {
     newAlert.status = statusToChangeTo;
     this.setState({ alert: newAlert });
   }
+
+  createLineChart = (visData, index) => {
+    const color = visData.relatedDataList ? 'rgba(243, 0, 87, 1)' : 'rgba(63, 81, 181, 1)';
+    const chartData = {
+      labels: [ ...visData.dataPoints.keys() ],
+      datasets: [
+        {
+          label: visData.metricName + ' for ' + visData.dimensionName,
+          fill: false,
+          lineTension: 0.1,
+          backgroundColor: 'rgba(75,192,192,0.4)',
+          borderColor: color,
+          borderCapStyle: 'butt',
+          borderDash: [],
+          borderDashOffset: 0.0,
+          borderJoinStyle: 'miter',
+          pointBorderColor: color,
+          pointBackgroundColor: '#fff',
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: color,
+          pointHoverBorderColor: 'rgba(220,220,220,1)',
+          pointHoverBorderWidth: 2,
+          pointRadius: 1,
+          pointHitRadius: 10,
+          data: [ ...visData.dataPoints.values() ]
+        }
+      ]
+    };
+
+    return <Line key={index} data={chartData} />;
+  }
+
+  relatedDataContainer = (relatedData, index) => {
+    return (
+      <Fragment key={index}>
+        <Typography variant="body2" style={{ margin: '10px' }}>
+          {`Related data from ${relatedData.metricName} for ${relatedData.dimensionName} requested by ${relatedData.username}`}
+        </Typography>
+        {this.createLineChart(relatedData, index)}
+      </Fragment>
+    )
+  }
+
+  visualizeRelatedData = (anomaly) => {
+    let relatedDataCharts = [];
+    anomaly.relatedDataList.forEach((relatedData, index) => 
+      relatedDataCharts.push(this.relatedDataContainer(relatedData, index))
+    );
+    return relatedDataCharts;
+  }
   
   render() {
     const style = {
@@ -82,41 +134,28 @@ class AlertInfo extends Component {
         </center>
         <List className="anomalies-list">
           {alert.anomalies.map((anomaly, index) => {
-            const chartData = {
-              labels: [ ...anomaly.dataPoints.keys() ],
-              datasets: [
-                {
-                  label: anomaly.metricName + ' for ' + anomaly.dimensionName,
-                  fill: false,
-                  lineTension: 0.1,
-                  backgroundColor: 'rgba(75,192,192,0.4)',
-                  borderColor: 'rgba(243, 0, 87, 1)',
-                  borderCapStyle: 'butt',
-                  borderDash: [],
-                  borderDashOffset: 0.0,
-                  borderJoinStyle: 'miter',
-                  pointBorderColor: 'rgba(243, 0, 87, 1)',
-                  pointBackgroundColor: '#fff',
-                  pointBorderWidth: 1,
-                  pointHoverRadius: 5,
-                  pointHoverBackgroundColor: 'rgba(243, 0, 87, 1)',
-                  pointHoverBorderColor: 'rgba(220,220,220,1)',
-                  pointHoverBorderWidth: 2,
-                  pointRadius: 1,
-                  pointHitRadius: 10,
-                  data: [ ...anomaly.dataPoints.values() ]
-                }
-              ]
-            };
-
             return (
               <Fragment key={index}>
                 <ListItem key={index} dense>
-                  <ListItemText id={index} 
-                    primary={`Anomaly in ${anomaly.metricName} for ${anomaly.dimensionName} on ${anomaly.timestampDate}`} 
-                  />
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <ListItemText id={index} 
+                        disableTypography
+                        primary={
+                          <Typography variant="body1" style={{ marginTop: '10px' }}>
+                            {`Anomaly in ${anomaly.metricName} for ${anomaly.dimensionName} on ${anomaly.timestampDate}\n`}
+                          </Typography>
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      {this.createLineChart(anomaly, index)}
+                    </Grid>
+                    <Grid item xs={6}>
+                      {this.visualizeRelatedData(anomaly)}
+                    </Grid>
+                  </Grid>
                 </ListItem>
-                <Line key={index} data={chartData} />
                 <Divider style={style} variant="inset" component="li"/>
               </Fragment>
             );

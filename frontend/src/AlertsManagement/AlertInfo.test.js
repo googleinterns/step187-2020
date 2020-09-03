@@ -10,19 +10,26 @@ import * as helpers from './management_helpers';
 
 configure({ adapter: new Adapter() });
 
-describe("componentDidMount", () => {
-  // Mock result alert data.
-  const expectedAlert = {
-    id: 1987654321098765, 
-    timestampDate: "Fri Dec 27 2019",
-    anomalies: [{ 
-      dataPoints: new Map([ ["2019-10-24", 46] ]), 
-      dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Wed Nov 27 2019"
-    }],
-    status: "RESOLVED",
-  };
+// Mock result alert data.
+const expectedAlert = {
+  id: 1987654321098765, 
+  timestampDate: "Fri Dec 27 2019",
+  anomalies: [{ 
+    dataPoints: new Map([ ["2019-10-24", 46] ]), 
+    dimensionName: "Ramen", metricName: "Interest Over Time",
+    timestampDate: "Wed Nov 27 2019",
+    relatedDataList: [{
+      dataPoints: new Map([ ["2019-10-24", 78] ]),
+      dimensionName: "Udon", metricName: "Interest Over Time",
+      username: "bob@",
+      },
+    ]
+  }],
+  status: "RESOLVED",
+};
 
+describe("componentDidMount", () => {
+  
   const REQUEST_ID = 1987654321098765;
 
   it("should set state correctly with fetched alert", async () => {
@@ -61,17 +68,6 @@ describe("componentDidMount", () => {
 })
 
 describe("handleStatusChange", () => {
-  // Mock alert.
-  const expectedAlert = {
-    id: 1987654321098765, 
-    timestampDate: "Fri Dec 27 2019",
-    anomalies: [{ 
-      dataPoints: new Map([ ["2019-10-24", 46] ]), 
-      dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Wed Nov 27 2019"
-    }],
-    status: "RESOLVED",
-  };
 
   const SERVLET_ROUTE = '/api/v1/alerts-data';
   const POST_DATA = {"body": "1987654321098765 UNRESOLVED", "method": "POST",};
