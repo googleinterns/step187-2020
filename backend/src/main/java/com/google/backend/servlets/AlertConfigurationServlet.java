@@ -87,11 +87,11 @@ public class AlertConfigurationServlet extends HttpServlet {
 
     try {
       Entity configurationEntity = new Entity("Configuration");
-      configurationEntity.setProperty("user", email);
-      configurationEntity.setProperty("metric", metric);
-      configurationEntity.setProperty("dimension", dimension);
-      configurationEntity.setProperty("relatedMetric", relatedMetric);
-      configurationEntity.setProperty("relatedDimension", relatedDimension);
+      configurationEntity.setProperty(Configuration.USER_PROPERTY, email);
+      configurationEntity.setProperty(Configuration.METRIC_PROPERTY, metric);
+      configurationEntity.setProperty(Configuration.DIMENSION_PROPERTY, dimension);
+      configurationEntity.setProperty(Configuration.RELATED_METRIC_PROPERTY, relatedMetric);
+      configurationEntity.setProperty(Configuration.RELATED_DIMENSION_PROPERTY, relatedDimension);
       datastore.put(configurationEntity);
     } catch (DatastoreFailureException e) {
       throw new ServletException(e);
@@ -120,7 +120,14 @@ public class AlertConfigurationServlet extends HttpServlet {
     private final String relatedDimension;
     private final String relatedMetric;
 
+    public static final String USER_PROPERTY = "user";
+    public static final String DIMENSION_PROPERTY = "dimension";
+    public static final String METRIC_PROPERTY = "metric";
+    public static final String RELATED_DIMENSION_PROPERTY = "relatedDimension";
+    public static final String RELATED_METRIC_PROPERTY = "relatedMetric";
+
     private Configuration(String user, String dimension, String metric, String relatedDimension, String relatedMetric) {
+      
       this.user = user;
       this.dimension = dimension;
       this.metric = metric;
