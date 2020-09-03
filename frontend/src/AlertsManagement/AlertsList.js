@@ -48,7 +48,7 @@ export default function AlertsList(props) {
                 primary={<Typography variant="body1" >Alert on 
                   <Box fontWeight='fontWeightBold' display='inline' m={1} style={{ color: '#0FA3B1'}}>
                     {` ${allAlerts.get(alertId).timestampDate} (
-                      ${formatDate(allAlerts.get(alertId).timestampDate, /** mFirst = */ true)})`}
+                      ${formatDate(allAlerts.get(alertId).timestampDate, /** monthFirst = */ true)} )`}
                   </Box> has
                   <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
                     {` ${allAlerts.get(alertId).anomalies.length} anomalies`}

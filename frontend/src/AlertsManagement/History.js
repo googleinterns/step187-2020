@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import LinkIcon from '@material-ui/icons/Link';
 import { DATA_DELIMITER } from './management_constants';
 import { getAlertsData } from './management_helpers';
-import { tableIcons } from './table_icons';
+import { TABLE_ICONS } from './table_icons';
 import { formatDate } from '../time_utils';
 
 const createData = (id, timestampDate, numAnomalies, status, priority, metrics, dimensions) => {
@@ -20,7 +20,7 @@ const rows = (allAlerts) => {
 
     // TODO: replace 1 with alert.priority
     rowItems.push(
-      createData(alertId, formatDate(alert.timestampDate, false), 
+      createData(alertId, formatDate(alert.timestampDate, /** monthFirst = */ false), 
         alert.anomalies.length, alert.status, 1,
         [...metrics].reduce((accumulator, value) => accumulator + DATA_DELIMITER + value), 
         [...dimensions].reduce((accumulator, value) => accumulator + DATA_DELIMITER + value)
@@ -72,7 +72,7 @@ class History extends Component {
       <div style={styles.root}>
         <Typography variant="h4" gutterBottom style={styles.header}>Alerts Archive</Typography>
         
-        <MaterialTable icons={tableIcons}
+        <MaterialTable icons={TABLE_ICONS}
           actions={[
             {
               icon: () => <LinkIcon />,
