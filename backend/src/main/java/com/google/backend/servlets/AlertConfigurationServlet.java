@@ -87,7 +87,7 @@ public class AlertConfigurationServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     try {
-      Entity configurationEntity = new Entity("Configuration");
+      Entity configurationEntity = new Entity(CONFIG_PROPERTY);
       configurationEntity.setProperty(Configuration.USER_PROPERTY, email);
       configurationEntity.setProperty(Configuration.METRIC_PROPERTY, metric);
       configurationEntity.setProperty(Configuration.DIMENSION_PROPERTY, dimension);
