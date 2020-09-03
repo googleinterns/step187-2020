@@ -72,6 +72,7 @@ public class AlertConfigurationServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
 
     String email = new String();
+    // The user will not be logged in when I am testing locally
     if (userService.isUserLoggedIn()) {
       email = userService.getCurrentUser().getEmail();
     } else {
