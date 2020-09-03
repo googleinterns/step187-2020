@@ -14,8 +14,10 @@
 
 package com.google.blackswan.mock;
 
-import com.google.models.*;
-import java.util.*;
+import com.google.models.Alert;
+import com.google.models.Timestamp;
+import java.util.List;
+import java.util.ArrayList;
 
 /** Generate list of dummy alerts. Supposed to analyze list of anomalies and create different alerts. */
 public class DummyAlertGenerator implements AlertGenerator {

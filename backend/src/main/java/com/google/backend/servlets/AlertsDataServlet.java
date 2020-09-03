@@ -18,16 +18,19 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import com.google.models.Alert;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,26 +38,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** 
- * Servlet that handles Alert data. Gets Alert data from the Datastore and returns JSON, 
- * and changes Alert status in the Datastore given user input. 
+ * Servlet that handles Alert data. 
+ * Gets specified amount of most recent Alert data from the Datastore and returns JSON.
+ * Given user input, changes Alert status in the Datastore. 
  */
 @WebServlet("/api/v1/alerts-data")
 public class AlertsDataServlet extends HttpServlet {
 
+  private static final int DEFAULT_ALERTS_LIMIT = 5;
   private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
   private static final String WRONG_ALERT_DATA = "Incorrect alert data sent in HTTP request.";
-  
+  private static final Logger log = Logger.getLogger(AlertsDataServlet.class.getName());
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // TODO: only get alerts that the user is subscribed to.
-    Query query = new Query(Alert.ALERT_ENTITY_KIND);
+    Query query = new Query(Alert.ALERT_ENTITY_KIND).addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-    List<Alert> alertList = new ArrayList<>();
 
-    for (Entity entity : results.asIterable()) {
-      alertList.add(Alert.createAlertFromEntity(entity));
+    int limit;
+    try {
+      limit = Integer.parseInt(request.getParameter("limit"));
+    } catch (NumberFormatException e) {
+      log.warning("Received " + request.getParameter("limit") + " instead of an integer.");
+      limit = DEFAULT_ALERTS_LIMIT;
     }
+    
+    List<Entity> results = datastore.prepare(query)
+      .asList(FetchOptions.Builder.withLimit(limit));
+    List<Alert> alertList = results.stream().map(Alert::createAlertFromEntity)
+      .collect(Collectors.toList());
     
     response.setContentType("application/json;");
     response.getWriter().println(new Gson().toJson(alertList));

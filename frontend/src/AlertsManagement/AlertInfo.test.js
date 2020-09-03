@@ -62,8 +62,8 @@ describe("componentDidMount", () => {
     const instance = wrapper.instance();
 
     expect(mock).toHaveBeenCalled();
-    await expect(instance.componentDidMount()
-    ).rejects.toEqual(new Error("Could not find alert with id " + REQUEST_ID));
+    await expect(instance.componentDidMount()).rejects.toEqual(
+      new Error("Could not find alert with id " + REQUEST_ID));
   });
 })
 

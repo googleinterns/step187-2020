@@ -14,6 +14,8 @@
 
 package com.google.blackswan.mock.filesystem;
 
+import com.google.models.DataInfo;
+import com.google.blackswan.mock.Constant;
 import java.io.InputStream;
 import java.lang.ClassLoader;
 
@@ -33,10 +35,8 @@ public class LocalFileSystem implements FileSystem {
     this.classLoader = loader;
   }
 
-  public InputStream getDataAsStream(String metric, String dimension) {
-    String fileName = new StringBuilder(metric).append(FileSystem.DELIMITER)
-        .append(dimension).append(FileSystem.FILE_TYPE).toString();
-    return classLoader.getResourceAsStream(fileName);
+  public InputStream getDataAsStream(DataInfo requestedData) {
+    return classLoader.getResourceAsStream(Constant.FILE_LOCATIONS.get(requestedData));
   }
 
 }

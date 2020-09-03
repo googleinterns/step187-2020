@@ -122,7 +122,7 @@ public final class AlertTest {
 
     assertEquals(anomalyList, alert.getAnomalies());
     assertEquals(alertEntity.getProperty(Timestamp.TIMESTAMP_PROPERTY), 
-        alert.getTimestamp().toString());
+        alert.getTimestamp().toEpochDay());
     assertEquals(alertEntity.getProperty(Alert.STATUS_PROPERTY), 
         alert.getStatus().name());
   }

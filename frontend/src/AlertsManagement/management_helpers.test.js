@@ -1,6 +1,7 @@
 import { getAlertsData, getSpecificAlertData } from "./management_helpers";
 import { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks();
+import { DEFAULT_COMMENT_LIMIT } from './management_constants';
 
 describe("getAlertsData", () => {
   const fakeAlerts = [{
@@ -85,7 +86,7 @@ describe("getAlertsData", () => {
   it("correctly organizes alert information into data structures based on alert data", async () => {
     fetch.mockResponseOnce(JSON.stringify(fakeAlerts)); 
 
-    const results = await getAlertsData();
+    const results = await getAlertsData(DEFAULT_COMMENT_LIMIT);
 
     expect(results).toMatchObject([expectedAlerts, expectedUnchecked, expectedChecked])
   });

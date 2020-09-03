@@ -14,7 +14,7 @@
 
 package com.google.blackswan.mock;
 
-import com.google.models.*;
+import com.google.models.Anomaly;
 import java.util.*;
 
 /** Generate list of hard-coded dummy anomalies. */

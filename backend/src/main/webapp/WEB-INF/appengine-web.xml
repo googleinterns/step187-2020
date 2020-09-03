@@ -6,4 +6,8 @@
  <threadsafe>false</threadsafe>
  <sessions-enabled>true</sessions-enabled>
  <runtime>java8</runtime>
+ <static-files>
+    <include path="/**.html"></include>
+    <include path="/**.js"></include>
+ </static-files>
 </appengine-web-app>

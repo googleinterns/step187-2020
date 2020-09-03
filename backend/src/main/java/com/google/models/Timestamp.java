@@ -36,6 +36,10 @@ public final class Timestamp implements Comparable<Timestamp> {
                                                     .toFormatter();
 
   private final LocalDate date;
+
+  public static Timestamp of(long epochDay) {
+    return new Timestamp(LocalDate.ofEpochDay(epochDay));
+  }
  
   public Timestamp(int day, int month, int year) {
     date = LocalDate.of(year, month, day);
@@ -59,6 +63,10 @@ public final class Timestamp implements Comparable<Timestamp> {
 
   public int getYear() {
     return date.getYear();
+  }
+
+  public long toEpochDay() {
+    return date.toEpochDay();
   }
 
   @Override

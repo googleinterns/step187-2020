@@ -2,17 +2,20 @@ import { convertTimestampToDate } from '../time_utils';
 import { UNRESOLVED_STATUS } from './management_constants';
 
 /**
- * Fetch alerts data from Datastore and organize into data structures.
+ * Fetch specified amount of alerts from Datastore and organize into data structures.
  * Returns an array with a map of alert IDs to Object containing alert info, 
  * an array of ids of unresolved alerts, and an array of ids of resolved alerts.
  */
-export async function getAlertsData() {
+export async function getAlertsData(alertsLimit) {
   let allAlerts = new Map();
   let unresolvedAlerts = [];
   let resolvedAlerts = [];
 
-  const alertsResponse = await fetch('/api/v1/alerts-data')
-  if (!alertsResponse.ok) throw new Error('Error getting alerts data: ' + alertsResponse.status);
+  const alertsResponse = await fetch('/api/v1/alerts-data?limit=' + alertsLimit);
+  if (!alertsResponse.ok) {
+    throw new Error('Error getting alerts data with limit ' 
+      + alertsLimit + ': ' + alertsResponse.status);
+  }
   const data = await alertsResponse.json();
   data.forEach((alert) => {
     const alertId = alert.id.value;
@@ -52,7 +55,7 @@ export async function getSpecificAlertData(alertId) {
     'Error getting alert data for id ' + alertId + ':' + alertResponse.status
   );
   const alert = await alertResponse.json();
-  
+
   let editedAnomalies = alert.anomalies.slice();
   alert.anomalies.forEach((anomaly, index) => {
     editedAnomalies[index].timestampDate = convertTimestampToDate(anomaly.timestampDate);
@@ -81,4 +84,3 @@ export async function getSpecificAlertData(alertId) {
     status: alert.status,
   });
 }
-
