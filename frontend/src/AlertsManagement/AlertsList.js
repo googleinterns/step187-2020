@@ -9,6 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { formatDate } from '../time_utils';
+import './AlertsList.css';
 
 /**
  * Displays alerts in a list given information passed down as props from AlertsContent.
@@ -42,14 +43,14 @@ export default function AlertsList(props) {
                 />
               </Tooltip>
             </ListItemIcon>
-            <Link to={`/alerts/${alertId}`} style={{ color: "inherit", textDecoration: "none"}} >
+            <Link to={`/alerts/${alertId}`} id="alert-link" >
               <ListItemText id={labelId} 
                 disableTypography
                 primary={<Typography variant="body1" >Alert on 
-                  <Box fontWeight='fontWeightBold' display='inline' m={1} style={{ color: '#0FA3B1'}}>
+                  <Box fontWeight='fontWeightBold' display='inline' m={1} id="alert-text">
                     {` ${allAlerts.get(alertId).timestampDate} (${formatDate(allAlerts.get(alertId).timestampDate)})`}
                   </Box> has
-                  <Box display='inline' m={1} style={{ color: '#0FA3B1'}}>
+                  <Box display='inline' m={1} id="alert-text">
                     {` ${allAlerts.get(alertId).anomalies.length} anomalies`}
                   </Box>
                   </Typography>

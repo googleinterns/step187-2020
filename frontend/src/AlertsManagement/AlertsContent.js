@@ -20,8 +20,14 @@ const styles = ({
     maxWidth: 900,
     margin: 'auto',
   },
+  limit: {
+    marginBottom: '25px',
+  }
 });
 
+/** 
+ * Container for content under a tab, where children is the content components,
+ * value is the index of the tab being displayed, and index is the TabPanel's index.  */
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -35,7 +41,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography component={'span'} variant={'body2'}>{children}</Typography>
+          <Typography component={'span'} variant={'body1'}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -80,13 +86,13 @@ class AlertsContent extends Component {
 
   async componentDidMount() {
     var results = await getAlertsData(this.state.alertsLimit);
-    if (results.length !== 3) {
+    if (Object.keys(results).length !== 3) {
       throw new Error("getAlertsData() did not return the correct alerts data.")
     }
     this.setState({
-      allAlerts: new Map(results[0]),
-      unchecked: results[1].slice(),
-      checked: results[2].slice(),
+      allAlerts: new Map(results.all),
+      unchecked: results.unresolved.slice(),
+      checked: results.resolved.slice(),
     });
   }
 
@@ -151,7 +157,7 @@ class AlertsContent extends Component {
             type="number"
             label="# of alerts:"
             variant="outlined"
-            style={{ marginBottom: '25px' }}
+            className={classes.limit}
             InputProps={{ inputProps: { min: 1, max: 15 } }}
             value={alertsLimit}
             onChange={this.handleAlertsLimitChange}

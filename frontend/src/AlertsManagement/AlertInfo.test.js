@@ -11,7 +11,7 @@ import * as helpers from './management_helpers';
 configure({ adapter: new Adapter() });
 
 // Mock result alert data.
-const expectedAlert = {
+const EXPECTED_ALERT = {
   id: 1987654321098765, 
   timestampDate: "Fri Dec 27 2019",
   anomalies: [{ 
@@ -46,12 +46,12 @@ beforeEach(() => {
 
 describe("componentDidMount", () => {
   it("should set state correctly with fetched alert", async () => {
-    const mock = jest.spyOn(helpers, "getSpecificAlertData").mockReturnValue(expectedAlert);
+    const mock = jest.spyOn(helpers, "getSpecificAlertData").mockReturnValue(EXPECTED_ALERT);
 
     await wrapper.instance().componentDidMount();
 
     expect(mock).toHaveBeenCalled();
-    expect(wrapper.state('alert')).toMatchObject(expectedAlert);
+    expect(wrapper.state('alert')).toMatchObject(EXPECTED_ALERT);
   });
 
   it("should throw an error when no data is received", async () => {
@@ -78,7 +78,7 @@ describe("handleStatusChange", () => {
 
   it("sends a POST request with the correct data to change alert status", () => {
     jest.spyOn(global, 'fetch');
-    wrapper.setState({ alert: expectedAlert });
+    wrapper.setState({ alert: EXPECTED_ALERT });
 
     act(() => {
       wrapper.find('#status-button').simulate('click');

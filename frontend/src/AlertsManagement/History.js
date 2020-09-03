@@ -7,6 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import { getAlertsData } from './management_helpers';
 import { formatDate } from '../time_utils';
 
+/**
+ * Displays all alert data in a list. Clicking on an alert will take you to that alert's route.
+ */
 class History extends Component {
   constructor(props) {
     super(props);
@@ -17,11 +20,11 @@ class History extends Component {
 
   async componentDidMount() {
     var results = await getAlertsData();
-    if (results.length !== 3) {
+    if (Object.keys(results).length !== 3) {
       throw new Error("getAlertsData() did not return the correct alerts data.")
     }
     this.setState({
-      allAlerts: new Map(results[0]),
+      allAlerts: new Map(results.all),
     });
   }
 
