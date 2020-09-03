@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import ManagementRoutes from './ManagementRoutes';
-import NavBar from '../NavBar';
 import './AlertsManagement.css';
 
 /**
@@ -12,7 +11,6 @@ class AlertsManagement extends Component {
   render() {
     return (
       <div className="alerts-management">
-        <NavBar />
         <Typography variant="h3" gutterBottom id="alerts-header">
           BlackSwan Alerts
         </Typography>

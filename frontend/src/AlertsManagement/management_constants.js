@@ -10,3 +10,4 @@ export const tabLabels = {
 export const UNRESOLVED_STATUS = "UNRESOLVED";
 export const RESOLVED_STATUS = "RESOLVED";
 export const DEFAULT_ALERTS_LIMIT = 5;
+export const MAX_ALERTS_LIMIT = 1000;

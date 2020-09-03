@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import ControlPanel from './ControlPanel';
 import Footer from './Footer';
 import ConfigList from './ConfigList';
-import NavBar from '../../NavBar';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -29,7 +28,6 @@ export default function AlertConfiguration() {
 
   return (
     <Fragment>
-      <NavBar />
       <CssBaseline />
       <main className={classes.main}>
         <ControlPanel addConfig={addConfig}/>

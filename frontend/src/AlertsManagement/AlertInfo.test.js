@@ -10,31 +10,43 @@ import * as helpers from './management_helpers';
 
 configure({ adapter: new Adapter() });
 
+// Mock result alert data.
+const expectedAlert = {
+  id: 1987654321098765, 
+  timestampDate: "Fri Dec 27 2019",
+  anomalies: [{ 
+    dataPoints: new Map([ ["2019-10-24", 46] ]), 
+    dimensionName: "Ramen", metricName: "Interest Over Time",
+    timestampDate: "Wed Nov 27 2019",
+    relatedDataList: [{
+      dataPoints: new Map([ ["2019-10-24", 78] ]),
+      dimensionName: "Udon", metricName: "Interest Over Time",
+      username: "bob@",
+      },
+    ]
+  }],
+  status: "RESOLVED",
+};
+
+const REQUEST_ID = 1987654321098765;
+
+let wrapper;
+
+beforeEach(() => {
+  wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
+  wrapper.setProps({
+    match: {
+      params: {
+        alertId: REQUEST_ID,
+      }
+    },
+    history: {}
+  });
+});
+
 describe("componentDidMount", () => {
-  // Mock result alert data.
-  const expectedAlert = {
-    id: 1987654321098765, 
-    timestampDate: "Fri Dec 27 2019",
-    anomalies: [{ 
-      dataPoints: new Map([ ["2019-10-24", 46] ]), 
-      dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Wed Nov 27 2019"
-    }],
-    status: "RESOLVED",
-  };
-
-  const REQUEST_ID = 1987654321098765;
-
   it("should set state correctly with fetched alert", async () => {
     const mock = jest.spyOn(helpers, "getSpecificAlertData").mockReturnValue(expectedAlert);
-    const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
-    wrapper.setProps({
-      match: {
-        params: {
-          alertId: REQUEST_ID,
-        }
-      }
-    });
 
     await wrapper.instance().componentDidMount();
 
@@ -44,14 +56,6 @@ describe("componentDidMount", () => {
 
   it("should throw an error when no data is received", async () => {
     const mock = jest.spyOn(helpers, "getSpecificAlertData").mockReturnValue(null);
-    const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
-    wrapper.setProps({
-      match: {
-        params: {
-          alertId: REQUEST_ID,
-        }
-      }
-    });
     const instance = wrapper.instance();
 
     expect(mock).toHaveBeenCalled();
@@ -61,18 +65,6 @@ describe("componentDidMount", () => {
 })
 
 describe("handleStatusChange", () => {
-  // Mock alert.
-  const expectedAlert = {
-    id: 1987654321098765, 
-    timestampDate: "Fri Dec 27 2019",
-    anomalies: [{ 
-      dataPoints: new Map([ ["2019-10-24", 46] ]), 
-      dimensionName: "Ramen", metricName: "Interest Over Time",
-      timestampDate: "Wed Nov 27 2019"
-    }],
-    status: "RESOLVED",
-  };
-
   const SERVLET_ROUTE = '/api/v1/alerts-data';
   const POST_DATA = {"body": "1987654321098765 UNRESOLVED", "method": "POST",};
 
@@ -86,7 +78,6 @@ describe("handleStatusChange", () => {
 
   it("sends a POST request with the correct data to change alert status", () => {
     jest.spyOn(global, 'fetch');
-    const wrapper = shallow(<AlertInfo />, { disableLifecycleMethods: true });
     wrapper.setState({ alert: expectedAlert });
 
     act(() => {
