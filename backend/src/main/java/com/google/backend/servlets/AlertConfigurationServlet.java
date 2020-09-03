@@ -52,8 +52,13 @@ public class AlertConfigurationServlet extends HttpServlet {
 
     List<Configuration> configurations = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
-      Configuration configuration = Configuration.createFromEntity(entity);
-      configurations.add(configuration);
+      Configuration configuration = new Configuration(
+        (String) entity.getProperty(Configuration.USER_PROPERTY),
+        (String) entity.getProperty(Configuration.DIMENSION_PROPERTY),
+        (String) entity.getProperty(Configuration.METRIC_PROPERTY),
+        (String) entity.getProperty(Configuration.RELATED_DIMENSION_PROPERTY),
+        (String) entity.getProperty(Configuration.RELATED_METRIC_PROPERTY),
+      );
     }
 
     response.setContentType("application/json;");
