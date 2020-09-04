@@ -1,10 +1,13 @@
 # Rules for dispatch file...
 dispatch:
-# Route the urls that point to the Java backend's API calls
+# Route the urls that point to the Java backend's API calls.
  - url: "*/api/v1/*"
    service: backend
  - url: "*/blackswan/*"
    service: backend
-# Route all other urls to the React.js frontend
+# Route the urls that point to Python backend's API calls.
+ - url: "*/python/*"
+   service: python
+# Route all other urls to the React.js frontend.
  - url: "*/*"
    service: default

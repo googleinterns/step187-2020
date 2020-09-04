@@ -22,6 +22,10 @@ import java.util.HashMap;
 
 /** Constants used throughout the blackswan mock classes. */
 public final class Constant {
+  // Only set to false, when you're pushing to Github or do 
+  // not have access to key.json. 
+  public static final boolean USE_CLOUD_STORAGE = false;
+  
   // Constants used to filenames. 
   private static final String FILE_DELIMITER = "-";
   private static final String FILE_END = "--data.csv";

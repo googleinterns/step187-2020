@@ -1,9 +1,6 @@
 # GreySwan
 
-## Config frontend project
-Run `yarn` in `./frontend` to install dependencies.
-
-## Run locally
+## Run project locally
 ```
 // From frontend directory
 yarn local
@@ -11,6 +8,34 @@ yarn local
 mvn appengine:run
 // From python directory
 python3.7 main.py
+```
+*See `key.json` section if you don't already have the key locally.
+
+## Project set up
+### Frontend
+1) Install Node v10.21.0.
+```
+nvm install v10.21.0
+nvm list // Make sure v10.21.0 is included.
+nvm use 10.21.0
+```
+2) Make sure you have `yarn` installed.
+3) Run `yarn` in `./frontend` to install dependencies.
+### Java Backend
+1) Follow [instructions](https://cloud.google.com/sdk/docs/downloads-apt-ge) to install gCloud SDK.
+2) Run `gcloud init` in root directory of our repository. Provide `greyswan` as gCloud project ID. 
+3) Install Maven locally.
+```
+sudo apt update
+sudo apt install maven
+mvn -version // Check if maven is installed.
+```
+4) Make sure you have Java 8 installed locally. If not, follow instructions [here](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html).
+### Python Microservice
+1) Make sure you have Python 3.7 and pip3 installed.
+2) To install dependencies:
+```
+pip3 install -r requirements.txt
 ```
 
 ## Testing
@@ -21,18 +46,8 @@ mvn test
 yarn test
 ```
 
-## Setting up and running Python code
-To install dependencies: (Only need to run once.)
-```
-pip3 install -r requirements.txt
-```
-To run server locally (make sure you're in `python` directory and `key.json` is present):
-```
-python3.7 main.py
-```
-
-## Deploy to gcloud
-Only need to do for first time. If you're using cloud shell, should not need following commands.
+## Deploy to gCloud
+Only need to do for first time in project root directory. If you're using cloud shell, should not need following commands.
 ```
 gcloud init
 gcloud config set project greyswan
