@@ -14,6 +14,8 @@
 
 package com.google.models;
 
+import com.google.appengine.api.datastore.Entity;
+import com.google.blackswan.mock.Constant;
 
 /** 
  * Wrapper for meta data of a related data type that includes user who
@@ -57,6 +59,35 @@ public final class DataInfoUser {
     return new StringBuilder(dataInfo.toString())
         .append("Username: ").append(username).append("\n")
         .toString();
+  }
+
+    @Override
+  public int hashCode() {
+    return toString().hashCode();
+  }
+
+  @Override
+   public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof DataInfoUser)) {
+      return false;
+    }
+
+    DataInfoUser target = (DataInfoUser) o;
+
+    return target.dataInfo.equals(dataInfo) &&
+        target.username.equals(username);
+  }
+
+  public static DataInfoUser createFromEntity(Entity entity) {
+    return DataInfoUser.of(
+      (String) entity.getProperty(Constant.CONFIG_RELATED_METRIC_PROPERTY),
+      (String) entity.getProperty(Constant.CONFIG_RELATED_DIMENSION_PROPERTY),
+      (String) entity.getProperty(Constant.CONFIG_USER_PROPERTY)
+    );
   }
 
 }

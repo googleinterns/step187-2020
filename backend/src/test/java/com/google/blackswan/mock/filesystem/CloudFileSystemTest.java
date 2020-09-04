@@ -31,7 +31,7 @@ public class CloudFileSystemTest {
   private static final String EXPECTED_BUCKET_NAME = "greyswan.appspot.com";
   private static final String METRIC = "Interest Over Time - US";
   private static final String DIMENSION = "Ramen";
-  private static final String EXPECTED_OBJECT_NAME = "interest-ramen.csv";
+  private static final String EXPECTED_OBJECT_NAME = "ramen-us--data.csv";
 
   @Before
   public void setUp() throws Exception {
