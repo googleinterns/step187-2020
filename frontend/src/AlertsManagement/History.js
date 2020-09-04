@@ -15,8 +15,9 @@ const createData = (id, timestampDate, numAnomalies, status, priority, metrics, 
 const rows = (allAlerts) => { 
   let rowItems = [];
   allAlerts.forEach((alert, alertId) => {
-    let metrics = new Set(alert.anomalies.map((anomaly) => anomaly.metricName));
-    let dimensions = new Set(alert.anomalies.map((anomaly) => anomaly.dimensionName));
+    alert.anomalies = alert.anomalies ? alert.anomalies : [];
+    let metrics = new Set(alert.anomalies.map(anomaly => anomaly.metricName)).add("hello");
+    let dimensions = new Set(alert.anomalies.map(anomaly => anomaly.dimensionName)).add("goddybe");
 
     // TODO: replace 1 with alert.priority
     rowItems.push(
@@ -28,6 +29,16 @@ const rows = (allAlerts) => {
     );
   });
   return rowItems; 
+}
+
+const createChips = (data, metrics) => {
+  return (
+    (metrics ? data.metrics : data.dimensions).split(DATA_DELIMITER).map((dimension) => 
+      <Chip label={dimension} color={metrics ? "secondary" : "primary"} variant="outlined" 
+        size="small" style={{ margin: '5px' }}
+      />
+    )
+  );
 }
 
 class History extends Component {
@@ -58,9 +69,6 @@ class History extends Component {
       header: {
         marginTop: '50px',
         marginBottom: '30px'
-      },
-      chip: {
-        margin: '5px',
       }
     });
 
@@ -87,17 +95,11 @@ class History extends Component {
             { title: 'Priority', field: 'priority', type: 'numeric', align: 'left' },
             { 
               title: 'Metrics', field: 'metrics', sorting: false,
-              render: rowData => rowData.metrics.split(DATA_DELIMITER).map((metric) => 
-                <Chip label={metric} color="secondary" variant="outlined" 
-                  size="small" style={styles.chip}
-                />)
+              render: rowData => createChips(rowData, /** metrics = */ true)
             },
             { 
               title: 'Dimensions', field: 'dimensions', sorting: false,
-              render: rowData => rowData.dimensions.split(DATA_DELIMITER).map((dimension) => 
-                <Chip label={dimension} color="primary" variant="outlined" 
-                  size="small" style={styles.chip}
-                />)
+              render: rowData => createChips(rowData, /** metrics= */ false)
             }
           ]}
           data={rows(allAlerts)} 
