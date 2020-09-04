@@ -19,6 +19,10 @@ import com.google.common.collect.ImmutableMap;
 
 /** Constants used throughout the blackswan mock classes. */
 public final class Constant {
+  // Only set to false, when you're pushing to Github or do 
+  // not have access to key.json. 
+  public static final boolean USE_CLOUD_STORAGE = false;
+
   public static final String INTEREST_US = "Interest Over Time - US";
   public static final String UDON = "Udon";
   public static final String PHO = "Pho";

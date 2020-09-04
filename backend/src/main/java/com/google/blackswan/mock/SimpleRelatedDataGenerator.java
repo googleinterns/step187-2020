@@ -29,8 +29,10 @@ import com.google.blackswan.mock.filesystem.*;
 public class SimpleRelatedDataGenerator implements RelatedDataGenerator {
   private static final String CONFIG_USERNAME = "catyu@";
   /** Ideally should be injected. Currently, putting as class variable. */
-  private static final FileSystem FILE_SYSTEM = LocalFileSystem.createSystem();
-  private static final SimpleRelatedDataGenerator INSTANCE = new SimpleRelatedDataGenerator();
+  private static final FileSystem FILE_SYSTEM = Constant.USE_CLOUD_STORAGE ? 
+      CloudFileSystem.createSystem() : LocalFileSystem.createSystem();
+  private static final SimpleRelatedDataGenerator INSTANCE 
+      = new SimpleRelatedDataGenerator();
 
   private Multimap<DataInfo, DataInfoUser> relatedDataMap;
   private Map<DataInfo, Map<Timestamp, Integer>> csvDataCache;
