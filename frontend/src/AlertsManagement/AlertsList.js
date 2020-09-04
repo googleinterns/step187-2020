@@ -46,7 +46,7 @@ export default function AlertsList(props) {
 
     allAlerts.get(alertId).priority = numToEnum;
     // Set state in order to re-render the component, although the state is not used.
-    setPriority(newPriority); 
+    setPriority(newPriority ? newPriority : priority); 
   }
 
   const sortPriority = (displayAlerts) => {
