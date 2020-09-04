@@ -93,8 +93,8 @@ public final class DataInfoTest {
   @Test
   public void createFromEntityToDataInfoUser_correctConversion() {
     Entity entity = new Entity(Constant.CONFIG_ENTITY_KIND);
-    entity.setProperty(Constant.CONFIG_RMETRIC_PROPERTY, METRIC_NAME);
-    entity.setProperty(Constant.CONFIG_RDIMENSION_PROPERTY, DIMENSION_NAME);
+    entity.setProperty(Constant.CONFIG_RELATED_METRIC_PROPERTY, METRIC_NAME);
+    entity.setProperty(Constant.CONFIG_RELATED_DIMENSION_PROPERTY, DIMENSION_NAME);
     entity.setProperty(Constant.CONFIG_USER_PROPERTY, USER_NAME);
 
     assertEquals(DATA_INFO_USER, DataInfoUser.createFromEntity(entity));

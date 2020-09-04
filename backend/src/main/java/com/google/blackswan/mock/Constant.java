@@ -40,11 +40,9 @@ public final class Constant {
 
   // Constants used to generate filenames map. 
   private static final ImmutableList<String> COUNTRIES_LIST = 
-      ImmutableList.<String>builder()
-      .add(US_COUNTRY).add(JP_COUNTRY).add(UK_COUNTRY).build();
+      ImmutableList.of(US_COUNTRY, JP_COUNTRY, UK_COUNTRY);
   private static final ImmutableList<String> DIMENSIONS = 
-      ImmutableList.<String>builder()
-      .add(UDON).add(PHO).add(RAMEN).build();
+      ImmutableList.of(UDON, PHO, RAMEN);
 
   public static final ImmutableMap<DataInfo, String> FILE_LOCATIONS = buildFileLocations();
 
@@ -52,14 +50,8 @@ public final class Constant {
     Map<DataInfo, String> result = new HashMap<>();
     for (String country : COUNTRIES_LIST) {
       for (String dimension : DIMENSIONS) {
-        String filename = new StringBuilder()
-            .append(dimension.toLowerCase())
-            .append(FILE_DELIMITER)
-            .append(country)
-            .append(FILE_END).toString();
-        String metric = new StringBuilder()
-            .append(INTEREST)
-            .append(country.toUpperCase()).toString();
+        String filename = dimension.toLowerCase() + FILE_DELIMITER + country + FILE_END;
+        String metric = INTEREST + country.toUpperCase();
         result.put(DataInfo.of(metric, dimension), filename);
       }
     }
@@ -75,8 +67,8 @@ public final class Constant {
   public static final String CONFIG_ENTITY_KIND = "Configuration";
   public static final String CONFIG_METRIC_PROPERTY = "metric";
   public static final String CONFIG_DIMENSION_PROPERTY = "dimension";
-  public static final String CONFIG_RMETRIC_PROPERTY = "relatedMetric";
-  public static final String CONFIG_RDIMENSION_PROPERTY = "relatedDimension";
+  public static final String CONFIG_RELATED_METRIC_PROPERTY = "relatedMetric";
+  public static final String CONFIG_RELATED_DIMENSION_PROPERTY = "relatedDimension";
   public static final String CONFIG_USER_PROPERTY = "user";
 
   /** No instances. */
