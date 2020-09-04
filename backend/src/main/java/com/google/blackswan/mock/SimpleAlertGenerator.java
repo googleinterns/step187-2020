@@ -44,7 +44,8 @@ public class SimpleAlertGenerator implements AlertGenerator {
     }
 
     return anomalyGroups.keySet().stream()
-        .map(key -> Alert.createAlertWithoutId(key, anomalyGroups.get(key), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2))
+        .map(key -> Alert.createAlertWithoutId(key, anomalyGroups.get(key), 
+            Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2))
         .collect(ImmutableList.toImmutableList());
   }
 

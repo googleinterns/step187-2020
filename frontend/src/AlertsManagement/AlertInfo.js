@@ -41,9 +41,8 @@ class AlertInfo extends Component {
     const { alert } = this.state;
     
     const statusToChangeTo = alert.status === UNRESOLVED_STATUS ? RESOLVED_STATUS : UNRESOLVED_STATUS;
-    fetch('/api/v1/alerts-data', {
-      method: 'POST',
-      body: alert.id + " " + statusToChangeTo,
+    fetch('/api/v1/alerts-data?id=' + alert.id + '&status=' + statusToChangeTo, {
+      method: 'POST'
     });
 
     const newAlert = Object.assign({}, alert);
@@ -56,15 +55,14 @@ class AlertInfo extends Component {
 
     // We have to get the P0, P1, or P2 version to match with enum representation in backend.
     const numToEnum = Object.keys(priorityLevels)[Object.values(priorityLevels).indexOf(newPriority)];
-    fetch('/api/v1/alert-visualization', {
-      method: 'POST',
-      body: alert.id + " " + numToEnum,
+    fetch('/api/v1/alert-visualization?id=' + alert.id + '&priority=' + numToEnum, {
+      method: 'POST'
     });
 
     const newAlert = Object.assign({}, alert);
     newAlert.priority = newPriority;
 
-    this.setState({ alert: newAlert, priority: newPriority});
+    this.setState({ alert: newAlert, priority: newPriority });
   }
   
   render() {

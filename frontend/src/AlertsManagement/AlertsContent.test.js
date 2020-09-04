@@ -107,8 +107,8 @@ describe("handleCheckbox", () => {
   const editChecked = [2, 0];
   const doubleChecked = [0, 2];
 
-  const SERVLET_ROUTE = '/api/v1/alerts-data';
-  const POST_DATA = {"body": "0 RESOLVED", "method": "POST",};
+  const REQUEST_URL = '/api/v1/alerts-data?id=0&status=RESOLVED';
+  const POST_DATA = {"method": "POST",};
 
   let wrapper;
 
@@ -163,7 +163,7 @@ describe("handleCheckbox", () => {
     });
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith(SERVLET_ROUTE, POST_DATA);
+    expect(global.fetch).toHaveBeenCalledWith(REQUEST_URL, POST_DATA);
   });
 
   // TODO: write tests for dealing with error response from backend (e.g. 404 code).

@@ -26,26 +26,27 @@ import { formatDate } from '../time_utils';
  * handleToggle = callback function to handle clicking on the checkbox
  */
 export default function AlertsList(props) {
-  const [displayAlerts, setDisplayAlerts] = useState(props.displayAlerts);
   const allAlerts = props.allAlerts;
+  const originalDisplay = props.displayAlerts;
+
+  const [displayAlerts, setDisplayAlerts] = useState(props.displayAlerts);
   const [priority, setPriority] = useState(priorityLevels.P0);
   const [sortDirectionPriority, setSortDirectionPriority] = useState(false);
   const [sortDirectionDate, setSortDirectionDate] = useState(false);
   
-  useEffect(() =>{
+  useEffect(() => {
     setDisplayAlerts(props.displayAlerts);
   }, [props.displayAlerts]);
 
   const handlePriorityChange = (newPriority, alertId, allAlerts) => {
     const numToEnum = Object.keys(priorityLevels)[Object.values(priorityLevels).indexOf(newPriority)];
-    fetch('/api/v1/alert-visualization', {
-      method: 'POST',
-      body: alertId + " " + numToEnum,
+    fetch('/api/v1/alert-visualization?id=' + alertId + '&priority=' + numToEnum, {
+      method: 'POST'
     });
 
     allAlerts.get(alertId).priority = numToEnum;
     // Set state in order to re-render the component, although the state is not used.
-    setPriority(priority); 
+    setPriority(newPriority); 
   }
 
   const sortPriority = (displayAlerts) => {
@@ -59,7 +60,8 @@ export default function AlertsList(props) {
   const sortDate = (displayAlerts) => {
     let sorted = displayAlerts.slice();
     sorted.sort((a, b) => (
-        formatDate(allAlerts.get(a).timestampDate, false) > formatDate(allAlerts.get(b).timestampDate, false)
+        formatDate(allAlerts.get(a).timestampDate, false) > 
+        formatDate(allAlerts.get(b).timestampDate, false)
       ) ? 1 : -1);
     sorted = sortDirectionDate ? sorted.reverse() : sorted;
     setSortDirectionDate(!sortDirectionDate);
@@ -81,7 +83,8 @@ export default function AlertsList(props) {
         { sortDirectionPriority ? <ArrowDownwardIcon /> : <ArrowUpwardIcon /> }
       </Button>
       <List className="alerts-list">
-        {displayAlerts.map((alertId, value) => {
+        {(originalDisplay.length !== displayAlerts.length ? originalDisplay : displayAlerts)
+          .map((alertId, value) => {
           const labelId = `checkbox-list-label-${alertId}`;
 
           return (
