@@ -14,6 +14,8 @@
 
 package com.google.models;
 
+import com.google.appengine.api.datastore.Entity;
+import com.google.blackswan.mock.Constant;
 
 /** 
  * Wrapper for meta data of a related data type used in RelatedDataGenerator.
@@ -66,8 +68,15 @@ public final class DataInfo {
 
     DataInfo target = (DataInfo) o;
 
-    return target.metricName == metricName &&
-        target.dimensionName == dimensionName;
+    return target.metricName.equals(metricName) &&
+        target.dimensionName.equals(dimensionName);
+  }
+
+  public static DataInfo createFromEntity(Entity entity) {
+    return DataInfo.of(
+      (String) entity.getProperty(Constant.CONFIG_METRIC_PROPERTY),
+      (String) entity.getProperty(Constant.CONFIG_DIMENSION_PROPERTY)
+    );
   }
 
 }

@@ -26,7 +26,7 @@ public class LocalFileSystemTest {
 
   private static final String METRIC = "Interest Over Time - US";
   private static final String DIMENSION = "Ramen";
-  private static final String EXPECTED_NAME = "interest-ramen.csv";
+  private static final String EXPECTED_NAME = "ramen-us--data.csv";
 
   @Before
   public void setUp() throws Exception {
