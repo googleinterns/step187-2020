@@ -16,8 +16,8 @@ const rows = (allAlerts) => {
   let rowItems = [];
   allAlerts.forEach((alert, alertId) => {
     alert.anomalies = alert.anomalies ? alert.anomalies : [];
-    let metrics = new Set(alert.anomalies.map(anomaly => anomaly.metricName)).add("hello");
-    let dimensions = new Set(alert.anomalies.map(anomaly => anomaly.dimensionName)).add("goddybe");
+    let metrics = new Set(alert.anomalies.map(anomaly => anomaly.metricName));
+    let dimensions = new Set(alert.anomalies.map(anomaly => anomaly.dimensionName));
 
     rowItems.push(
       createData(alertId, formatDate(alert.timestampDate, /** monthFirst = */ false), 
