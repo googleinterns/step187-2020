@@ -10,17 +10,17 @@ export function convertTimestampToDate(timestampDate) {
 
 const DATE_DELIMITER = '/';
 
-/** Format JavaScript date in the form MM/DD/YYYY if mFirst is true, otherwise YYYY/MM/DD. */
-export function formatDate(date, mFirst) {
-  var d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
+/** Format JavaScript date in the form MM/DD/YYYY if monthFirst is true, otherwise YYYY/MM/DD. */
+export function formatDate(date, monthFirst) {
+  var dateObject = new Date(date),
+      month = '' + (dateObject.getMonth() + 1),
+      day = '' + dateObject.getDate(),
+      year = dateObject.getFullYear();
 
   if (month.length < 2) 
       month = '0' + month;
   if (day.length < 2) 
       day = '0' + day;
 
-  return mFirst ? [month, day, year].join(DATE_DELIMITER) : [year, month, day].join(DATE_DELIMITER);
+  return monthFirst? [month, day, year].join(DATE_DELIMITER) : [year, month, day].join(DATE_DELIMITER);
 }

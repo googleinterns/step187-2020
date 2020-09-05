@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import LinkIcon from '@material-ui/icons/Link';
 import { DATA_DELIMITER, priorityLevels } from './management_constants';
 import { getAlertsData } from './management_helpers';
-import { tableIcons } from './table_icons';
+import { TABLE_ICONS } from './table_icons';
 import { formatDate } from '../time_utils';
 
 const createData = (id, timestampDate, priority, numAnomalies, status, metrics, dimensions) => {
@@ -15,11 +15,12 @@ const createData = (id, timestampDate, priority, numAnomalies, status, metrics, 
 const rows = (allAlerts) => { 
   let rowItems = [];
   allAlerts.forEach((alert, alertId) => {
-    let metrics = new Set(alert.anomalies.map((anomaly) => anomaly.metricName));
-    let dimensions = new Set(alert.anomalies.map((anomaly) => anomaly.dimensionName));
+    alert.anomalies = alert.anomalies ? alert.anomalies : [];
+    let metrics = new Set(alert.anomalies.map(anomaly => anomaly.metricName)).add("hello");
+    let dimensions = new Set(alert.anomalies.map(anomaly => anomaly.dimensionName)).add("goddybe");
 
     rowItems.push(
-      createData(alertId, formatDate(alert.timestampDate, false), 
+      createData(alertId, formatDate(alert.timestampDate, /** monthFirst = */ false), 
         priorityLevels[alert.priority], alert.anomalies.length, alert.status, 
         [...metrics].reduce((accumulator, value) => accumulator + DATA_DELIMITER + value), 
         [...dimensions].reduce((accumulator, value) => accumulator + DATA_DELIMITER + value)
@@ -27,6 +28,16 @@ const rows = (allAlerts) => {
     );
   });
   return rowItems; 
+}
+
+const createChips = (data, metrics) => {
+  return (
+    (metrics ? data.metrics : data.dimensions).split(DATA_DELIMITER).map((dimension) => 
+      <Chip label={dimension} color={metrics ? "secondary" : "primary"} variant="outlined" 
+        size="small" style={{ margin: '5px' }}
+      />
+    )
+  );
 }
 
 /**
@@ -60,9 +71,6 @@ class History extends Component {
       header: {
         marginTop: '50px',
         marginBottom: '30px'
-      },
-      chip: {
-        margin: '5px',
       }
     });
 
@@ -74,7 +82,7 @@ class History extends Component {
       <div style={styles.root}>
         <Typography variant="h4" gutterBottom style={styles.header}>Alerts Archive</Typography>
         
-        <MaterialTable icons={tableIcons}
+        <MaterialTable icons={TABLE_ICONS}
           actions={[
             {
               icon: () => <LinkIcon />,
@@ -89,17 +97,11 @@ class History extends Component {
             { title: 'Status', field: 'status', sorting: false },
             { 
               title: 'Metrics', field: 'metrics', sorting: false,
-              render: rowData => rowData.metrics.split(DATA_DELIMITER).map((metric) => 
-                <Chip label={metric} color="secondary" variant="outlined" 
-                  size="small" style={styles.chip}
-                />)
+              render: rowData => createChips(rowData, /** metrics = */ true)
             },
             { 
               title: 'Dimensions', field: 'dimensions', sorting: false,
-              render: rowData => rowData.dimensions.split(DATA_DELIMITER).map((dimension) => 
-                <Chip label={dimension} color="primary" variant="outlined" 
-                  size="small" style={styles.chip}
-                />)
+              render: rowData => createChips(rowData, /** metrics= */ false)
             }
           ]}
           data={rows(allAlerts)} 
