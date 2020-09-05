@@ -14,30 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getSpecificAlertData } from './management_helpers';
 import { UNRESOLVED_STATUS, RESOLVED_STATUS, priorityLevels } from './management_constants';
-
-const styles = {
-  divider: {
-    marginTop: '20px',
-    marginBottom: '20px',
-  },
-  resolveButton: {
-    marginTop: '10px',
-    marginBottom: '30px',
-  },
-  relatedText: { 
-    marginTop: '10px', 
-    marginBottom: '5px' 
-  },
-  relatedDivider: { 
-    marginBottom: '20px',
-  },
-  anomalyText: {
-    marginTop: '10px'
-  },
-  infoText: {
-    color: '#0FA3B1'
-  }
-};
+import './AlertInfo.css';
 
 /**
  * Requests alert data given specified alert ID from route and 
@@ -112,13 +89,13 @@ class AlertInfo extends Component {
     anomaly.relatedDataList.forEach((relatedData, index) => 
       relatedDataCharts.push(
         <Fragment key={index}>
-          <Typography variant="body2" style={styles.relatedText}>
+          <Typography variant="body2" id="related-text">
             {`Related data from ${relatedData.metricName} for 
               ${relatedData.dimensionName} (${relatedData.username})`}
           </Typography>
           {this.createLineChart(relatedData, index)}
           {index === (anomaly.relatedDataList.length - 1) ? null :
-            <Divider style={styles.divider}/> }
+            <Divider id="divider" /> }
         </Fragment>
       )
     );
@@ -211,11 +188,11 @@ class AlertInfo extends Component {
                       <ListItemText id={index} 
                         disableTypography
                         primary={
-                          <Typography variant="body2" style={styles.anomalyText}>
-                            <Box display='inline' fontWeight="fontWeightBold" m={0.25} style={styles.infoText}>
+                          <Typography variant="body2" id="anomaly-text">
+                            <Box display='inline' fontWeight="fontWeightBold" m={0.25} id="info-text">
                               {` ${anomaly.metricName} for ${anomaly.dimensionName}`}
                             </Box> on
-                            <Box display='inline' fontWeight="fontWeightBold" m={0.5} style={styles.infoText}>
+                            <Box display='inline' fontWeight="fontWeightBold" m={0.5} id="info-text">
                               {`${anomaly.timestampDate}`}
                             </Box>
                           </Typography>
@@ -228,7 +205,7 @@ class AlertInfo extends Component {
                     </Grid>
                   </Grid>
                 </ListItem>
-                <Divider style={styles.divider} component="li"/>
+                <Divider id="divider" component="li"/>
               </Fragment>
             );
           })}

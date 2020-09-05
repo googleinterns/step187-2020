@@ -92,7 +92,7 @@ describe("getAlertsData", () => {
 
     const results = await getAlertsData(DEFAULT_COMMENT_LIMIT);
 
-    expect(results).toMatchObject([expectedAlerts, expectedUnchecked, expectedChecked])
+    expect(results).toMatchObject({ all: expectedAlerts, unresolved: expectedUnchecked, resolved: expectedChecked});
   });
 });
 

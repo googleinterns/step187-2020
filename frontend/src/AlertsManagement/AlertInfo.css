@@ -1,0 +1,22 @@
+#divider {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#status-button {
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+#related-text { 
+  margin-top: 10px; 
+  margin-bottom: 5px; 
+}
+
+#anomaly-text {
+  margin-top: 10px;
+}
+
+#info-text {
+  color: #0FA3B1;
+}

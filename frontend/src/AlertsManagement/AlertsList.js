@@ -16,6 +16,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { priorityLevels } from './management_constants';
 import { formatDate } from '../time_utils';
+import './AlertsList.css';
 
 /**
  * Displays alerts in a list given information passed down as props from AlertsContent.

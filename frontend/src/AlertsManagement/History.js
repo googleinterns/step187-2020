@@ -29,6 +29,9 @@ const rows = (allAlerts) => {
   return rowItems; 
 }
 
+/**
+ * Displays all alert data in a table using material-table.
+ */
 class History extends Component {
   constructor(props) {
     super(props);
@@ -39,11 +42,11 @@ class History extends Component {
 
   async componentDidMount() {
     var results = await getAlertsData();
-    if (results.length !== 3) {
+    if (Object.keys(results).length !== 3) {
       throw new Error("getAlertsData() did not return the correct alerts data.")
     }
     this.setState({
-      allAlerts: new Map(results[0]),
+      allAlerts: new Map(results.all),
     });
   }
 

@@ -47,7 +47,7 @@ describe("componentDidMount", () => {
 
   it("should set state correctly with alerts information", async () => {
     const mock = jest.spyOn(helpers, "getAlertsData")
-                  .mockReturnValue([expectedAlerts, expectedUnchecked, expectedChecked]);
+                  .mockReturnValue({ all: expectedAlerts, unresolved: expectedUnchecked, resolved: expectedChecked});
     const wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
     
     await wrapper.instance().componentDidMount();
@@ -59,7 +59,7 @@ describe("componentDidMount", () => {
   });
 
   it("should throw an error when unexpected data is received", async () => {
-    const mock = jest.spyOn(helpers, "getAlertsData").mockReturnValue([expectedAlerts]);
+    const mock = jest.spyOn(helpers, "getAlertsData").mockReturnValue({ all: expectedAlerts });
     const wrapper = shallow(<AlertsContent classes={styles} />, { disableLifecycleMethods: true });
     const instance = wrapper.instance();
 
