@@ -66,8 +66,8 @@ describe("componentDidMount", () => {
 })
 
 describe("handleStatusChange", () => {
-  const SERVLET_ROUTE = '/api/v1/alerts-data';
-  const POST_DATA = {"body": "1987654321098765 UNRESOLVED", "method": "POST",};
+  const REQUEST_URL = '/api/v1/alerts-data?id=' + REQUEST_ID + '&status=UNRESOLVED';
+  const POST_DATA = {"method": "POST",};
 
   beforeEach(() => {
     fetch.resetMocks();
@@ -86,7 +86,7 @@ describe("handleStatusChange", () => {
     });
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith(SERVLET_ROUTE, POST_DATA);
+    expect(global.fetch).toHaveBeenCalledWith(REQUEST_URL, POST_DATA);
     expect(wrapper.state('alert').status).toEqual(UNRESOLVED_STATUS);
   });
 
@@ -94,9 +94,9 @@ describe("handleStatusChange", () => {
 });
 
 describe("handlePriorityChange", () => {
-  const SERVLET_ROUTE = '/api/v1/alert-visualization';
-  const POST_DATA = {"body": "1987654321098765 P1", "method": "POST",};
-  
+  const REQUEST_URL = '/api/v1/alert-visualization?id=' + REQUEST_ID + '&priority=P1';
+  const POST_DATA = {"method": "POST",};
+
   beforeEach(() => {
     fetch.resetMocks();
   });
@@ -114,7 +114,7 @@ describe("handlePriorityChange", () => {
     });
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith(SERVLET_ROUTE, POST_DATA);
+    expect(global.fetch).toHaveBeenCalledWith(REQUEST_URL, POST_DATA);
     expect(wrapper.state('alert').priority).toEqual(priorityLevels.P1);
     expect(wrapper.state('priority')).toEqual(priorityLevels.P1);
   });

@@ -47,8 +47,6 @@ public class AlertsDataServlet extends HttpServlet {
 
   private static final int MAX_LIMIT = 1000;
   private static final int DEFAULT_ALERTS_LIMIT = 5;
-  private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
-  private static final String WRONG_ALERT_DATA = "Incorrect alert data sent in HTTP request.";
   private static final Logger log = Logger.getLogger(AlertsDataServlet.class.getName());
 
   @Override
@@ -79,9 +77,8 @@ public class AlertsDataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) 
       throws ServletException, IOException {
-    String[] data = processRequestBody(request);
-    Long id = Long.parseLong(data[0]);
-    String status = data[1];
+    Long id = Long.parseLong(request.getParameter("id"));
+    String status = request.getParameter("status");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     try {
@@ -91,23 +88,5 @@ public class AlertsDataServlet extends HttpServlet {
     } catch (EntityNotFoundException e) {
       throw new ServletException(e);
     }
-  }
-
-  /** 
-    * Read from the request body, which contains data in the format "alertId statusToChangeTo".
-    * For example, the body could be "4785074604081152 RESOLVED".
-    */
-  private String[] processRequestBody(HttpServletRequest request) 
-      throws IOException, ServletException {
-    BufferedReader reader = request.getReader();
-    String body = reader.readLine();
-    if (body == null) {
-      throw new ServletException(EMPTY_BODY_ERROR);
-    }
-    String[] data = body.split(" "); 
-    if (data.length != 2) {
-      throw new ServletException(WRONG_ALERT_DATA);
-    }
-    return data;
   }
 }

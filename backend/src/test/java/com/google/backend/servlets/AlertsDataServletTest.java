@@ -55,11 +55,10 @@ public class AlertsDataServletTest {
   public ExpectedException thrown = ExpectedException.none();
 
   private static final String RESPONSE_CONTENT_TYPE = "application/json;";
-  private static final String REQUEST_CONTENT_TYPE = "text/plain;";
-  private static final String REQUEST_CHARSET = "UTF-8";
   private static final Long FAKE_ID = 1L;
-  private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
   private static final String LIMIT_PARAM = "limit";
+  private static final String ID_PARAM = "id";
+  private static final String STATUS_PARAM = "status";
   private static final String FAKE_LIMIT = "2";
 
   private static final AlertsDataServlet alertsDataServlet = new AlertsDataServlet();
@@ -144,11 +143,8 @@ public class AlertsDataServletTest {
     Entity newAlertEntity = newAlert.toEntity();
     datastore.put(newAlertEntity);
     Long id = newAlertEntity.getKey().getId();
-
-    String data = id + " " + Alert.StatusType.RESOLVED;
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
+    when(request.getParameter(ID_PARAM)).thenReturn(Long.toString(id));
+    when(request.getParameter(STATUS_PARAM)).thenReturn(Alert.StatusType.RESOLVED.name());
 
 
     alertsDataServlet.doPost(request, response);
@@ -158,28 +154,4 @@ public class AlertsDataServletTest {
     Entity resultEntity = datastore.prepare(query).asSingleEntity();
     assertEquals(Alert.StatusType.RESOLVED.name(), resultEntity.getProperty(Alert.STATUS_PROPERTY).toString());
   }
-
-  @Test
-  public void doPost_EmptyRequestBody_ThrowsException() throws IOException, ServletException {
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader("")));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
-
-    thrown.expect(ServletException.class);
-    thrown.expectMessage(EMPTY_BODY_ERROR);
-    alertsDataServlet.doPost(request, response);
-  }
-
-  @Test
-  public void doPost_EntityNotInDatastore_ThrowsException() throws IOException, ServletException {
-    String data = FAKE_ID + " " + Alert.StatusType.RESOLVED;
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
-
-    thrown.expect(ServletException.class);
-    thrown.expectCause(IsInstanceOf.<Throwable>instanceOf(EntityNotFoundException.class));
-    alertsDataServlet.doPost(request, response);    
-  }
-
 }

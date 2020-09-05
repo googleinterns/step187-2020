@@ -54,11 +54,10 @@ public class AlertVisualizationServletTest {
   public ExpectedException thrown = ExpectedException.none();
 
   private static final String RESPONSE_CONTENT_TYPE = "application/json;";
-  private static final String REQUEST_CONTENT_TYPE = "text/plain;";
   private static final String REQUEST_CHARSET = "UTF-8";
   private static final String ID_PARAM = "id";
+  private static final String PRIORITY_PARAM = "priority";
   private static final Long FAKE_ID = 1L;
-  private static final String EMPTY_BODY_ERROR = "No data was sent in HTTP request body.";
 
   private static final AlertVisualizationServlet alertVisualizationServlet = new AlertVisualizationServlet();
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
@@ -115,12 +114,8 @@ public class AlertVisualizationServletTest {
     Entity newAlertEntity = newAlert.toEntity();
     datastore.put(newAlertEntity);
     Long id = newAlertEntity.getKey().getId();
-
-    String data = id + " " + Alert.PriorityLevel.P0;
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
-
+    when(request.getParameter(ID_PARAM)).thenReturn(Long.toString(id));
+    when(request.getParameter(PRIORITY_PARAM)).thenReturn(Alert.PriorityLevel.P0.name());
 
     alertVisualizationServlet.doPost(request, response);
 
@@ -129,28 +124,4 @@ public class AlertVisualizationServletTest {
     Entity resultEntity = datastore.prepare(query).asSingleEntity();
     assertEquals(Alert.PriorityLevel.P0.name(), resultEntity.getProperty(Alert.PRIORITY_PROPERTY).toString());
   }
-
-  @Test
-  public void doPost_EmptyRequestBody_ThrowsException() throws IOException, ServletException {
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader("")));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
-
-    thrown.expect(ServletException.class);
-    thrown.expectMessage(EMPTY_BODY_ERROR);
-    alertVisualizationServlet.doPost(request, response);
-  }
-
-  @Test
-  public void doPost_EntityNotInDatastore_ThrowsException() throws IOException, ServletException {
-    String data = FAKE_ID + " " + Alert.StatusType.RESOLVED;
-    when(request.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
-    when(request.getContentType()).thenReturn(REQUEST_CONTENT_TYPE);
-    when(request.getCharacterEncoding()).thenReturn(REQUEST_CHARSET);
-
-    thrown.expect(ServletException.class);
-    thrown.expectCause(IsInstanceOf.<Throwable>instanceOf(EntityNotFoundException.class));
-    alertVisualizationServlet.doPost(request, response);    
-  }
-
 }

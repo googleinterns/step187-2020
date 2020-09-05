@@ -29,7 +29,8 @@ public class DummyAlertGenerator implements AlertGenerator {
     alerts = new ArrayList<Alert>();
     for (int k = 0; k < SET_ALERT_GROUP_SIZE; k++) {
       alerts.add(Alert.createAlertWithoutId(Timestamp.getDummyTimestamp(k), 
-          anomalyGenerator.getAnomalies(), Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2));
+          anomalyGenerator.getAnomalies(), Alert.StatusType.UNRESOLVED, 
+          Alert.PriorityLevel.P2));
     }
   }
 

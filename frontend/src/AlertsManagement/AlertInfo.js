@@ -3,6 +3,7 @@ import { Line } from 'react-chartjs-2';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -65,9 +66,8 @@ class AlertInfo extends Component {
     const { alert } = this.state;
     
     const statusToChangeTo = alert.status === UNRESOLVED_STATUS ? RESOLVED_STATUS : UNRESOLVED_STATUS;
-    fetch('/api/v1/alerts-data', {
-      method: 'POST',
-      body: alert.id + " " + statusToChangeTo,
+    fetch('/api/v1/alerts-data?id=' + alert.id + '&status=' + statusToChangeTo, {
+      method: 'POST'
     });
 
     const newAlert = Object.assign({}, alert);
@@ -131,15 +131,14 @@ class AlertInfo extends Component {
 
     // We have to get the P0, P1, or P2 version to match with enum representation in backend.
     const numToEnum = Object.keys(priorityLevels)[Object.values(priorityLevels).indexOf(newPriority)];
-    fetch('/api/v1/alert-visualization', {
-      method: 'POST',
-      body: alert.id + " " + numToEnum,
+    fetch('/api/v1/alert-visualization?id=' + alert.id + '&priority=' + numToEnum, {
+      method: 'POST'
     });
 
     const newAlert = Object.assign({}, alert);
     newAlert.priority = newPriority;
 
-    this.setState({ alert: newAlert, priority: newPriority});
+    this.setState({ alert: newAlert, priority: newPriority });
   }
   
   render() {
@@ -204,6 +203,40 @@ class AlertInfo extends Component {
           </Grid>
         </Grid>
 
+        <Grid container justify="center">
+          <Grid item xs={2.5}>
+            <Typography variant="h6" align="center">
+              Status: {alert.status}
+            </Typography>
+            <center>
+              <Button id="status-button" variant="contained" color="primary" component="span" 
+                onClick={this.handleStatusChange}
+              >
+                {alert.status === UNRESOLVED_STATUS ? "Resolve?" : "Unresolve?"}
+              </Button>
+            </center>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography variant="h6" align="center">
+              Priority: P{priority}
+            </Typography>
+            <center>
+              <form>
+                <Select
+                  labelId="priority-select"
+                  id="priority-select"
+                  value={priority}
+                  onChange={event => this.handlePriorityChange(event.target.value)}
+                >
+                  <MenuItem value={priorityLevels.P0}>P0</MenuItem>
+                  <MenuItem value={priorityLevels.P1}>P1</MenuItem>
+                  <MenuItem value={priorityLevels.P2}>P2</MenuItem>
+                </Select>
+              </form>
+            </center>
+          </Grid>
+        </Grid>
+ 
         <List className="anomalies-list">
           {alert.anomalies.map((anomaly, index) => {
             return (

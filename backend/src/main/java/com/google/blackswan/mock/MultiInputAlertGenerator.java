@@ -50,7 +50,8 @@ public class MultiInputAlertGenerator implements AlertGenerator {
 
     return anomalyGroups.keySet().stream()
         .map(key -> Alert.createAlertWithoutId(key, anomalyGroups.get(key), 
-            Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2)).collect(ImmutableList.toImmutableList());
+            Alert.StatusType.UNRESOLVED, Alert.PriorityLevel.P2))
+        .collect(ImmutableList.toImmutableList());
   }
 
   public List<Alert> getAlerts() {

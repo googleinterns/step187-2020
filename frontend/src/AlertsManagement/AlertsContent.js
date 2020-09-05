@@ -109,18 +109,18 @@ class AlertsContent extends Component {
     const currentUncheckedIndex = unchecked.indexOf(alertId);
     const currentCheckedIndex = checked.indexOf(alertId);
 
-    let changeStatus;
+    let statusToChangeTo;
 
     if (currentCheckedIndex === -1 && currentUncheckedIndex !== -1) {
       // Was unresolved and now want to resolve it, second check is a sanity check.
       newChecked.push(alertId);
       newUnchecked.splice(currentUncheckedIndex, 1);
-      changeStatus = RESOLVED_STATUS;
+      statusToChangeTo = RESOLVED_STATUS;
     } else if (currentUncheckedIndex === -1 && currentCheckedIndex !== -1) {
       // Was resolved and now want to unresolve it, second check is a sanity check.
       newUnchecked.push(alertId);
       newChecked.splice(currentCheckedIndex, 1);
-      changeStatus = UNRESOLVED_STATUS;
+      statusToChangeTo = UNRESOLVED_STATUS;
     } else {
       throw new Error("Misplaced alert: " + this.state.allAlerts[alertId]);
     }
@@ -130,9 +130,8 @@ class AlertsContent extends Component {
       checked: newChecked,
     });
 
-    fetch('/api/v1/alerts-data', {
-      method: 'POST',
-      body: alertId + " " + changeStatus,
+    fetch('/api/v1/alerts-data?id=' + alertId + '&status=' + statusToChangeTo, {
+      method: 'POST'
     });
   };
 
