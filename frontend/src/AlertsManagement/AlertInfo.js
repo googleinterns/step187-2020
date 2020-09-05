@@ -8,7 +8,6 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
@@ -156,52 +155,8 @@ class AlertInfo extends Component {
           Alert on {alert.timestampDate}
         </Typography>
         <Typography variant="h6" align="center">
-            Number of anomalies: {alert.anomalies.length}
+          Number of anomalies: {alert.anomalies.length}
         </Typography>
-        
-        <Grid container xs={12} justify="center">
-          <Grid item xs={2}>
-            <Typography variant="h6" align="center">
-              Status: {alert.status}
-            </Typography>
-            <center>
-              <Button id="status-button" variant="contained" color="primary" component="span" 
-                onClick={this.handleStatusChange} style={styles.resolveButton}
-              >
-                {alert.status === UNRESOLVED_STATUS ? "Resolve?" : "Unresolve?"}
-              </Button>
-            </center>
-          </Grid>
-          <Grid item xs={2}>
-            <Typography variant="h6" align="center">
-              Priority: P{priority}
-            </Typography>
-            <center>
-              <form>
-                <Select
-                  labelId="priority-select"
-                  id="priority-select"
-                  value={priority}
-                  onChange={event => this.handlePriorityChange(event.target.value)}
-                  style={styles.resolveButton}
-                >
-                  <MenuItem value={priorityLevels.P0}>P0</MenuItem>
-                  <MenuItem value={priorityLevels.P1}>P1</MenuItem>
-                  <MenuItem value={priorityLevels.P2}>P2</MenuItem>
-                </Select>
-              </form>
-            </center>
-          </Grid>
-        </Grid>
-
-        <Grid container >
-          <Grid item xs={6}>
-            <Typography variant="h6" align="center">Anomaly Graphs</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h6" align="center">Related Data Graphs</Typography>
-          </Grid>
-        </Grid>
 
         <Grid container justify="center">
           <Grid item xs={2.5}>
@@ -234,6 +189,15 @@ class AlertInfo extends Component {
                 </Select>
               </form>
             </center>
+          </Grid>
+        </Grid>
+        <br />
+        <Grid container >
+          <Grid item xs={6}>
+            <Typography variant="h6" align="center">Anomaly Graphs</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h6" align="center">Related Data Graphs</Typography>
           </Grid>
         </Grid>
  
